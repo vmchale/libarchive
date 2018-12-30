@@ -1,0 +1,44 @@
+name:                libarchive
+version:             0.1.0.0
+synopsis:            Haskell bindings for libarchive
+description:         Partial Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack tar archives.
+license:             BSD3
+license-file:        LICENSE
+author:              Vanessa McHale
+maintainer:          vanessa.mchale@iohk.io
+copyright:           Copyright: (c) 2018 Vanessa McHale
+category:            Codec
+build-type:          Simple
+extra-doc-files:     README.md
+                     CHANGELOG.md
+extra-source-files:  cabal.project.local
+                     cbits/*.c
+cabal-version:       1.18
+
+Flag development {
+  Description: Enable `-Werror`
+  manual: True
+  default: False
+}
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Codec.Archive
+  other-modules:       Codec.Archive.Foreign
+  build-depends:       base >= 4.3 && < 5
+                     , bytestring
+                     , filepath
+  default-language:    Haskell2010
+  if flag(development)
+    ghc-options:       -Werror
+  if impl(ghc >= 8.0)
+    ghc-options:       -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Widentities
+  if impl(ghc >= 8.4)
+    ghc-options:       -Wmissing-export-lists
+  ghc-options:         -Wall
+  pkgconfig-depends:   libarchive
+  c-sources:           cbits/unpack.c
+
+source-repository head
+  type:     git
+  location: https://github.com/vmchale/libarchive
