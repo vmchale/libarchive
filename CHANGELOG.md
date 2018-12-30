@@ -1,2 +1,5 @@
 # libarchive
 
+## 0.2.0.0
+
+  * Fix bug in paths
