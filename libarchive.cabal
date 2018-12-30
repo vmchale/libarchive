@@ -6,6 +6,7 @@ license-file: LICENSE
 copyright: Copyright: (c) 2018 Vanessa McHale
 maintainer: vanessa.mchale@iohk.io
 author: Vanessa McHale
+bug-reports: https://github.com/vmchale/libarchive/issues
 synopsis: Haskell bindings for libarchive
 description:
     Partial Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack tar archives.
