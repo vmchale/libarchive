@@ -7,3 +7,5 @@
 This contains partial Haskell bindings around
 [libarchive](http://libarchive.org/). It was created as an alternative to
 [tar](http://hackage.haskell.org/package/tar).
+
+Right now it only has support for decompressing tar archives.
