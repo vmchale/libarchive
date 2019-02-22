@@ -24,7 +24,7 @@ void unpack_in_dir(char* dirname, void *buff, size_t size) {
         strcpy(fp, dirname);
         strcat(fp, pre_path_name);
         archive_entry_set_pathname(entry, fp);
-        archive_read_extract(a, entry, 0);
+        archive_read_extract(a, entry, ARCHIVE_EXTRACT_TIME);
         archive_entry_set_pathname(entry, pre_path_name);
         free(fp);
         archive_read_data_skip(a);
