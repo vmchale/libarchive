@@ -11,8 +11,8 @@ void unpack_in_dir(char* dirname, void *buff, size_t size) {
     struct archive_entry *entry;
     a = archive_read_new();
 
-    // enable tar support
-    archive_read_support_format_tar(a);
+    // autodetect archive format/compression
+    archive_read_support_format_all(a);
 
     // open from memory (bytestring)
     archive_read_open_memory(a, buff, size);
