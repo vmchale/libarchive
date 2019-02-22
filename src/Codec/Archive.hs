@@ -1,14 +1,14 @@
 module Codec.Archive
     ( unpackToDir
-    , unpackTarball
+    , unpackArchive
     ) where
 
 import           Codec.Archive.Foreign (unpackToDir)
 import qualified Data.ByteString       as BS
 
-unpackTarball :: FilePath -- ^ Filepath pointing to @.tar@ file
+unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
-unpackTarball tarFp dirFp = do
+unpackArchive tarFp dirFp = do
     contents <- BS.readFile tarFp
     unpackToDir dirFp contents

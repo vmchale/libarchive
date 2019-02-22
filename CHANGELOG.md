@@ -4,6 +4,7 @@
 
   * Enable autodetection of archive format/compression
   * Slightly improved docs
+  * Rename `unpackTarball` to `unpackArchive`
 
 ## 0.2.0.0
 
