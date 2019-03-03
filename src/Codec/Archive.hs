@@ -6,10 +6,11 @@ module Codec.Archive
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
 import           Control.Applicative
+import           Control.Monad         (unless)
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc (malloc)
+import           Foreign.Marshal.Alloc (free, malloc)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
 import           System.FilePath       (pathSeparator, (</>))
@@ -24,7 +25,9 @@ archiveCond :: Ptr Archive
             -> Ptr ArchiveEntry
             -> IO Bool
 archiveCond a entry = do
-    res <- archive_read_next_header a =<< getPtr entry
+    ptrPtr <- getPtr entry
+    res <- archive_read_next_header a ptrPtr
+    free ptrPtr
     pure $ res == archiveOk || res == archiveRetry
 
 common :: FilePath -- ^ Directory name
@@ -35,19 +38,17 @@ common dirname a entry = loop *> archive_read_free a
     where
         loop = do
             done <- not <$> archiveCond a entry
-            if done
-                then pure ()
-                else do
-                    prePathName <- archive_entry_pathname entry
-                    -- FIXME: segfaults here... (b/c prePathName is null...)
-                    prePathNameHs <- peekCString prePathName
-                    let fp = dirname </> prePathNameHs
-                    withCString fp $ \fpc -> do
-                        archive_entry_set_pathname entry fpc
-                        archive_read_extract a entry archiveExtractTime
-                        archive_entry_set_pathname entry prePathName
-                        archive_read_data_skip a
-                        loop
+            unless done $ do
+                prePathName <- archive_entry_pathname entry
+                -- FIXME: segfaults here b/c prePathName is null
+                prePathNameHs <- peekCString prePathName
+                let fp = dirname </> prePathNameHs
+                withCString fp $ \fpc -> do
+                    archive_entry_set_pathname entry fpc
+                    archive_read_extract a entry archiveExtractTime
+                    archive_entry_set_pathname entry prePathName
+                    archive_read_data_skip a
+                    loop
 
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
