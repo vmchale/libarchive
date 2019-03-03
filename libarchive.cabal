@@ -32,6 +32,7 @@ library
     exposed-modules:
         Codec.Archive
     pkgconfig-depends: libarchive -any
+    build-tools: c2hs -any
     c-sources:
         cbits/unpack.c
     hs-source-dirs: src
