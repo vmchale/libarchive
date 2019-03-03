@@ -3,19 +3,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-// Unpack a tar archive (stored in a bytestring) into a particular directory
-void unpack_in_dir(char* dirname, void *buff, size_t size) {
-
-    // step 1: allocate/initialize archive struct
-    struct archive *a;
-    struct archive_entry *entry;
-    a = archive_read_new();
-
-    // autodetect archive format/compression
-    archive_read_support_format_all(a);
-
-    // open from memory (bytestring)
-    archive_read_open_memory(a, buff, size);
+void unpack_common(char* dirname, struct archive *a, struct archive_entry *entry) {
 
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK || archive_read_next_header(a, &entry) == ARCHIVE_RETRY) {
         const char* pre_path_name = archive_entry_pathname(entry);
@@ -32,4 +20,41 @@ void unpack_in_dir(char* dirname, void *buff, size_t size) {
     free(dirname);
 
     archive_read_free(a);
+
+}
+
+void unpack_from_file(char* dirname, char* filepath) {
+
+    // allocate/initialize archive struct
+    struct archive *a;
+    struct archive_entry *entry;
+    a = archive_read_new();
+
+    // autodetect archive format/compression
+    archive_read_support_format_all(a);
+
+    // open from file
+    archive_read_open_filename(a, filepath, 10240);
+
+    unpack_common(dirname, a, entry);
+
+}
+
+
+// Unpack a tar archive (stored in a bytestring) into a particular directory
+void unpack_in_dir(char* dirname, void *buff, size_t size) {
+
+    // step 1: allocate/initialize archive struct
+    struct archive *a;
+    struct archive_entry *entry;
+    a = archive_read_new();
+
+    // autodetect archive format/compression
+    archive_read_support_format_all(a);
+
+    // open from memory (bytestring)
+    archive_read_open_memory(a, buff, size);
+
+    unpack_common(dirname, a, entry);
+
 }

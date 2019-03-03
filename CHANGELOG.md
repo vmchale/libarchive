@@ -1,5 +1,9 @@
 # libarchive
 
+## 0.2.1.2
+
+  * Stream from a file when using `unpackArchive`
+
 ## 0.2.1.1
 
   * Preserve modification times by default

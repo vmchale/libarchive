@@ -1,20 +1,11 @@
-module Codec.Archive.Foreign ( unpackToDir
+module Codec.Archive.Foreign ( unpack_in_dir
+                             , unpack_from_file
                              ) where
 
-import           Data.ByteString  as BS
 import           Data.Word        (Word)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr
-import           System.FilePath  (pathSeparator)
 
 foreign import ccall unsafe unpack_in_dir :: CString -> Ptr CChar -> Word -> IO ()
-
-unpackToDir :: FilePath -- ^ Directory to unpack in
-            -> BS.ByteString -- ^ 'ByteString' containing archive
-            -> IO ()
-unpackToDir fp bs = do
-    fp' <- newCString (fp ++ [pathSeparator])
-    useAsCStringLen bs $
-        \(charPtr, sz) ->
-            unpack_in_dir fp' charPtr (fromIntegral sz)
+foreign import ccall unsafe unpack_from_file :: CString -> CString -> IO ()
