@@ -1,16 +1,17 @@
 module Codec.Archive
     ( unpackToDir
     , unpackArchive
+    , listFP
     ) where
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
 import           Control.Applicative
-import           Control.Monad         (unless)
+import           Control.Monad         (unless, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc (free, malloc)
+import           Foreign.Marshal.Alloc (alloca, free, malloc)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
 import           System.FilePath       (pathSeparator, (</>))
@@ -30,6 +31,9 @@ archiveCond a entry = do
     free ptrPtr
     pure $ res == archiveOk || res == archiveRetry
 
+-- see:
+-- https://github.com/ttuegel/libarchive-conduit/blob/master/src/Codec/Archive/Read.hs#L50
+-- ?
 common :: FilePath -- ^ Directory name
        -> Ptr Archive
        -> Ptr ArchiveEntry
@@ -50,14 +54,40 @@ common dirname a entry = loop *> archive_read_free a
                     archive_read_data_skip a
                     loop
 
+archiveFile :: FilePath -> IO (Ptr Archive)
+archiveFile fp = withCString fp $ \cpath -> do
+    a <- archive_read_new
+    archive_read_support_format_all a
+    archive_read_open_filename a cpath 10240
+    pure a
+
+{-
+listFP :: FilePath -> IO [FilePath]
+listFP = listPaths <=< archiveFile
+
+listPaths :: Ptr Archive -> IO [FilePath]
+listPaths ptr = do
+    res <- getPath ptr
+    case res of
+        Just x  -> (x:) <$> listPaths ptr
+        Nothing -> pure []
+
+getPath :: Ptr Archive -> IO (Maybe FilePath)
+getPath archive = alloca $ \pentry -> do
+    eof <- (==1) <$> archive_read_next_header archive pentry
+    if eof then return Nothing
+      else do
+        entry <- peek pentry
+        path <- archive_entry_pathname entry >>= peekCString
+        pure $ Just path
+-}
+
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
-unpackArchive tarFp dirFp = withCString tarFp $ \tarFpc -> do
+unpackArchive tarFp dirFp = do
     entry <- archive_entry_new
-    a <- archive_read_new
-    archive_read_support_format_all a
-    archive_read_open_filename a tarFpc 10240
+    a <- archiveFile tarFp
     common dirFp a entry
 
 unpackToDir :: FilePath -- ^ Directory to unpack in

@@ -13,6 +13,7 @@ module Codec.Archive.Foreign ( -- * cbits
                              , archive_entry_pathname_utf8
                              , archive_read_open_filename
                              , archive_entry_new
+                             , archive_entry_new2
                              -- * Header read macros
                              , archiveOk
                              , archiveEOF
@@ -46,12 +47,14 @@ foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr 
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
 foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
-foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CInt -> IO ()
+foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO () -- TODO: ReadResult
 foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_new2 :: Ptr Archive -> IO (Ptr ArchiveEntry)
 foreign import ccall unsafe archive_entry_pathname_utf8 :: Ptr ArchiveEntry -> IO CString
 
 #include <archive.h>
 
+-- TODO: make ReadResult a sum type
 archiveOk :: ReadResult
 archiveOk = {# const ARCHIVE_OK #}
 
