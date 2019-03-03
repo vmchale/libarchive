@@ -4,18 +4,60 @@ module Codec.Archive
     ) where
 
 import           Codec.Archive.Foreign
+import           Codec.Archive.Types
+import           Control.Applicative
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
-import           System.FilePath       (pathSeparator)
+import           Foreign.Marshal.Alloc (malloc)
+import           Foreign.Ptr           (Ptr)
+import           Foreign.Storable      (Storable (..))
+import           System.FilePath       (pathSeparator, (</>))
+
+getPtr :: Storable a => a -> IO (Ptr a)
+getPtr ptr = do
+    newPtr <- malloc
+    poke newPtr ptr
+    pure newPtr
+
+archiveCond :: Ptr Archive
+            -> Ptr ArchiveEntry
+            -> IO Bool
+archiveCond a entry = do
+    res <- archive_read_next_header a =<< getPtr entry
+    pure $ res == archiveOk || res == archiveRetry
+
+common :: FilePath -- ^ Directory name
+       -> Ptr Archive
+       -> Ptr ArchiveEntry
+       -> IO ()
+common dirname a entry = loop *> archive_read_free a
+    where
+        loop = do
+            done <- not <$> archiveCond a entry
+            if done
+                then pure ()
+                else do
+                    prePathName <- archive_entry_pathname entry
+                    -- FIXME: segfaults here... (b/c prePathName is null...)
+                    prePathNameHs <- peekCString prePathName
+                    let fp = dirname </> prePathNameHs
+                    withCString fp $ \fpc -> do
+                        archive_entry_set_pathname entry fpc
+                        archive_read_extract a entry archiveExtractTime
+                        archive_entry_set_pathname entry prePathName
+                        archive_read_data_skip a
+                        loop
 
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
-unpackArchive tarFp dirFp = do
-    fp' <- newCString tarFp
-    dir' <- newCString (dirFp ++ [pathSeparator])
-    unpack_from_file dir' fp'
+unpackArchive tarFp dirFp = withCString tarFp $ \tarFpc -> do
+    entry <- archive_entry_new
+    a <- archive_read_new
+    archive_read_support_format_all a
+    archive_read_open_filename a tarFpc 10240
+    common dirFp a entry
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'ByteString' containing archive
