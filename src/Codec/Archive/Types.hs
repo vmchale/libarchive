@@ -11,8 +11,10 @@ import           Data.Semigroup
 import           Foreign.C.Types  (CInt)
 import           Foreign.Storable (Storable)
 
+-- | Abstract type
 data Archive
 
+-- | Abstract type
 data ArchiveEntry
 
 -- TODO: make this a sum type
