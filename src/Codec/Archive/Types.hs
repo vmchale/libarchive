@@ -15,6 +15,7 @@ data Archive
 
 data ArchiveEntry
 
+-- TODO: make this a sum type
 newtype ReadResult = ReadResult CInt
     deriving (Storable, Eq, Num)
 
