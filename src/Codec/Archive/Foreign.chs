@@ -84,7 +84,7 @@ archiveFilterCompress = {# const ARCHIVE_FILTER_COMPRESS #}
 archiveFilterProgram :: ArchiveFilter
 archiveFilterProgram = {# const ARCHIVE_FILTER_PROGRAM #}
 
-archiveFilterLzma :: ArchiveFillter
+archiveFilterLzma :: ArchiveFilter
 archiveFilterLzma = {# const ARCHIVE_FILTER_LZMA #}
 
 archiveFilterXz :: ArchiveFilter
