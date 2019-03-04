@@ -19,10 +19,10 @@ data ArchiveEntry
 
 -- TODO: make this a sum type
 newtype ReadResult = ReadResult CInt
-    deriving (Storable, Eq, Num)
+    deriving (Eq, Num)
 
 newtype ExtractFlags = ExtractFlags CInt
-    deriving (Storable, Eq, Num)
+    deriving (Eq, Num)
 
 instance Semigroup ExtractFlags where
     (<>) (ExtractFlags x) (ExtractFlags y) = ExtractFlags (x .|. y)

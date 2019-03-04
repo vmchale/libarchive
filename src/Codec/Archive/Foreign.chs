@@ -9,10 +9,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              , archive_read_free
                              , archive_read_extract
                              , archive_entry_pathname
-                             , archive_entry_pathname_utf8
                              , archive_read_open_filename
-                             , archive_entry_new
-                             , archive_entry_new2
                              , archive_read_open_memory
                              -- * Header read macros
                              , archiveOk
@@ -36,18 +33,18 @@ import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr
 
+-- Archive entry
+foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
+
+-- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ()
-foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
-foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO () -- TODO: ReadResult
-foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
-foreign import ccall unsafe archive_entry_new2 :: Ptr Archive -> IO (Ptr ArchiveEntry)
-foreign import ccall unsafe archive_entry_pathname_utf8 :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
 
 #include <archive.h>
