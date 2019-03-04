@@ -45,8 +45,10 @@ getEntry a = alloca $ \ptr -> do
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
-unpackArchive tarFp _dirFp =
-    unpackEntries =<< archiveFile tarFp
+unpackArchive tarFp _dirFp = do
+    a <- archiveFile tarFp
+    unpackEntries a
+    archive_read_free a
 
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
@@ -60,5 +62,7 @@ bsToArchive bs = do
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'ByteString' containing archive
             -> IO ()
-unpackToDir _fp bs =
-    unpackEntries =<< bsToArchive bs
+unpackToDir _fp bs = do
+    a <- bsToArchive bs
+    unpackEntries a
+    archive_read_free a
