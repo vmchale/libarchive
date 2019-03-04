@@ -1,5 +1,6 @@
 # Code Maintenance
 - [ ] Test suite
+- [ ] Literally the barest support for error handling
 # Features
 - [ ] `pipes` support?
 # Performance

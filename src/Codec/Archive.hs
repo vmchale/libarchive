@@ -13,9 +13,6 @@ import           Foreign.Marshal.Alloc (alloca)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
 
-done :: ReadResult -> Bool
-done res = not (res == archiveOk || res == archiveRetry)
-
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
     a <- archive_read_new
@@ -32,6 +29,7 @@ unpackArchive' a = do
 
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
+    let done res = not (res == archiveOk || res == archiveRetry)
     stop <- done <$> archive_read_next_header a ptr
     if stop
         then pure Nothing
