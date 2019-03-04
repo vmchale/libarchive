@@ -84,6 +84,15 @@ archiveFilterCompress = {# const ARCHIVE_FILTER_COMPRESS #}
 archiveFilterProgram :: ArchiveFilter
 archiveFilterProgram = {# const ARCHIVE_FILTER_PROGRAM #}
 
+archiveFilterLzma :: ArchiveFillter
+archiveFilterLzma = {# const ARCHIVE_FILTER_LZMA #}
+
+archiveFilterXz :: ArchiveFilter
+archiveFilterXz = {# const ARCHIVE_FILTER_XZ #}
+
+archiveFilterUu :: ArchiveFilter
+archiveFilterUu = {# const ARCHIVE_FILTER_UU #}
+
 -- Extraction flags
 archiveExtractOwner :: ExtractFlags
 archiveExtractOwner = {# const ARCHIVE_EXTRACT_OWNER #}
