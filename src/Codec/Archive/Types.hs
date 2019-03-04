@@ -1,9 +1,12 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
-module Codec.Archive.Types ( Archive
+module Codec.Archive.Types ( -- * Abstract data types
+                             Archive
                            , ArchiveEntry
+                           -- * Macros
                            , ExtractFlags (..)
                            , ReadResult (..)
+                           , ArchiveFilter (..)
                            ) where
 
 import           Data.Bits        ((.|.))
@@ -22,6 +25,9 @@ newtype ReadResult = ReadResult CInt
     deriving (Eq, Num)
 
 newtype ExtractFlags = ExtractFlags CInt
+    deriving (Eq, Num)
+
+newtype ArchiveFilter = ArchiveFilter CInt
     deriving (Eq, Num)
 
 instance Semigroup ExtractFlags where

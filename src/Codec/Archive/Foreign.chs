@@ -68,6 +68,23 @@ archiveFailed = {# const ARCHIVE_FAILED #}
 archiveFatal :: ReadResult
 archiveFatal = {# const ARCHIVE_FATAL #}
 
+-- Archive filter
+archiveFilterNone :: ArchiveFilter
+archiveFilterNone = {# const ARCHIVE_FILTER_NONE #}
+
+archiveFilterGzip :: ArchiveFilter
+archiveFilterGzip = {# const ARCHIVE_FILTER_GZIP #}
+
+archiveFilterBzip2 :: ArchiveFilter
+archiveFilterBzip2 = {# const ARCHIVE_FILTER_BZIP2 #}
+
+archiveFilterCompress :: ArchiveFilter
+archiveFilterCompress = {# const ARCHIVE_FILTER_COMPRESS #}
+
+archiveFilterProgram :: ArchiveFilter
+archiveFilterProgram = {# const ARCHIVE_FILTER_PROGRAM #}
+
+-- Extraction flags
 archiveExtractOwner :: ExtractFlags
 archiveExtractOwner = {# const ARCHIVE_EXTRACT_OWNER #}
 
