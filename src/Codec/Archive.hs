@@ -5,6 +5,9 @@ module Codec.Archive
     -- * Types
     , Archive
     , ArchiveEntry
+    -- * Lower-level API types
+    , ReadResult
+    , ExtractFlags
     ) where
 
 import           Codec.Archive.Foreign

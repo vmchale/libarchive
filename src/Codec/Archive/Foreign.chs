@@ -1,3 +1,5 @@
+-- | Everything here is super stateful but hey that's why we have the 'IO'
+-- monad in the first place
 module Codec.Archive.Foreign ( -- * Direct bindings
                                archive_read_new
                              , archive_read_support_format_all
