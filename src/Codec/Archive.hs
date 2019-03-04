@@ -1,6 +1,10 @@
 module Codec.Archive
-    ( unpackToDir
+    ( -- * High-level functionality
+      unpackToDir
     , unpackArchive
+    -- * Types
+    , Archive
+    , ArchiveEntry
     ) where
 
 import           Codec.Archive.Foreign
