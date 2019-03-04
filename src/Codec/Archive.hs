@@ -20,11 +20,11 @@ archiveFile fp = withCString fp $ \cpath -> do
     archive_read_open_filename a cpath 10240
     pure a
 
-unpackArchive' :: Ptr Archive -> IO ()
-unpackArchive' a = do
+unpackEntries :: Ptr Archive -> IO ()
+unpackEntries a = do
     res <- getEntry a
     case res of
-        Just x  -> archive_read_extract a x archiveExtractTime *> unpackArchive' a
+        Just x  -> archive_read_extract a x archiveExtractTime *> unpackEntries a
         Nothing -> pure ()
 
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
@@ -39,7 +39,7 @@ unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
 unpackArchive tarFp _dirFp =
-    unpackArchive' =<< archiveFile tarFp
+    unpackEntries =<< archiveFile tarFp
 
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
@@ -54,4 +54,4 @@ unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'ByteString' containing archive
             -> IO ()
 unpackToDir _fp bs =
-    unpackArchive' =<< bsToArchive bs
+    unpackEntries =<< bsToArchive bs
