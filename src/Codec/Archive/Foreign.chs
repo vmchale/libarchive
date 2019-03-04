@@ -14,6 +14,7 @@ module Codec.Archive.Foreign ( -- * cbits
                              , archive_read_open_filename
                              , archive_entry_new
                              , archive_entry_new2
+                             , archive_read_open_memory
                              -- * Header read macros
                              , archiveOk
                              , archiveEOF
@@ -51,6 +52,7 @@ foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString
 foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
 foreign import ccall unsafe archive_entry_new2 :: Ptr Archive -> IO (Ptr ArchiveEntry)
 foreign import ccall unsafe archive_entry_pathname_utf8 :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
 
 #include <archive.h>
 
