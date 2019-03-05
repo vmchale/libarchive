@@ -19,6 +19,7 @@ import           Foreign.C.String
 import           Foreign.Marshal.Alloc (alloca)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
+import           System.FilePath       ((</>))
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
@@ -27,12 +28,21 @@ archiveFile fp = withCString fp $ \cpath -> do
     archive_read_open_filename a cpath 10240
     pure a
 
-unpackEntries :: Ptr Archive -> IO ()
-unpackEntries a = do
+-- | Unpack an archive in a given directory
+unpackEntriesFp :: Ptr Archive -> FilePath -> IO ()
+unpackEntriesFp a fp = do
     res <- getEntry a
     case res of
-        Just x  -> archive_read_extract a x archiveExtractTime *> unpackEntries a
         Nothing -> pure ()
+        Just x  -> do
+            preFile <- archive_entry_pathname x
+            file <- peekCString preFile
+            let file' = fp </> file
+            withCString file' $ \fileC ->
+                archive_entry_set_pathname x fileC
+            archive_read_extract a x archiveExtractTime
+            archive_entry_set_pathname x preFile
+            unpackEntriesFp a fp
 
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
@@ -45,9 +55,9 @@ getEntry a = alloca $ \ptr -> do
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Filepath to unpack to
               -> IO ()
-unpackArchive tarFp _dirFp = do
+unpackArchive tarFp dirFp = do
     a <- archiveFile tarFp
-    unpackEntries a
+    unpackEntriesFp a dirFp
     archive_read_free a
 
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
@@ -62,7 +72,7 @@ bsToArchive bs = do
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'ByteString' containing archive
             -> IO ()
-unpackToDir _fp bs = do
+unpackToDir fp bs = do
     a <- bsToArchive bs
-    unpackEntries a
+    unpackEntriesFp a fp
     archive_read_free a

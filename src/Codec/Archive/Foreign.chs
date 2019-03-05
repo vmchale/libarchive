@@ -19,7 +19,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              , archiveWarn
                              , archiveFailed
                              , archiveFatal
-                             -- * Entry flag macros
+                             -- * Entry flags
                              , archiveExtractOwner
                              , archiveExtractPerm
                              , archiveExtractTime
