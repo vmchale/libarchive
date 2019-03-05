@@ -9,10 +9,9 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ArchiveFilter (..)
                            ) where
 
-import           Data.Bits        ((.|.))
+import           Data.Bits       ((.|.))
 import           Data.Semigroup
-import           Foreign.C.Types  (CInt)
-import           Foreign.Storable (Storable)
+import           Foreign.C.Types (CInt)
 
 -- | Abstract type
 data Archive

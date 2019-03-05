@@ -1,5 +1,8 @@
 -- | Everything here is super stateful but hey that's why we have the 'IO'
 -- monad in the first place
+--
+-- In general, if you want to find out what some function here does, check
+-- @archive.h@ or @archive_entry.h@ instead.
 module Codec.Archive.Foreign ( -- * Direct bindings
                                archive_read_new
                              , archive_entry_set_pathname
@@ -26,6 +29,15 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              , archiveExtractNoOverwrite
                              , archiveExtractUnlink
                              , archiveExtractACL
+                             -- * Filters
+                             , archiveFilterNone
+                             , archiveFilterGzip
+                             , archiveFilterBzip2
+                             , archiveFilterCompress
+                             , archiveFilterProgram
+                             , archiveFilterLzma
+                             , archiveFilterXz
+                             , archiveFilterUu
                              ) where
 
 import           Codec.Archive.Types
