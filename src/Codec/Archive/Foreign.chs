@@ -2,7 +2,6 @@
 -- monad in the first place
 module Codec.Archive.Foreign ( -- * Direct bindings
                                archive_read_new
-                             , archive_read_support_format_all
                              , archive_entry_set_pathname
                              , archive_read_data_skip
                              , archive_read_next_header
@@ -11,6 +10,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              , archive_entry_pathname
                              , archive_read_open_filename
                              , archive_read_open_memory
+                             , archive_read_support_format_all
+                             , archive_read_support_filter_all
                              -- * Header read macros
                              , archiveOk
                              , archiveEOF
@@ -39,13 +40,14 @@ foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CS
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO () -- TODO: ReadResult
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
+foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ()
+foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ()
 
 #include <archive.h>
 
