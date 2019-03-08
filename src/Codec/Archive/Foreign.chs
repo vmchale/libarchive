@@ -18,6 +18,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
                              , archive_entry_set_size
+                             , archive_entry_set_symlink
+                             , archive_entry_set_hardlink
                              , archive_entry_pathname
                              , archive_entry_perm
                              , archive_entry_new
@@ -25,8 +27,10 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
+                             , archive_write_free
                              , archive_write_set_format_pax_restricted
                              , archive_write_header
+                             , archive_write_open_filename
                              -- * File types
                              , regular
                              , symlink
@@ -72,6 +76,8 @@ foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CSt
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
+foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
 foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
@@ -93,6 +99,8 @@ foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSiz
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO CInt
+foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO CInt
 
 #include <archive.h>
 #include <archive_entry.h>

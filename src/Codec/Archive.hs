@@ -2,6 +2,7 @@ module Codec.Archive
     ( -- * High-level functionality
       unpackToDir
     , unpackArchive
+    , entriesToFile
     -- * Concrete (Haskell) types
     , Entry (..)
     , EntryContent (..)
@@ -15,8 +16,10 @@ module Codec.Archive
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
+import           Control.Monad         (void)
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
+import           Data.Foldable         (traverse_)
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc (alloca)
 import           Foreign.Ptr           (Ptr)
@@ -32,14 +35,40 @@ withArchiveEntry fact = do
     archive_entry_free entry
     pure res
 
+contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> IO ()
+contentAdd (NormalFile contents) a entry = do
+    archive_entry_set_filetype entry regular
+    void $ archive_write_header a entry
+    useAsCStringLen contents $ \(buff, sz) ->
+        void $ archive_write_data a buff (fromIntegral sz)
+contentAdd Directory a entry = do
+    archive_entry_set_filetype entry directory
+    void $ archive_write_header a entry
+contentAdd (Symlink fp) a entry = do
+    archive_entry_set_filetype entry symlink
+    withCString fp $ \fpc ->
+        archive_entry_set_symlink entry fpc
+    void $ archive_write_header a entry
+
 archiveEntryAdd :: Ptr Archive -> Entry -> IO ()
 archiveEntryAdd a (Entry fp contents perms) =
     withArchiveEntry $ \entry -> do
         withCString fp $ \fpc ->
             archive_entry_set_pathname entry fpc
         archive_entry_set_perm entry perms
-        archive_write_header a entry
+        contentAdd contents a entry
         pure ()
+
+packEntries :: (Foldable t) => Ptr Archive -> t Entry -> IO ()
+packEntries a = traverse_ (archiveEntryAdd a)
+
+entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
+entriesToFile fp hsEntries = do
+    a <- archive_write_new
+    withCString fp $ \fpc ->
+        void $ archive_write_open_filename a fpc
+    packEntries a hsEntries
+    void $ archive_write_free a
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do

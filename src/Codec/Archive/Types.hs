@@ -31,8 +31,7 @@ data ArchiveEntry
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
 data EntryContent = NormalFile !BS.ByteString
                   | Directory
-                  | SymbolicLink !FilePath
-                  | HardLink !FilePath
+                  | Symlink !FilePath
 
 data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent
