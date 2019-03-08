@@ -21,6 +21,14 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_write_new
                              , archive_write_set_format_pax_restricted
                              , archive_entry_set_size
+                             -- * File types
+                             , regular
+                             , symlink
+                             , socket
+                             , characterDevice
+                             , blockDevice
+                             , directory
+                             , fifo
                              -- * Header read macros
                              , archiveOk
                              , archiveEOF
@@ -74,6 +82,33 @@ foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO CInt
 
 #include <archive.h>
+#include <archive_entry.h>
+
+-- stupid function to work around something annoying idk
+mode_t :: Integer -> FileType
+mode_t = fromIntegral
+
+-- filetype
+regular :: FileType
+regular = {# const AE_IFREG #}
+
+symlink :: FileType
+symlink = {# const AE_IFLNK #}
+
+socket :: FileType
+socket = {# const AE_IFSOCK #}
+
+characterDevice :: FileType
+characterDevice = {# const AE_IFCHR #}
+
+blockDevice :: FileType
+blockDevice = {# const AE_IFBLK #}
+
+directory :: FileType
+directory = {# const AE_IFDIR #}
+
+fifo :: FileType
+fifo = {# const AE_IFIFO #}
 
 -- TODO: make ReadResult a sum type
 archiveOk :: ReadResult
