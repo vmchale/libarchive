@@ -15,6 +15,10 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              , archive_read_open_memory
                              , archive_read_support_format_all
                              , archive_read_support_filter_all
+                             , archive_write_data
+                             , archive_write_new
+                             , archive_write_set_format_pax_restricted
+                             , archive_entry_set_size
                              -- * Header read macros
                              , archiveOk
                              , archiveEOF
@@ -41,7 +45,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings
                              ) where
 
 import           Codec.Archive.Types
-import           Data.Word           (Word)
+import           Data.Int            (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr
@@ -49,6 +53,7 @@ import           Foreign.Ptr
 -- Archive entry
 foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
@@ -60,6 +65,11 @@ foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
 foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ()
+
+-- Archive write
+foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
+foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
+foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO CInt
 
 #include <archive.h>
 

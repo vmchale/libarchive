@@ -20,6 +20,8 @@ import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
 import           System.FilePath       ((</>))
 
+-- TODO: memArchive and createFileArchive
+
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
     a <- archive_read_new
