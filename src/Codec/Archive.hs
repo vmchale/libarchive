@@ -12,7 +12,6 @@ module Codec.Archive
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
-import           Control.Applicative
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
