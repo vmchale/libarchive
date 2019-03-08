@@ -32,19 +32,27 @@ data EntryContent = NormalFile !BS.ByteString
                   | HardLink !FilePath
 
 data Entry = Entry { filepath    :: !FilePath
-                   , permissions :: !FileType
                    , content     :: !EntryContent
+                   , permissions :: !Permissions
                    }
 
+newtype Permissions = Permissions CMode
+
+standardPermissions :: Permissions
+standardPermissions = Permissions 0o644
+
+executablePermissions :: Permissions
+executablePermissions = Permissions 0o755
+
 newtype FileType = FileType CMode
-    deriving (Eq, Num)
+    deriving (Num)
 
 -- TODO: make this a sum type
 newtype ReadResult = ReadResult CInt
     deriving (Eq, Num)
 
 newtype ExtractFlags = ExtractFlags CInt
-    deriving (Eq, Num)
+    deriving (Num)
 
 newtype ArchiveFilter = ArchiveFilter CInt
     deriving (Num)
