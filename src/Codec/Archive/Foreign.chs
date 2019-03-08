@@ -3,18 +3,20 @@
 --
 -- In general, if you want to find out what some function here does, check
 -- @archive.h@ or @archive_entry.h@ instead.
-module Codec.Archive.Foreign ( -- * Direct bindings
+module Codec.Archive.Foreign ( -- * Direct bindings (read)
                                archive_read_new
-                             , archive_entry_set_pathname
                              , archive_read_data_skip
                              , archive_read_next_header
                              , archive_read_free
                              , archive_read_extract
-                             , archive_entry_pathname
                              , archive_read_open_filename
                              , archive_read_open_memory
                              , archive_read_support_format_all
                              , archive_read_support_filter_all
+                             -- * Direct bindings (entry)
+                             , archive_entry_set_pathname
+                             , archive_entry_pathname
+                             -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
                              , archive_write_set_format_pax_restricted
