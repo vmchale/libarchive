@@ -5,6 +5,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ArchiveEntry
                            -- * Concrete (Haskell) data types
                            , Entry (..)
+                           , EntryContent (..)
                            -- * Macros
                            , ExtractFlags (..)
                            , ReadResult (..)
@@ -12,10 +13,11 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , FileType (..)
                            ) where
 
-import           Data.Bits       ((.|.))
-import qualified Data.ByteString as BS
+import           Data.Bits          ((.|.))
+import qualified Data.ByteString    as BS
 import           Data.Semigroup
-import           Foreign.C.Types (CInt)
+import           Foreign.C.Types    (CInt)
+import           System.Posix.Types (CMode (..))
 
 -- | Abstract type
 data Archive
@@ -23,12 +25,18 @@ data Archive
 -- | Abstract type
 data ArchiveEntry
 
-data Entry = Entry { filepath :: FilePath
-                   , contents :: BS.ByteString
-                   , filetype :: FileType
+-- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
+data EntryContent = NormalFile !BS.ByteString
+                  | Directory
+                  | SymbolicLink !FilePath
+                  | HardLink !FilePath
+
+data Entry = Entry { filepath    :: !FilePath
+                   , permissions :: !FileType
+                   , content     :: !EntryContent
                    }
 
-newtype FileType = FileType CInt
+newtype FileType = FileType CMode
     deriving (Eq, Num)
 
 -- TODO: make this a sum type
