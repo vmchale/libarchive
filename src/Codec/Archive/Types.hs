@@ -11,6 +11,9 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ReadResult (..)
                            , ArchiveFilter (..)
                            , FileType (..)
+                           -- * Values
+                           , standardPermissions
+                           , executablePermissions
                            ) where
 
 import           Data.Bits          ((.|.))
@@ -36,13 +39,13 @@ data Entry = Entry { filepath    :: !FilePath
                    , permissions :: !Permissions
                    }
 
-newtype Permissions = Permissions CMode
+type Permissions = CMode
 
 standardPermissions :: Permissions
-standardPermissions = Permissions 0o644
+standardPermissions = 0o644
 
 executablePermissions :: Permissions
-executablePermissions = Permissions 0o755
+executablePermissions = 0o755
 
 newtype FileType = FileType CMode
     deriving (Num)

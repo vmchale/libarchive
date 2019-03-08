@@ -15,9 +15,10 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_support_filter_all
                              -- * Direct bindings (entry)
                              , archive_entry_set_pathname
-                             , archive_entry_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
+                             , archive_entry_pathname
+                             , archive_entry_perm
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
@@ -69,6 +70,7 @@ foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CS
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
+foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
