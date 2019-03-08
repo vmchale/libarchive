@@ -64,6 +64,7 @@ import           Foreign.Ptr
 foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
