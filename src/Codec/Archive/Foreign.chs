@@ -17,13 +17,16 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
+                             , archive_entry_set_size
                              , archive_entry_pathname
                              , archive_entry_perm
+                             , archive_entry_new
+                             , archive_entry_free
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
                              , archive_write_set_format_pax_restricted
-                             , archive_entry_set_size
+                             , archive_write_header
                              -- * File types
                              , regular
                              , symlink
@@ -71,6 +74,8 @@ foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
+foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
@@ -87,6 +92,7 @@ foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
 
 #include <archive.h>
 #include <archive_entry.h>

@@ -2,7 +2,10 @@ module Codec.Archive
     ( -- * High-level functionality
       unpackToDir
     , unpackArchive
-    -- * Types
+    -- * Concrete (Haskell) types
+    , Entry (..)
+    , EntryContent (..)
+    -- * Abstract types
     , Archive
     , ArchiveEntry
     -- * Lower-level API types
@@ -21,6 +24,22 @@ import           Foreign.Storable      (Storable (..))
 import           System.FilePath       ((</>))
 
 -- TODO: memArchive and createFileArchive
+
+withArchiveEntry :: (Ptr ArchiveEntry -> IO a) -> IO a
+withArchiveEntry fact = do
+    entry <- archive_entry_new
+    res <- fact entry
+    archive_entry_free entry
+    pure res
+
+archiveEntryAdd :: Ptr Archive -> Entry -> IO ()
+archiveEntryAdd a (Entry fp contents perms) =
+    withArchiveEntry $ \entry -> do
+        withCString fp $ \fpc ->
+            archive_entry_set_pathname entry fpc
+        archive_entry_set_perm entry perms
+        archive_write_header a entry
+        pure ()
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
