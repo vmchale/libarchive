@@ -92,6 +92,7 @@ unpackEntriesFp a fp = do
                 archive_entry_set_pathname x fileC
             archive_read_extract a x archiveExtractTime
             archive_entry_set_pathname x preFile
+            archive_read_data_skip a
             unpackEntriesFp a fp
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
