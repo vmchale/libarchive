@@ -119,7 +119,7 @@ unpackArchive :: FilePath -- ^ Filepath pointing to archive
 unpackArchive tarFp dirFp = do
     a <- archiveFile tarFp
     unpackEntriesFp a dirFp
-    archive_read_free a
+    void $ archive_read_free a
 
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
@@ -136,4 +136,4 @@ unpackToDir :: FilePath -- ^ Directory to unpack in
 unpackToDir fp bs = do
     a <- bsToArchive bs
     unpackEntriesFp a fp
-    archive_read_free a
+    void $ archive_read_free a

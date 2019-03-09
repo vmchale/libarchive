@@ -15,6 +15,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_open_memory
                              , archive_read_support_format_all
                              , archive_read_support_filter_all
+                             , archive_read_add_passphrase
                              -- * Direct bindings (entry)
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
@@ -27,6 +28,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_perm
                              , archive_entry_symlink
                              , archive_entry_hardlink
+                             , archive_entry_size
                              , archive_entry_new
                              , archive_entry_free
                              -- * Direct bindings (write)
@@ -58,6 +60,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveExtractNoOverwrite
                              , archiveExtractUnlink
                              , archiveExtractACL
+                             , archiveExtractFFlags
+                             , archiveExtractXattr
                              -- * Filters
                              , archiveFilterNone
                              , archiveFilterGzip
@@ -99,12 +103,33 @@ foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize
 foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO CInt
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
-foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()
+foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO () -- TODO: ReadResult
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
-foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ()
-foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ()
+foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO CInt
+
+foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_compress :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_gzip :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_grzip :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_lrzip :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_lz4 :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_lzip :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_lzma :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_lzop :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_none :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_program :: Ptr Archive -> CString -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_program_signature :: Ptr Archive -> CString -> CString -> CSize -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_rpm :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_uu :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_xz :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_zstd :: Ptr Archive -> IO CInt
+
+foreign import ccall unsafe archive_read_support_format_7zip :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_format_ar :: Ptr Archive -> IO CInt
 
 -- Archive write
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
@@ -205,5 +230,11 @@ archiveExtractUnlink = {# const ARCHIVE_EXTRACT_UNLINK #}
 
 archiveExtractACL :: ExtractFlags
 archiveExtractACL = {# const ARCHIVE_EXTRACT_ACL #}
+
+archiveExtractFFlags :: ExtractFlags
+archiveExtractFFlags = {# const ARCHIVE_EXTRACT_FFLAGS #}
+
+archiveExtractXattr :: ExtractFlags
+archiveExtractXattr = {# const ARCHIVE_EXTRACT_XATTR #}
 
 -- TODO: archive.h line 667 onwards...
