@@ -8,7 +8,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , EntryContent (..)
                            -- * Macros
                            , ExtractFlags (..)
-                           , ReadResult (..)
+                           , ArchiveError (..)
                            , ArchiveFilter (..)
                            , ArchiveFormat (..)
                            , FileType (..)
@@ -53,8 +53,8 @@ newtype ArchiveFormat = ArchiveFormat CInt
 newtype FileType = FileType CMode
     deriving (Num)
 
--- TODO: make this a sum type
-newtype ReadResult = ReadResult CInt
+-- TODO: make this a sum type ?
+newtype ArchiveError = ArchiveError CInt
     deriving (Eq, Num)
 
 newtype ExtractFlags = ExtractFlags CInt

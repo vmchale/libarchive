@@ -13,7 +13,7 @@ module Codec.Archive
     , Archive
     , ArchiveEntry
     -- * Lower-level API types
-    , ReadResult
+    , ArchiveError
     , ExtractFlags
     ) where
 
@@ -93,9 +93,9 @@ unpackEntriesFp a fp = do
             let file' = fp </> file
             withCString file' $ \fileC ->
                 archive_entry_set_pathname x fileC
-            archive_read_extract a x archiveExtractTime
+            void $ archive_read_extract a x archiveExtractTime
             archive_entry_set_pathname x preFile
-            archive_read_data_skip a
+            void $ archive_read_data_skip a
             unpackEntriesFp a fp
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent

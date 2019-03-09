@@ -126,14 +126,14 @@ foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ()
-foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO CInt
-foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
-foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
+foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
+foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveError
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
-foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO CInt
-foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO CInt
-foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO CInt
+foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO CInt
 
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO CInt
@@ -195,23 +195,23 @@ directory = {# const AE_IFDIR #}
 fifo :: FileType
 fifo = {# const AE_IFIFO #}
 
--- TODO: make ReadResult a sum type
-archiveOk :: ReadResult
+-- TODO: make ArchiveError a sum type
+archiveOk :: ArchiveError
 archiveOk = {# const ARCHIVE_OK #}
 
-archiveEOF :: ReadResult
+archiveEOF :: ArchiveError
 archiveEOF = {# const ARCHIVE_EOF #}
 
-archiveRetry :: ReadResult
+archiveRetry :: ArchiveError
 archiveRetry = {# const ARCHIVE_RETRY #}
 
-archiveWarn :: ReadResult
+archiveWarn :: ArchiveError
 archiveWarn = {# const ARCHIVE_WARN #}
 
-archiveFailed :: ReadResult
+archiveFailed :: ArchiveError
 archiveFailed = {# const ARCHIVE_FAILED #}
 
-archiveFatal :: ReadResult
+archiveFatal :: ArchiveError
 archiveFatal = {# const ARCHIVE_FATAL #}
 
 -- Archive filter
