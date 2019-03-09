@@ -78,7 +78,7 @@ archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
     a <- archive_read_new
     void $ archive_read_support_format_all a
-    archive_read_open_filename a cpath 10240
+    void $ archive_read_open_filename a cpath 10240
     pure a
 
 -- | Unpack an archive in a given directory
@@ -130,7 +130,7 @@ bsToArchive bs = do
     void $ archive_read_support_format_all a
     useAsCStringLen bs $
         \(charPtr, sz) ->
-            archive_read_open_memory a charPtr (fromIntegral sz)
+            void $ archive_read_open_memory a charPtr (fromIntegral sz)
     pure a
 
 unpackToDir :: FilePath -- ^ Directory to unpack in

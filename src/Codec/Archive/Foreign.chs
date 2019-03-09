@@ -12,6 +12,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_free
                              , archive_read_extract
                              , archive_read_open_filename
+                             , archive_read_open_filename_w
                              , archive_read_open_memory
                              , archive_read_support_filter_all
                              , archive_read_support_filter_bzip2
@@ -130,8 +131,9 @@ foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ()
-foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO () -- TODO: ReadResult
-foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO () -- FIXME: probably returns something
+foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO CInt
+foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO CInt
+foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO CInt
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO CInt
 
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO CInt
