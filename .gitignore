@@ -1,2 +1,6 @@
+tags
+*.prof
+*.hp
+*.eventlog
 dist-newstyle
 *.tar
