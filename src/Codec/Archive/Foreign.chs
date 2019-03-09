@@ -6,6 +6,7 @@
 module Codec.Archive.Foreign ( -- * Direct bindings (read)
                                archive_read_new
                              , archive_read_data_skip
+                             , archive_read_data
                              , archive_read_next_header
                              , archive_read_free
                              , archive_read_extract
@@ -21,7 +22,10 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_set_symlink
                              , archive_entry_set_hardlink
                              , archive_entry_pathname
+                             , archive_entry_filetype
                              , archive_entry_perm
+                             , archive_entry_symlink
+                             , archive_entry_hardlink
                              , archive_entry_new
                              , archive_entry_free
                              -- * Direct bindings (write)
@@ -82,9 +86,14 @@ foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode 
 foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
 foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
 foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO FileType
+foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_hardlink :: Ptr ArchiveEntry -> IO CString
+
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
+foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ()
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()

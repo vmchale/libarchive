@@ -94,11 +94,15 @@ unpackEntriesFp a fp = do
             archive_entry_set_pathname x preFile
             unpackEntriesFp a fp
 
-readEntry :: Ptr ArchiveEntry -> IO Entry
-readEntry entry = do
+readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
+readContents = undefined
+
+readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
+readEntry a entry = do
     fp <- peekCString =<< archive_entry_pathname entry
     perms <- archive_entry_perm entry
-    pure $ Entry fp undefined perms
+    contents <- readContents a entry
+    pure $ Entry fp contents perms
 
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
