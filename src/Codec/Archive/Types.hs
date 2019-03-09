@@ -10,6 +10,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ExtractFlags (..)
                            , ReadResult (..)
                            , ArchiveFilter (..)
+                           , ArchiveFormat (..)
                            , FileType (..)
                            -- * Values
                            , standardPermissions
@@ -45,6 +46,9 @@ standardPermissions = 0o644
 
 executablePermissions :: Permissions
 executablePermissions = 0o755
+
+newtype ArchiveFormat = ArchiveFormat CInt
+    deriving Num
 
 newtype FileType = FileType CMode
     deriving (Num)

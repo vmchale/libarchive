@@ -30,11 +30,11 @@ flag development
 library
     exposed-modules:
         Codec.Archive
+        Codec.Archive.Foreign
     build-tools: c2hs -any
     pkgconfig-depends: libarchive -any
     hs-source-dirs: src
     other-modules:
-        Codec.Archive.Foreign
         Codec.Archive.Types
     default-language: Haskell2010
     other-extensions: GeneralizedNewtypeDeriving

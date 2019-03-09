@@ -2,7 +2,7 @@
 -- monad in the first place
 --
 -- In general, if you want to find out what some function here does, check
--- @archive.h@ or @archive_entry.h@ instead.
+-- @archive.h@ or @archive_entry.h@.
 module Codec.Archive.Foreign ( -- * Direct bindings (read)
                                archive_read_new
                              , archive_read_data_skip
@@ -13,8 +13,26 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_extract
                              , archive_read_open_filename
                              , archive_read_open_memory
-                             , archive_read_support_format_all
                              , archive_read_support_filter_all
+                             , archive_read_support_filter_bzip2
+                             , archive_read_support_filter_compress
+                             , archive_read_support_filter_gzip
+                             , archive_read_support_filter_grzip
+                             , archive_read_support_filter_lrzip
+                             , archive_read_support_filter_lz4
+                             , archive_read_support_filter_lzip
+                             , archive_read_support_filter_lzma
+                             , archive_read_support_filter_lzop
+                             , archive_read_support_filter_none
+                             , archive_read_support_filter_program
+                             , archive_read_support_filter_program_signature
+                             , archive_read_support_filter_rpm
+                             , archive_read_support_filter_uu
+                             , archive_read_support_filter_xz
+                             , archive_read_support_filter_zstd
+                             , archive_read_support_format_7zip
+                             , archive_read_support_format_all
+                             , archive_read_support_format_ar
                              , archive_read_add_passphrase
                              -- * Direct bindings (entry)
                              , archive_entry_set_pathname

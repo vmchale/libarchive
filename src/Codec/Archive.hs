@@ -1,3 +1,6 @@
+-- | This module contains higher-level functions for working with archives in
+-- a more Haskell-y way. See "Codec.Archive.Foreign" for direct bindings to
+-- libarchive.
 module Codec.Archive
     ( -- * High-level functionality
       unpackToDir
@@ -74,7 +77,7 @@ entriesToFile fp hsEntries = do
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
     a <- archive_read_new
-    archive_read_support_format_all a
+    void $ archive_read_support_format_all a
     archive_read_open_filename a cpath 10240
     pure a
 
@@ -124,7 +127,7 @@ unpackArchive tarFp dirFp = do
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
     a <- archive_read_new
-    archive_read_support_format_all a
+    void $ archive_read_support_format_all a
     useAsCStringLen bs $
         \(charPtr, sz) ->
             archive_read_open_memory a charPtr (fromIntegral sz)
