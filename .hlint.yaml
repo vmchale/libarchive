@@ -1,0 +1,11 @@
+---
+- functions:
+  - {name: undefined, within: []}
+  - {name: traceShowId, within: []}
+  - {name: traceShow, within: []}
+
+- error: {lhs: "if p then x else pure ()", rhs: "when p x"}
+
+- fixity: infixr 3 ***
+- fixity: infixr 3 &&&
+- fixity: infixr 1 <=<
