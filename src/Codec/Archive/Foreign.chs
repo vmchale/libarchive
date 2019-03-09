@@ -77,19 +77,20 @@ import           Foreign.Ptr
 import           System.Posix.Types  (CMode (..))
 
 -- Archive entry
-foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
+foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
-foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
-foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
 foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO FileType
 foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_hardlink :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
 
 
 -- Archive read
