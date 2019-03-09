@@ -89,6 +89,13 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveFilterLzma
                              , archiveFilterXz
                              , archiveFilterUu
+                             , archiveFilterRpm
+                             , archiveFilterLzip
+                             , archiveFilterLrzip
+                             , archiveFilterLzop
+                             , archiveFilterGrzip
+                             , archiveFilterLz4
+                             -- , archiveFilterZstd
                              ) where
 
 import           Codec.Archive.Types
@@ -230,6 +237,27 @@ archiveFilterXz = {# const ARCHIVE_FILTER_XZ #}
 archiveFilterUu :: ArchiveFilter
 archiveFilterUu = {# const ARCHIVE_FILTER_UU #}
 
+archiveFilterRpm :: ArchiveFilter
+archiveFilterRpm = {# const ARCHIVE_FILTER_RPM #}
+
+archiveFilterLzip :: ArchiveFilter
+archiveFilterLzip = {# const ARCHIVE_FILTER_LZIP #}
+
+archiveFilterLrzip :: ArchiveFilter
+archiveFilterLrzip = {# const ARCHIVE_FILTER_LRZIP #}
+
+archiveFilterLzop :: ArchiveFilter
+archiveFilterLzop = {# const ARCHIVE_FILTER_LZOP #}
+
+archiveFilterGrzip :: ArchiveFilter
+archiveFilterGrzip = {# const ARCHIVE_FILTER_GRZIP #}
+
+archiveFilterLz4 :: ArchiveFilter
+archiveFilterLz4 = {# const ARCHIVE_FILTER_LZ4 #}
+
+-- archiveFilterZstd :: ArchiveFilter
+-- archiveFilterZstd = {# const ARCHIVE_FILTER_ZSTD #}
+
 -- Extraction flags
 archiveExtractOwner :: ExtractFlags
 archiveExtractOwner = {# const ARCHIVE_EXTRACT_OWNER #}
@@ -254,5 +282,3 @@ archiveExtractFFlags = {# const ARCHIVE_EXTRACT_FFLAGS #}
 
 archiveExtractXattr :: ExtractFlags
 archiveExtractXattr = {# const ARCHIVE_EXTRACT_XATTR #}
-
--- TODO: archive.h line 667 onwards...
