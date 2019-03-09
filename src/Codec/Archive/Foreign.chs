@@ -7,6 +7,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                                archive_read_new
                              , archive_read_data_skip
                              , archive_read_data
+                             , archive_read_data_block
                              , archive_read_next_header
                              , archive_read_free
                              , archive_read_extract
@@ -94,6 +95,7 @@ foreign import ccall unsafe archive_entry_hardlink :: Ptr ArchiveEntry -> IO CSt
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ()
+foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO CInt
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ReadResult
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ()

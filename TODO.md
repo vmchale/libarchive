@@ -7,3 +7,4 @@
 - [ ] check for tarbombs?
 # Performance
 - [ ] Lots of the memory stuff is ridiculously inefficient as-is
+- [ ] Benchmark against `tar` library
