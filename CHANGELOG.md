@@ -1,5 +1,11 @@
 # libarchive
 
+## 1.0.0.0
+
+  * Get rid of `cbits` completely
+  * Add full low-level FFI bindings
+  * Add high-level functions for unpacking archives
+
 ## 0.2.1.2
 
   * Stream from a file when using `unpackArchive`

@@ -1,7 +1,10 @@
-# Upstream
-- [ ] for some reason it doesn't preserve dates or whatever the same way other
-  stuff does?
 # Code Maintenance
 - [ ] Test suite
+- [ ] Literally the barest support for error handling
+- [ ] `Codec.Archive.Pack` etc.
+# Features
+- [ ] `pipes` support?
+- [ ] check for tarbombs?
 # Performance
 - [ ] Lots of the memory stuff is ridiculously inefficient as-is
+- [ ] Benchmark against `tar` library

@@ -9,4 +9,4 @@ This contains partial Haskell bindings around
 [tar](http://hackage.haskell.org/package/tar), but it supports more archive
 formats.
 
-Right now it only has support for decompressing archives.
+Right now it only has high-level support for decompressing archives.
