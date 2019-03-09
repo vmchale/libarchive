@@ -125,46 +125,46 @@ foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ()
+foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveError
-foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
-foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO CInt
+foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
 
-foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_compress :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_gzip :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_grzip :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_lrzip :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_lz4 :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_lzip :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_lzma :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_lzop :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_none :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_program :: Ptr Archive -> CString -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_program_signature :: Ptr Archive -> CString -> CString -> CSize -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_rpm :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_uu :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_xz :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_filter_zstd :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_compress :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_gzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_grzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_lrzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_lz4 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_lzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_lzma :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_lzop :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_none :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_program :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_program_signature :: Ptr Archive -> CString -> CString -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_rpm :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_uu :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_xz :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_filter_zstd :: Ptr Archive -> IO ArchiveError
 
-foreign import ccall unsafe archive_read_support_format_7zip :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_read_support_format_ar :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_support_format_7zip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_ar :: Ptr Archive -> IO ArchiveError
 
 -- Archive write
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO CInt
-foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
-foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO CInt
-foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
+foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
 
 #include <archive.h>
 #include <archive_entry.h>
