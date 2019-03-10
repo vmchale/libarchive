@@ -81,6 +81,15 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveExtractACL
                              , archiveExtractFFlags
                              , archiveExtractXattr
+                             , archiveExtractSecureSymlinks
+                             , archiveExtractSecureNoDotDot
+                             , archiveExtractNoAutodir
+                             , archiveExtractSparse
+                             , archiveExtractMacMetadata
+                             , archiveExtractNoHfsCompression
+                             , archiveExtractHfsCompressionForced
+                             , archiveExtractSecureNoAbsolutePaths
+                             , archiveExtractClearNoChangeFFlags
                              -- * Filters
                              , archiveFilterNone
                              , archiveFilterGzip
@@ -284,3 +293,33 @@ archiveExtractFFlags = {# const ARCHIVE_EXTRACT_FFLAGS #}
 
 archiveExtractXattr :: ExtractFlags
 archiveExtractXattr = {# const ARCHIVE_EXTRACT_XATTR #}
+
+archiveExtractSecureSymlinks :: ExtractFlags
+archiveExtractSecureSymlinks = {# const ARCHIVE_EXTRACT_SECURE_SYMLINKS #}
+
+archiveExtractSecureNoDotDot :: ExtractFlags
+archiveExtractSecureNoDotDot = {# const ARCHIVE_EXTRACT_SECURE_NODOTDOT #}
+
+archiveExtractNoAutodir :: ExtractFlags
+archiveExtractNoAutodir = {# const ARCHIVE_EXTRACT_NO_AUTODIR #}
+
+-- archiveExtractNoOverwriteNewer :: ExtractFlags
+-- archiveExtractNoOverwriteNewer = {# const ARCHIVE_NO_OVERWRITE_NEWER #}
+
+archiveExtractSparse :: ExtractFlags
+archiveExtractSparse = {# const ARCHIVE_EXTRACT_SPARSE #}
+
+archiveExtractMacMetadata :: ExtractFlags
+archiveExtractMacMetadata = {# const ARCHIVE_EXTRACT_MAC_METADATA #}
+
+archiveExtractNoHfsCompression :: ExtractFlags
+archiveExtractNoHfsCompression = {# const ARCHIVE_EXTRACT_NO_HFS_COMPRESSION #}
+
+archiveExtractHfsCompressionForced :: ExtractFlags
+archiveExtractHfsCompressionForced = {# const ARCHIVE_EXTRACT_HFS_COMPRESSION_FORCED #}
+
+archiveExtractSecureNoAbsolutePaths :: ExtractFlags
+archiveExtractSecureNoAbsolutePaths = {# const ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS #}
+
+archiveExtractClearNoChangeFFlags :: ExtractFlags
+archiveExtractClearNoChangeFFlags = {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
