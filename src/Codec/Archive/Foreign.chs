@@ -36,6 +36,11 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_support_format_ar
                              , archive_read_add_passphrase
                              -- * Direct bindings (entry)
+                             , archive_entry_clear
+                             , archive_entry_clone
+                             , archive_entry_new
+                             , archive_entry_free
+                             , archive_entry_new2
                              , archive_entry_atime
                              , archive_entry_atime_nsec
                              , archive_entry_set_pathname
@@ -50,8 +55,6 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_symlink
                              , archive_entry_hardlink
                              , archive_entry_size
-                             , archive_entry_new
-                             , archive_entry_free
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
@@ -59,6 +62,19 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_write_set_format_pax_restricted
                              , archive_write_header
                              , archive_write_open_filename
+                             -- * Direct bindings (version/miscellaneous)
+                             , archive_version_number
+                             , archive_version_string
+                             , archive_version_details
+                             , archive_version_zlib_version
+                             , archive_version_liblzma_version
+                             , archive_version_bzlib_version
+                             , archive_version_liblz4_version
+                             , archive_version_libzstd_version
+                             -- * Version macros
+                             , archiveVersionNumber
+                             , archiveVersionOnlyString
+                             , archiveVersionString
                              -- * File types
                              , regular
                              , symlink
@@ -117,11 +133,25 @@ import           Foreign.C.Types
 import           Foreign.Ptr
 import           System.Posix.Types  (CMode (..))
 
+-- Miscellaneous
+foreign import ccall archive_version_number :: CInt
+foreign import ccall archive_version_string :: CString
+foreign import ccall archive_version_details :: CString
+foreign import ccall archive_version_zlib_version :: CString
+foreign import ccall archive_version_liblzma_version :: CString
+foreign import ccall archive_version_bzlib_version :: CString
+foreign import ccall archive_version_liblz4_version :: CString
+foreign import ccall archive_version_libzstd_version :: CString
+
 -- Archive entry
+foreign import ccall unsafe archive_entry_clear :: Ptr ArchiveEntry -> IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_clone :: Ptr ArchiveEntry -> IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
+foreign import ccall unsafe archive_entry_new2 :: Ptr ArchiveEntry -> IO (Ptr ArchiveEntry)
+
 foreign import ccall unsafe archive_entry_atime :: Ptr ArchiveEntry -> IO CTime
 foreign import ccall unsafe archive_entry_atime_nsec :: Ptr ArchiveEntry -> IO CLong
-foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
-foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
@@ -181,6 +211,15 @@ foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
 
 #include <archive.h>
 #include <archive_entry.h>
+
+archiveVersionNumber :: Int
+archiveVersionNumber = {# const ARCHIVE_VERSION_NUMBER #}
+
+archiveVersionOnlyString :: String
+archiveVersionOnlyString = {# const ARCHIVE_VERSION_ONLY_STRING #}
+
+archiveVersionString :: String
+archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType

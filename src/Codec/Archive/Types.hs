@@ -6,6 +6,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            -- * Concrete (Haskell) data types
                            , Entry (..)
                            , EntryContent (..)
+                           , Permissions
                            -- * Macros
                            , ExtractFlags (..)
                            , ArchiveError (..)
