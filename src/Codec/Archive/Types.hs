@@ -6,6 +6,9 @@ module Codec.Archive.Types ( -- * Abstract data types
                            -- * Concrete (Haskell) data types
                            , Entry (..)
                            , EntryContent (..)
+                           , Ownership (..)
+                           , ModTime
+                           , Id
                            , Permissions
                            -- * Macros
                            , ExtractFlags (..)
@@ -20,8 +23,9 @@ module Codec.Archive.Types ( -- * Abstract data types
 
 import           Data.Bits          ((.|.))
 import qualified Data.ByteString    as BS
+import           Data.Int           (Int64)
 import           Data.Semigroup
-import           Foreign.C.Types    (CInt)
+import           Foreign.C.Types    (CInt, CLong, CTime)
 import           System.Posix.Types (CMode (..))
 
 -- | Abstract type
@@ -38,9 +42,19 @@ data EntryContent = NormalFile !BS.ByteString
 data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent
                    , permissions :: !Permissions
+                   , ownership   :: !Ownership
+                   , time        :: !ModTime
                    }
 
+data Ownership = Ownership { userName  :: !String
+                           , groupName :: !String
+                           , ownerId   :: !Id
+                           , groupId   :: !Id
+                           }
+
 type Permissions = CMode
+type ModTime = (CTime, CLong)
+type Id = Int64
 
 standardPermissions :: Permissions
 standardPermissions = 0o644

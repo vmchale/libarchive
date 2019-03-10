@@ -64,6 +64,10 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_symlink
                              , archive_entry_hardlink
                              , archive_entry_size
+                             , archive_entry_uname
+                             , archive_entry_gname
+                             , archive_entry_uid
+                             , archive_entry_gid
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
@@ -174,6 +178,10 @@ foreign import ccall unsafe archive_entry_dev_is_set :: Ptr ArchiveEntry -> IO C
 foreign import ccall unsafe archive_entry_devmajor :: Ptr ArchiveEntry -> IO Word64
 foreign import ccall unsafe archive_entry_devminor :: Ptr ArchiveEntry -> IO Word64
 
+foreign import ccall unsafe archive_entry_uname :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_gname :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_uid :: Ptr ArchiveEntry -> IO Id
+foreign import ccall unsafe archive_entry_gid :: Ptr ArchiveEntry -> IO Id
 foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO FileType
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()

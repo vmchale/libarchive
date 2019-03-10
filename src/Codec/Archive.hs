@@ -6,6 +6,7 @@ module Codec.Archive
       unpackToDir
     , unpackArchive
     , entriesToFile
+    , hsEntries
     , standardPermissions
     , executablePermissions
     -- * Concrete (Haskell) types
@@ -58,12 +59,20 @@ contentAdd (Symlink fp) a entry = do
         archive_entry_set_symlink entry fpc
     void $ archive_write_header a entry
 
+setOwnership :: Ownership -> Ptr ArchiveEntry -> IO ()
+setOwnership = undefined
+
+setTime :: ModTime -> Ptr ArchiveEntry -> IO ()
+setTime = undefined
+
 archiveEntryAdd :: Ptr Archive -> Entry -> IO ()
-archiveEntryAdd a (Entry fp contents perms) =
+archiveEntryAdd a (Entry fp contents perms owner mtime) =
     withArchiveEntry $ \entry -> do
         withCString fp $ \fpc ->
             archive_entry_set_pathname entry fpc
         archive_entry_set_perm entry perms
+        setOwnership owner entry
+        setTime mtime entry
         contentAdd contents a entry
         pure ()
 
@@ -71,12 +80,12 @@ packEntries :: (Foldable t) => Ptr Archive -> t Entry -> IO ()
 packEntries a = traverse_ (archiveEntryAdd a)
 
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
-entriesToFile fp hsEntries = do
+entriesToFile fp hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
     withCString fp $ \fpc ->
         void $ archive_write_open_filename a fpc
-    packEntries a hsEntries
+    packEntries a hsEntries'
     void $ archive_write_free a
 
 archiveFile :: FilePath -> IO (Ptr Archive)
@@ -106,12 +115,39 @@ unpackEntriesFp a fp = do
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents = undefined
 
+readOwnership :: Ptr ArchiveEntry -> IO Ownership
+readOwnership entry = do
+    uname <- peekCString =<< archive_entry_uname entry
+    gname <- peekCString =<< archive_entry_gname entry
+    uid <- archive_entry_uid entry
+    gid <- archive_entry_gid entry
+    pure $ Ownership uname gname uid gid
+
+readTimes :: Ptr ArchiveEntry -> IO ModTime
+readTimes = undefined
+
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry = do
     fp <- peekCString =<< archive_entry_pathname entry
     perms <- archive_entry_perm entry
     contents <- readContents a entry
-    pure $ Entry fp contents perms
+    owner <- readOwnership entry
+    times <- readTimes entry
+    pure $ Entry fp contents perms owner times
+
+hsEntries :: Ptr Archive -> IO [Entry]
+hsEntries a = do
+    next <- getHsEntry a
+    case next of
+        Nothing -> pure []
+        Just x  -> (x:) <$> hsEntries a
+
+getHsEntry :: Ptr Archive -> IO (Maybe Entry)
+getHsEntry a = do
+    entry <- getEntry a
+    case entry of
+        Nothing -> pure Nothing
+        Just x  -> Just <$> readEntry a x
 
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
