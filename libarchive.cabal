@@ -31,7 +31,7 @@ library
     exposed-modules:
         Codec.Archive
         Codec.Archive.Foreign
-    build-tools: c2hs -any
+    build-tools: c2hs >=0.19.1
     pkgconfig-depends: libarchive -any
     hs-source-dirs: src
     other-modules:
