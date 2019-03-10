@@ -82,6 +82,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_write_set_format_pax_restricted
                              , archive_write_header
                              , archive_write_open_filename
+                             , archive_free
                              -- * Direct bindings (version/miscellaneous)
                              , archive_version_number
                              , archive_version_string
@@ -259,6 +260,8 @@ foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archi
 foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
 foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
+
+foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
 
 #include <archive.h>
 #include <archive_entry.h>

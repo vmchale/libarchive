@@ -29,19 +29,19 @@ import qualified Data.ByteString       as BS
 import           Foreign.C.String
 import           Foreign.Ptr           (Ptr)
 
-readArchiveFile :: FilePath -> IO [Entry]
-readArchiveFile fp = do
-    a <- archiveFile fp
-    entries <- hsEntries a
+withArchiveRead :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
+withArchiveRead fact a = do
+    res <- fact a
     void $ archive_read_free a
-    pure entries
+    pure res
+
+readArchiveFile :: FilePath -> IO [Entry]
+readArchiveFile fp =
+    archiveFile fp >>= withArchiveRead hsEntries
 
 readArchiveBS :: BS.ByteString -> IO [Entry]
-readArchiveBS bs = do
-    a <- bsToArchive bs
-    entries <- hsEntries a
-    void $ archive_read_free a
-    pure entries
+readArchiveBS bs =
+    bsToArchive bs >>= withArchiveRead hsEntries
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
