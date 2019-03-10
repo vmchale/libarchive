@@ -6,9 +6,12 @@ module Codec.Archive
       unpackToDir
     , unpackArchive
     , entriesToFile
+    , standardPermissions
+    , executablePermissions
     -- * Concrete (Haskell) types
     , Entry (..)
     , EntryContent (..)
+    , Permissions
     -- * Abstract types
     , Archive
     , ArchiveEntry
