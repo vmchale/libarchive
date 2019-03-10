@@ -49,6 +49,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveEntryBirthtimeIsSet
                              , archive_entry_ctime
                              , archive_entry_ctime_nsec
+                             , archiveEntryCTimeIsSet
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
@@ -164,6 +165,7 @@ foreign import ccall unsafe archive_entry_birthtime_nsec :: Ptr ArchiveEntry -> 
 foreign import ccall unsafe archive_entry_birthtime_is_set :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall unsafe archive_entry_ctime :: Ptr ArchiveEntry -> IO CTime
 foreign import ccall unsafe archive_entry_ctime_nsec :: Ptr ArchiveEntry -> IO CLong
+foreign import ccall unsafe archive_entry_ctime_is_set :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
@@ -232,6 +234,9 @@ archiveEntryATimeIsSet = fmap intToBool . archive_entry_atime_is_set
 
 archiveEntryBirthtimeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntryBirthtimeIsSet = fmap intToBool . archive_entry_birthtime_is_set
+
+archiveEntryCTimeIsSet :: Ptr ArchiveEntry -> IO Bool
+archiveEntryCTimeIsSet = fmap intToBool . archive_entry_ctime_is_set
 
 archiveVersionNumber :: Int
 archiveVersionNumber = {# const ARCHIVE_VERSION_NUMBER #}
