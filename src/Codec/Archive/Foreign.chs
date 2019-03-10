@@ -50,6 +50,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveEntryCTimeIsSet
                              , archive_entry_dev
                              , archiveEntryDevIsSet
+                             , archive_entry_devminor
+                             , archive_entry_devmajor
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
@@ -167,6 +169,12 @@ foreign import ccall unsafe archive_entry_birthtime_is_set :: Ptr ArchiveEntry -
 foreign import ccall unsafe archive_entry_ctime :: Ptr ArchiveEntry -> IO CTime
 foreign import ccall unsafe archive_entry_ctime_nsec :: Ptr ArchiveEntry -> IO CLong
 foreign import ccall unsafe archive_entry_ctime_is_set :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_dev :: Ptr ArchiveEntry -> IO Word64
+foreign import ccall unsafe archive_entry_dev_is_set :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_devmajor :: Ptr ArchiveEntry -> IO Word64
+foreign import ccall unsafe archive_entry_devminor :: Ptr ArchiveEntry -> IO Word64
+
+foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO FileType
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
@@ -175,12 +183,9 @@ foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CS
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 foreign import ccall unsafe archive_entry_pathname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_perm :: Ptr ArchiveEntry -> IO CMode
-foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO FileType
 foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_hardlink :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
-foreign import ccall unsafe archive_entry_dev :: Ptr ArchiveEntry -> IO Word64
-foreign import ccall unsafe archive_entry_dev_is_set :: Ptr ArchiveEntry -> IO CInt
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
