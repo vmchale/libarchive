@@ -6,36 +6,42 @@ module Codec.Archive
       unpackToDir
     , unpackArchive
     , entriesToFile
-    , hsEntries
     , readArchiveFile
-    , standardPermissions
-    , executablePermissions
+    , readArchiveBS
     -- * Concrete (Haskell) types
     , Entry (..)
     , EntryContent (..)
+    , Ownership (..)
     , Permissions
-    -- * Abstract types
-    , Archive
-    , ArchiveEntry
-    -- * Lower-level API types
-    , ArchiveError
-    , ExtractFlags
-    , FileType
-    , ArchiveFilter
+    , ModTime
+    , Id
+    , standardPermissions
+    , executablePermissions
     ) where
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Pack
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
-import           Control.Monad         (void, (<=<))
+import           Control.Monad         (void)
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
 import           Foreign.Ptr           (Ptr)
 
 readArchiveFile :: FilePath -> IO [Entry]
-readArchiveFile = hsEntries <=< archiveFile
+readArchiveFile fp = do
+    a <- archiveFile fp
+    entries <- hsEntries a
+    void $ archive_read_free a
+    pure entries
+
+readArchiveBS :: BS.ByteString -> IO [Entry]
+readArchiveBS bs = do
+    a <- bsToArchive bs
+    entries <- hsEntries a
+    void $ archive_read_free a
+    pure entries
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do

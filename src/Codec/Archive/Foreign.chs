@@ -144,6 +144,14 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archiveFilterGrzip
                              , archiveFilterLz4
                              -- , archiveFilterZstd
+                             -- * Abstract types
+                             , Archive
+                             , ArchiveEntry
+                             -- * Lower-level API types
+                             , ArchiveError
+                             , ExtractFlags
+                             , FileType
+                             , ArchiveFilter
                              ) where
 
 import           Codec.Archive.Types

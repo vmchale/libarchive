@@ -54,6 +54,8 @@ data Ownership = Ownership { userName  :: !String
 
 type Permissions = CMode
 type ModTime = (CTime, CLong)
+
+-- | A user or group ID
 type Id = Int64
 
 standardPermissions :: Permissions
