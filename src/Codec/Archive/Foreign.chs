@@ -36,6 +36,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_support_format_ar
                              , archive_read_add_passphrase
                              -- * Direct bindings (entry)
+                             , archive_entry_atime
+                             , archive_entry_atime_nsec
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
@@ -116,6 +118,8 @@ import           Foreign.Ptr
 import           System.Posix.Types  (CMode (..))
 
 -- Archive entry
+foreign import ccall unsafe archive_entry_atime :: Ptr ArchiveEntry -> IO CTime
+foreign import ccall unsafe archive_entry_atime_nsec :: Ptr ArchiveEntry -> IO CLong
 foreign import ccall unsafe archive_entry_new :: IO (Ptr ArchiveEntry)
 foreign import ccall unsafe archive_entry_free :: Ptr ArchiveEntry -> IO ()
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
