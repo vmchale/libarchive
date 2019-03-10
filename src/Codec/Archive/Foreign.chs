@@ -68,6 +68,13 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_gname
                              , archive_entry_uid
                              , archive_entry_gid
+                             , archive_entry_mtime
+                             , archive_entry_mtime_nsec
+                             , archive_entry_set_mtime
+                             , archive_entry_set_uname
+                             , archive_entry_set_gname
+                             , archive_entry_set_uid
+                             , archive_entry_set_gid
                              -- * Direct bindings (write)
                              , archive_write_data
                              , archive_write_new
@@ -178,6 +185,13 @@ foreign import ccall unsafe archive_entry_dev_is_set :: Ptr ArchiveEntry -> IO C
 foreign import ccall unsafe archive_entry_devmajor :: Ptr ArchiveEntry -> IO Word64
 foreign import ccall unsafe archive_entry_devminor :: Ptr ArchiveEntry -> IO Word64
 
+foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
+foreign import ccall unsafe archive_entry_set_gid :: Ptr ArchiveEntry -> Id -> IO ()
+foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
+foreign import ccall unsafe archive_entry_mtime :: Ptr ArchiveEntry -> IO CTime
+foreign import ccall unsafe archive_entry_mtime_nsec :: Ptr ArchiveEntry -> IO CLong
 foreign import ccall unsafe archive_entry_uname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_gname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_uid :: Ptr ArchiveEntry -> IO Id

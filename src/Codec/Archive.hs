@@ -60,10 +60,18 @@ contentAdd (Symlink fp) a entry = do
     void $ archive_write_header a entry
 
 setOwnership :: Ownership -> Ptr ArchiveEntry -> IO ()
-setOwnership = undefined
+setOwnership (Ownership uname gname uid gid) entry =
+    withCString uname $ \unameC ->
+    withCString gname $ \gnameC ->
+    sequence_
+        [ archive_entry_set_uname entry unameC
+        , archive_entry_set_gname entry gnameC
+        , archive_entry_set_uid entry uid
+        , archive_entry_set_gid entry gid
+        ]
 
 setTime :: ModTime -> Ptr ArchiveEntry -> IO ()
-setTime = undefined
+setTime (time', nsec) entry = archive_entry_set_mtime entry time' nsec
 
 archiveEntryAdd :: Ptr Archive -> Entry -> IO ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
@@ -124,7 +132,8 @@ readOwnership entry = do
     pure $ Ownership uname gname uid gid
 
 readTimes :: Ptr ArchiveEntry -> IO ModTime
-readTimes = undefined
+readTimes entry =
+    (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
 
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry = do
