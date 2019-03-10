@@ -2,8 +2,8 @@
 
 ## 1.0.0.0
 
-  * Get rid of `cbits` completely
-  * Add full low-level FFI bindings
+  * Get rid of `cbits`
+  * Add low-level FFI bindings
   * Add high-level functions for unpacking archives
 
 ## 0.2.1.2
