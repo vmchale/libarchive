@@ -1,5 +1,5 @@
 -- | This module contains higher-level functions for working with archives in
--- a more Haskell-y way. See "Codec.Archive.Foreign" for direct bindings to
+-- Haskell. See "Codec.Archive.Foreign" for direct bindings to
 -- libarchive.
 module Codec.Archive
     ( -- * High-level functionality

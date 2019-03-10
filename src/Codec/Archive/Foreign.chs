@@ -1,8 +1,6 @@
--- | Everything here is super stateful but hey that's why we have the 'IO'
--- monad in the first place
+-- | Everything here is stateful and hence takes place in the 'IO' monad.
 --
--- In general, if you want to find out what some function here does, check
--- @archive.h@ or @archive_entry.h@.
+-- Consult @archive.h@ or @archive_entry.h@ for documentation.
 module Codec.Archive.Foreign ( -- * Direct bindings (read)
                                archive_read_new
                              , archive_read_data_skip
