@@ -142,12 +142,12 @@ readContents a entry = go =<< archive_entry_filetype entry
                 | otherwise = error ("Unsupported filetype " ++ show n)
 
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
-readOwnership entry = do
-    uname <- peekCString =<< archive_entry_uname entry
-    gname <- peekCString =<< archive_entry_gname entry
-    uid <- archive_entry_uid entry
-    gid <- archive_entry_gid entry
-    pure $ Ownership uname gname uid gid
+readOwnership entry =
+    Ownership
+        <$> (peekCString =<< archive_entry_uname entry)
+        <*> (peekCString =<< archive_entry_gname entry)
+        <*> archive_entry_uid entry
+        <*> archive_entry_gid entry
 
 readTimes :: Ptr ArchiveEntry -> IO ModTime
 readTimes entry =
