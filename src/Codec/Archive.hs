@@ -15,6 +15,8 @@ module Codec.Archive
     -- * Lower-level API types
     , ArchiveError
     , ExtractFlags
+    , FileType
+    , ArchiveFilter
     ) where
 
 import           Codec.Archive.Foreign
