@@ -50,6 +50,8 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_entry_ctime
                              , archive_entry_ctime_nsec
                              , archiveEntryCTimeIsSet
+                             , archive_entry_dev
+                             , archiveEntryDevIsSet
                              , archive_entry_set_pathname
                              , archive_entry_set_filetype
                              , archive_entry_set_perm
@@ -135,6 +137,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
 
 import           Codec.Archive.Types
 import           Data.Int            (Int64)
+import           Data.Word           (Word64)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr
@@ -178,7 +181,8 @@ foreign import ccall unsafe archive_entry_filetype :: Ptr ArchiveEntry -> IO Fil
 foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_hardlink :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
-
+foreign import ccall unsafe archive_entry_dev :: Ptr ArchiveEntry -> IO Word64
+foreign import ccall unsafe archive_entry_dev_is_set :: Ptr ArchiveEntry -> IO CInt
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
@@ -237,6 +241,9 @@ archiveEntryBirthtimeIsSet = fmap intToBool . archive_entry_birthtime_is_set
 
 archiveEntryCTimeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntryCTimeIsSet = fmap intToBool . archive_entry_ctime_is_set
+
+archiveEntryDevIsSet :: Ptr ArchiveEntry -> IO Bool
+archiveEntryDevIsSet = fmap intToBool . archive_entry_dev_is_set
 
 archiveVersionNumber :: Int
 archiveVersionNumber = {# const ARCHIVE_VERSION_NUMBER #}
