@@ -64,10 +64,10 @@ readBS a =
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archive_entry_filetype entry
-    where go ft@(FileType n) | ft == regular = NormalFile <$> readBS a
+    where go ft | ft == regular = NormalFile <$> readBS a
                 | ft == symlink = Symlink <$> (peekCString =<< archive_entry_symlink entry)
                 | ft == directory = pure Directory
-                | otherwise = error ("Unsupported filetype " ++ show n)
+                | otherwise = error "Unsupported filetype"
 
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry =
