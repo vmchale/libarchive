@@ -66,7 +66,7 @@ newtype ArchiveFormat = ArchiveFormat CInt
     deriving (Num)
 
 newtype FileType = FileType CMode
-    deriving (Num)
+    deriving (Eq, Num)
 
 -- TODO: make this a sum type ?
 newtype ArchiveError = ArchiveError CInt

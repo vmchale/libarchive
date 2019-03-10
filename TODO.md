@@ -1,5 +1,6 @@
 # Code Maintenance
 - [ ] Test suite
+  - [ ] Roundtrip test
 - [ ] Literally the barest support for error handling
 - [ ] `Codec.Archive.Pack` etc.
 # Features

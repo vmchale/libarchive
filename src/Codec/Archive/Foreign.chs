@@ -28,7 +28,7 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_read_support_filter_rpm
                              , archive_read_support_filter_uu
                              , archive_read_support_filter_xz
-                             , archive_read_support_filter_zstd
+                             -- , archive_read_support_filter_zstd
                              , archive_read_support_format_7zip
                              , archive_read_support_format_all
                              , archive_read_support_format_ar
@@ -86,11 +86,11 @@ module Codec.Archive.Foreign ( -- * Direct bindings (read)
                              , archive_version_number
                              , archive_version_string
                              , archive_version_details
-                             , archive_version_zlib_version
-                             , archive_version_liblzma_version
-                             , archive_version_bzlib_version
-                             , archive_version_liblz4_version
-                             , archive_version_libzstd_version
+                             -- , archive_version_zlib_version
+                             -- , archive_version_liblzma_version
+                             -- , archive_version_bzlib_version
+                             -- , archive_version_liblz4_version
+                             -- , archive_version_libzstd_version
                              -- * Version macros
                              , archiveVersionNumber
                              , archiveVersionOnlyString
@@ -158,11 +158,11 @@ import           System.Posix.Types  (CMode (..))
 foreign import ccall archive_version_number :: CInt
 foreign import ccall archive_version_string :: CString
 foreign import ccall archive_version_details :: CString
-foreign import ccall archive_version_zlib_version :: CString
-foreign import ccall archive_version_liblzma_version :: CString
-foreign import ccall archive_version_bzlib_version :: CString
-foreign import ccall archive_version_liblz4_version :: CString
-foreign import ccall archive_version_libzstd_version :: CString
+-- foreign import ccall archive_version_zlib_version :: CString
+-- foreign import ccall archive_version_liblzma_version :: CString
+-- foreign import ccall archive_version_bzlib_version :: CString
+-- foreign import ccall archive_version_liblz4_version :: CString
+-- foreign import ccall archive_version_libzstd_version :: CString
 
 -- Archive entry
 foreign import ccall unsafe archive_entry_clear :: Ptr ArchiveEntry -> IO (Ptr ArchiveEntry)
@@ -238,7 +238,7 @@ foreign import ccall unsafe archive_read_support_filter_program_signature :: Ptr
 foreign import ccall unsafe archive_read_support_filter_rpm :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_filter_uu :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_filter_xz :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_support_filter_zstd :: Ptr Archive -> IO ArchiveError
+-- foreign import ccall unsafe archive_read_support_filter_zstd :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_read_support_format_7zip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ArchiveError
@@ -281,7 +281,12 @@ archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
-mode_t = fromIntegral
+mode_t = fromIntegral . asOctal
+
+-- converts 0020000 to 16384 etc.
+asOctal :: Integral a => a -> a
+asOctal n | n < 10 = n
+          | otherwise = 8 * asOctal (n `div` 10) + n `mod` 10
 
 -- filetype
 regular :: FileType

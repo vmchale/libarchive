@@ -7,6 +7,7 @@ module Codec.Archive
     , unpackArchive
     , entriesToFile
     , hsEntries
+    , readArchiveFile
     , standardPermissions
     , executablePermissions
     -- * Concrete (Haskell) types
@@ -25,7 +26,7 @@ module Codec.Archive
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
-import           Control.Monad         (void)
+import           Control.Monad         (void, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Data.Foldable         (traverse_)
@@ -96,6 +97,9 @@ entriesToFile fp hsEntries' = do
     packEntries a hsEntries'
     void $ archive_write_free a
 
+readArchiveFile :: FilePath -> IO [Entry]
+readArchiveFile = hsEntries <=< archiveFile
+
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
     a <- archive_read_new
@@ -120,8 +124,22 @@ unpackEntriesFp a fp = do
             void $ archive_read_data_skip a
             unpackEntriesFp a fp
 
+readBS :: Ptr Archive -> IO BS.ByteString
+readBS a =
+    alloca $ \buff ->
+    alloca $ \sz ->
+    alloca $ \offset -> do
+        void $ archive_read_data_block a buff sz offset
+        cstr <- peek buff
+        strSz <- peek sz
+        BS.packCStringLen (cstr, fromIntegral strSz)
+
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
-readContents = undefined
+readContents a entry = go =<< archive_entry_filetype entry
+    where go ft@(FileType n) | ft == regular = NormalFile <$> readBS a
+                | ft == symlink = Symlink <$> (peekCString =<< archive_entry_symlink entry)
+                | ft == directory = pure Directory
+                | otherwise = error ("Unsupported filetype " ++ show n)
 
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry = do
