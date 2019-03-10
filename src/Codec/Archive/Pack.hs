@@ -45,6 +45,7 @@ packEntries a = traverse_ (archiveEntryAdd a)
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
     a <- archive_write_new
+    -- this is the recommended format; it is a tar archive
     void $ archive_write_set_format_pax_restricted a
     withCString fp $ \fpc ->
         void $ archive_write_open_filename a fpc
