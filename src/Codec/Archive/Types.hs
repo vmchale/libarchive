@@ -48,7 +48,7 @@ executablePermissions :: Permissions
 executablePermissions = 0o755
 
 newtype ArchiveFormat = ArchiveFormat CInt
-    deriving Num
+    deriving (Num)
 
 newtype FileType = FileType CMode
     deriving (Num)

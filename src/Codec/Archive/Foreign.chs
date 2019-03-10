@@ -182,7 +182,7 @@ foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
 #include <archive.h>
 #include <archive_entry.h>
 
--- stupid function to work around something annoying idk
+-- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
 mode_t = fromIntegral
 
