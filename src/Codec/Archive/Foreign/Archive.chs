@@ -30,6 +30,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_support_format_all
                                      , archive_read_support_format_ar
                                      , archive_read_add_passphrase
+                                     , archive_read_set_passphrase
                                      -- * Direct bindings (write)
                                      , archive_write_data
                                      , archive_write_new
@@ -92,18 +93,36 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveError
                                      , ExtractFlags
                                      , ArchiveFilter
+                                     -- * Callback types
+                                     , ArchiveReadCallback
+                                     , ArchiveSkipCallback
+                                     , ArchiveSeekCallback
+                                     , ArchiveWriteCallback
+                                     , ArchiveOpenCallback
+                                     , ArchiveCloseCallback
+                                     , ArchiveSwitchCallback
+                                     , ArchivePassphraseCallback
                                      ) where
 
 import Data.Int (Int64)
 import Codec.Archive.Types
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Ptr (Ptr)
+import Foreign.Ptr (FunPtr, Ptr)
 
 -- Miscellaneous
 foreign import ccall archive_version_number :: CInt
 foreign import ccall archive_version_string :: CString
 foreign import ccall archive_version_details :: CString
+
+type ArchiveReadCallback = FunPtr (Ptr Archive -> CString -> Ptr CString -> IO CSize)
+type ArchiveSkipCallback = FunPtr (Ptr Archive -> CString -> Int64 -> IO Int64)
+type ArchiveSeekCallback = FunPtr (Ptr Archive -> CString -> Int64 -> CInt -> IO Int64)
+type ArchiveWriteCallback = FunPtr (Ptr Archive -> CString -> CString -> CSize -> IO CSize)
+type ArchiveOpenCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
+type ArchiveCloseCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
+type ArchiveSwitchCallback = FunPtr (Ptr Archive -> CString -> CString -> IO ArchiveError)
+type ArchivePassphraseCallback = FunPtr (Ptr Archive -> CString -> IO CString)
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
@@ -117,6 +136,7 @@ foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_passphrase :: Ptr Archive -> CString -> ArchivePassphraseCallback -> IO ArchiveError
 
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO ArchiveError
