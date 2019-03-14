@@ -37,6 +37,7 @@ library
     other-modules:
         Codec.Archive.Pack
         Codec.Archive.Unpack
+        Codec.Archive.Foreign.ArchiveEntry
         Codec.Archive.Types
     default-language: Haskell2010
     other-extensions: GeneralizedNewtypeDeriving
