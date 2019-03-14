@@ -64,6 +64,10 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , blockDevice
                                           , directory
                                           , fifo
+                                          -- * Abstract types
+                                          , ArchiveEntry
+                                          -- * Lower-level API types
+                                          , FileType
                                           ) where
 
 import Codec.Archive.Types
@@ -137,6 +141,20 @@ foreign import ccall unsafe archive_entry_is_data_encrypted :: Ptr ArchiveEntry 
 foreign import ccall unsafe archive_entry_is_metadata_encrypted :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall unsafe archive_entry_is_encrypted :: Ptr ArchiveEntry -> IO CInt
 
+foreign import ccall unsafe archive_entry_set_atime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
+foreign import ccall unsafe archive_entry_unset_atime :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_set_birthtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
+foreign import ccall unsafe archive_entry_unset_birthtime :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_set_ctime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
+foreign import ccall unsafe archive_entry_unset_ctime :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_set_dev :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_devmajor :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_devminor :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
+foreign import ccall unsafe archive_entry_set_fflags :: Ptr ArchiveEntry -> CULong -> CULong -> IO ()
+foreign import ccall unsafe archive_entry_copy_fflags_text :: Ptr ArchiveEntry -> CString -> IO CString
+foreign import ccall unsafe archive_entry_copy_fflags_text_w :: Ptr ArchiveEntry -> CWString -> IO CWString
+
 foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
@@ -144,7 +162,6 @@ foreign import ccall unsafe archive_entry_set_gid :: Ptr ArchiveEntry -> Id -> I
 foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
-foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??

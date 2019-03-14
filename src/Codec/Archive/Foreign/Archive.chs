@@ -88,11 +88,9 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveFilterLz4
                                      -- * Abstract types
                                      , Archive
-                                     , ArchiveEntry
                                      -- * Lower-level API types
                                      , ArchiveError
                                      , ExtractFlags
-                                     , FileType
                                      , ArchiveFilter
                                      ) where
 
