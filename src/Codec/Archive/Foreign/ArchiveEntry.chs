@@ -71,6 +71,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           ) where
 
 import Codec.Archive.Types
+import Control.Composition ((.*))
 import Data.Int (Int64)
 import Data.Word (Word64)
 import Foreign.C.String
@@ -154,16 +155,31 @@ foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> Fi
 foreign import ccall unsafe archive_entry_set_fflags :: Ptr ArchiveEntry -> CULong -> CULong -> IO ()
 foreign import ccall unsafe archive_entry_copy_fflags_text :: Ptr ArchiveEntry -> CString -> IO CString
 foreign import ccall unsafe archive_entry_copy_fflags_text_w :: Ptr ArchiveEntry -> CWString -> IO CWString
+foreign import ccall unsafe archive_entry_set_gid :: Ptr ArchiveEntry -> Id -> IO ()
+foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_gname_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_gname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_gname_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_gname_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_hardlink_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_hardlink_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_hardlink_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_set_ino :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_ino64 :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_link :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_link_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_link :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_link_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_link_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
 
 foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
-foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
-foreign import ccall unsafe archive_entry_set_gid :: Ptr ArchiveEntry -> Id -> IO ()
 foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
-foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 
 -- stupid function to work around some annoying C quirk
@@ -229,3 +245,12 @@ archiveEntryIsMetadataEncrypted = fmap intToBool . archive_entry_is_metadata_enc
 
 archiveEntryIsEncrypted :: Ptr ArchiveEntry -> IO Bool
 archiveEntryIsEncrypted = fmap intToBool . archive_entry_is_encrypted
+
+archiveEntryUpdateGNameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdateGNameUtf8 = fmap intToBool .* archive_entry_update_gname_utf8
+
+archiveEntryUpdateHardlinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdateHardlinkUtf8 = fmap intToBool .* archive_entry_update_hardlink_utf8
+
+archiveEntryUpdateLinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdateLinkUtf8 = fmap intToBool .* archive_entry_update_link_utf8

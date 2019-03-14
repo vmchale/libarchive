@@ -21,12 +21,6 @@ source-repository head
     type: git
     location: https://github.com/vmchale/libarchive
 
-flag development
-    description:
-        Enable `-Werror`
-    default: False
-    manual: True
-
 library
     exposed-modules:
         Codec.Archive
@@ -46,7 +40,8 @@ library
     build-depends:
         base >=4.9 && <5,
         bytestring -any,
-        filepath -any
+        filepath -any,
+        composition-prelude -any
 
     if impl(ghc >=8.0)
         ghc-options: -Wincomplete-uni-patterns -Wincomplete-record-updates
