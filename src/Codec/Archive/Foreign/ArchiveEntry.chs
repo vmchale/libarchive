@@ -1,3 +1,4 @@
+-- | Functions found in @archive_entry.h@
 module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                             archive_entry_clear
                                           , archive_entry_clone
@@ -107,6 +108,8 @@ foreign import ccall unsafe archive_entry_rdevmajor :: Ptr ArchiveEntry -> IO Wo
 foreign import ccall unsafe archive_entry_rdevminor :: Ptr ArchiveEntry -> IO Word64
 foreign import ccall unsafe archive_entry_sourcepath :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_sourcepath_w :: Ptr ArchiveEntry -> IO CWString
+foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
+foreign import ccall unsafe archive_entry_size_is_set :: Ptr ArchiveEntry -> IO Int
 
 foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
@@ -122,7 +125,6 @@ foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CSt
 foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
-foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
@@ -175,3 +177,6 @@ archiveEntryInoIsSet = fmap intToBool . archive_entry_ino_is_set
 
 archiveEntryMTimeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntryMTimeIsSet = fmap intToBool . archive_entry_mtime_is_set
+
+archiveEntrySizeIsSet :: Ptr ArchiveEntry -> IO Bool
+archiveEntrySizeIsSet = fmap intToBool . archive_entry_size_is_set
