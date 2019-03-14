@@ -173,14 +173,25 @@ foreign import ccall unsafe archive_entry_set_link_utf8 :: Ptr ArchiveEntry -> C
 foreign import ccall unsafe archive_entry_copy_link :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_copy_link_w :: Ptr ArchiveEntry -> CWString -> IO ()
 foreign import ccall unsafe archive_entry_update_link_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_set_mode :: Ptr ArchiveEntry -> CMode -> IO ()
+foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
+foreign import ccall unsafe archive_entry_unset_mtime :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_set_nlink :: Ptr ArchiveEntry -> CUInt -> IO ()
+foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_pathname_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_pathname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_pathname_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_pathname_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO ()
+foreign import ccall unsafe archive_entry_set_rdev :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_rdevmajor :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_rdevminor :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_unset_size :: Ptr ArchiveEntry -> IO ()
 
 foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
-foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
-foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
-foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
-foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
@@ -254,3 +265,6 @@ archiveEntryUpdateHardlinkUtf8 = fmap intToBool .* archive_entry_update_hardlink
 
 archiveEntryUpdateLinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
 archiveEntryUpdateLinkUtf8 = fmap intToBool .* archive_entry_update_link_utf8
+
+archiveEntryUpdatePathnameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdatePathnameUtf8 = fmap intToBool .* archive_entry_update_pathname_utf8
