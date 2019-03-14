@@ -122,12 +122,12 @@ type ArchiveWriteCallback = FunPtr (Ptr Archive -> CString -> CString -> CSize -
 type ArchiveOpenCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
 type ArchiveCloseCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
 type ArchiveSwitchCallback = FunPtr (Ptr Archive -> CString -> CString -> IO ArchiveError)
-type ArchivePassphraseCallback = FunPtr (Ptr Archive -> CString -> IO CString)
+type ArchivePassphraseCallback a = FunPtr (Ptr Archive -> Ptr a -> IO CString)
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_read_data :: Ptr Archive -> CString -> CSize -> IO ArchiveError
-foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr CString -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
+foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveError
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ArchiveError
@@ -136,7 +136,7 @@ foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_passphrase :: Ptr Archive -> CString -> ArchivePassphraseCallback -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_passphrase :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
 
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO ArchiveError
@@ -175,6 +175,7 @@ foreign import ccall unsafe archive_read_support_format_xar :: Ptr Archive -> IO
 foreign import ccall unsafe archive_read_support_format_zip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_format_zip_streamable :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_format_zip_seekable :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_format :: Ptr Archive -> CInt -> IO ArchiveError
 
 -- Archive write
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
