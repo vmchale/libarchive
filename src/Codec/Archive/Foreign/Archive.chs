@@ -137,7 +137,7 @@ foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CStrin
 foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract2 :: Ptr Archive -> Ptr ArchiveEntry -> Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_extract_set_progress :: Ptr Archive -> (FunPtr (Ptr a -> IO ())) -> Ptr a -> IO ()
+foreign import ccall unsafe archive_read_extract_set_progress_callback :: Ptr Archive -> (FunPtr (Ptr a -> IO ())) -> Ptr a -> IO ()
 foreign import ccall unsafe archive_read_extract_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ()
 foreign import ccall unsafe archive_read_close :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ArchiveError
@@ -183,11 +183,18 @@ foreign import ccall unsafe archive_read_set_format :: Ptr Archive -> CInt -> IO
 
 -- Archive write
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_write_set_blocks_per_byte :: Ptr Archive -> CInt -> IO ArchiveError
-foreign import ccall unsafe archive_write_get_blocks_per_byte :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_set_bytes_per_block :: Ptr Archive -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_write_get_bytes_per_block :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_write_set_bytes_in_last_block :: Ptr Archive -> CInt -> IO ArchiveError
-foreign import ccall unsafe archive_get_bytes_in_last_block :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_get_bytes_in_last_block :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_write_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter :: Ptr Archive -> ArchiveFilter -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_by_name :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_b64encode :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_bzip2 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_compress :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_grzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_gzip :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO ArchiveError
