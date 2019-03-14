@@ -159,6 +159,22 @@ foreign import ccall unsafe archive_read_support_filter_xz :: Ptr Archive -> IO 
 foreign import ccall unsafe archive_read_support_format_7zip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_format_all :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_format_ar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_by_code :: Ptr Archive -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_cab :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_cpio :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_empty :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_gnutar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_iso9660 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_lha :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_mtree :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_rar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_raw :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_tar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_warc :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_xar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_zip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_zip_streamable :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_support_format_zip_seekable :: Ptr Archive -> IO ArchiveError
 
 -- Archive write
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
