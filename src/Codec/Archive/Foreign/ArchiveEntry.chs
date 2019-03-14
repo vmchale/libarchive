@@ -18,20 +18,35 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryDevIsSet
                                           , archive_entry_devminor
                                           , archive_entry_devmajor
+                                          , archive_entry_fflags
+                                          , archive_entry_fflags_text
+                                          , archive_entry_filetype
+                                          , archive_entry_gname
+                                          , archive_entry_gname_utf8
+                                          , archive_entry_gname_w
+                                          , archive_entry_hardlink
+                                          , archive_entry_hardlink_utf8
+                                          , archive_entry_hardlink_w
+                                          , archive_entry_ino
+                                          , archive_entry_ino64
+                                          , archiveEntryInoIsSet
+                                          , archive_entry_mode
+                                          , archiveEntryMTimeIsSet
+                                          , archive_entry_nlink
+                                          , archive_entry_pathname
+                                          , archive_entry_pathname_utf8
+                                          , archive_entry_pathname_w
+
                                           , archive_entry_set_pathname
                                           , archive_entry_set_filetype
                                           , archive_entry_set_perm
                                           , archive_entry_set_size
                                           , archive_entry_set_symlink
                                           , archive_entry_set_hardlink
-                                          , archive_entry_pathname
-                                          , archive_entry_filetype
                                           , archive_entry_perm
                                           , archive_entry_symlink
-                                          , archive_entry_hardlink
                                           , archive_entry_size
                                           , archive_entry_uname
-                                          , archive_entry_gname
                                           , archive_entry_uid
                                           , archive_entry_gid
                                           , archive_entry_mtime
@@ -109,22 +124,30 @@ foreign import ccall unsafe archive_entry_rdevminor :: Ptr ArchiveEntry -> IO Wo
 foreign import ccall unsafe archive_entry_sourcepath :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_sourcepath_w :: Ptr ArchiveEntry -> IO CWString
 foreign import ccall unsafe archive_entry_size :: Ptr ArchiveEntry -> IO Int64
-foreign import ccall unsafe archive_entry_size_is_set :: Ptr ArchiveEntry -> IO Int
+foreign import ccall unsafe archive_entry_size_is_set :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_strmode :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_symlink_utf8 :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_symlink_w :: Ptr ArchiveEntry -> IO CWString
+foreign import ccall unsafe archive_entry_uid :: Ptr ArchiveEntry -> IO Id
+foreign import ccall unsafe archive_entry_uname :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_uname_utf8 :: Ptr ArchiveEntry -> IO CString
+foreign import ccall unsafe archive_entry_w :: Ptr ArchiveEntry -> IO CWString
+foreign import ccall unsafe archive_entry_is_data_encrypted :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_is_metadata_encrypted :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_is_encrypted :: Ptr ArchiveEntry -> IO CInt
 
 foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_gname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
 foreign import ccall unsafe archive_entry_set_gid :: Ptr ArchiveEntry -> Id -> IO ()
 foreign import ccall unsafe archive_entry_set_mtime :: Ptr ArchiveEntry -> CTime -> CLong -> IO ()
-foreign import ccall unsafe archive_entry_uname :: Ptr ArchiveEntry -> IO CString
-foreign import ccall unsafe archive_entry_uid :: Ptr ArchiveEntry -> IO Id
 foreign import ccall unsafe archive_entry_set_pathname :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_filetype :: Ptr ArchiveEntry -> FileType -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_hardlink :: Ptr ArchiveEntry -> CString -> IO ()
 foreign import ccall unsafe archive_entry_set_perm :: Ptr ArchiveEntry -> CMode -> IO () -- TODO: I think mode_t is right?? I hope??
-foreign import ccall unsafe archive_entry_symlink :: Ptr ArchiveEntry -> IO CString
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
@@ -180,3 +203,12 @@ archiveEntryMTimeIsSet = fmap intToBool . archive_entry_mtime_is_set
 
 archiveEntrySizeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntrySizeIsSet = fmap intToBool . archive_entry_size_is_set
+
+archiveEntryIsDataEncrypted :: Ptr ArchiveEntry -> IO Bool
+archiveEntryIsDataEncrypted = fmap intToBool . archive_entry_is_data_encrypted
+
+archiveEntryIsMetadataEncrypted :: Ptr ArchiveEntry -> IO Bool
+archiveEntryIsMetadataEncrypted = fmap intToBool . archive_entry_is_metadata_encrypted
+
+archiveEntryIsEncrypted :: Ptr ArchiveEntry -> IO Bool
+archiveEntryIsEncrypted = fmap intToBool . archive_entry_is_encrypted
