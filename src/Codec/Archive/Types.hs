@@ -3,6 +3,7 @@
 module Codec.Archive.Types ( -- * Abstract data types
                              Archive
                            , ArchiveEntry
+                           , Stat
                            -- * Concrete (Haskell) data types
                            , Entry (..)
                            , EntryContent (..)
@@ -33,6 +34,8 @@ data Archive
 
 -- | Abstract type
 data ArchiveEntry
+
+data Stat
 
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
 data EntryContent = NormalFile !BS.ByteString

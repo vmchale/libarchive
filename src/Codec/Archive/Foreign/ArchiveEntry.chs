@@ -21,6 +21,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_fflags
                                           , archive_entry_fflags_text
                                           , archive_entry_filetype
+                                          , archive_entry_gid
                                           , archive_entry_gname
                                           , archive_entry_gname_utf8
                                           , archive_entry_gname_w
@@ -31,31 +32,93 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_ino64
                                           , archiveEntryInoIsSet
                                           , archive_entry_mode
+                                          , archive_entry_mtime
+                                          , archive_entry_mtime_nsec
                                           , archiveEntryMTimeIsSet
                                           , archive_entry_nlink
                                           , archive_entry_pathname
                                           , archive_entry_pathname_utf8
                                           , archive_entry_pathname_w
-
-                                          , archive_entry_set_pathname
-                                          , archive_entry_set_filetype
-                                          , archive_entry_set_perm
-                                          , archive_entry_set_size
-                                          , archive_entry_set_symlink
-                                          , archive_entry_set_hardlink
                                           , archive_entry_perm
-                                          , archive_entry_symlink
+                                          , archive_entry_rdev
+                                          , archive_entry_rdevmajor
+                                          , archive_entry_rdevminor
+                                          , archive_entry_sourcepath
+                                          , archive_entry_sourcepath_w
                                           , archive_entry_size
-                                          , archive_entry_uname
+                                          , archiveEntrySizeIsSet
+                                          , archive_entry_strmode
+                                          , archive_entry_symlink
+                                          , archive_entry_symlink_w
+                                          , archive_entry_symlink_utf8
                                           , archive_entry_uid
-                                          , archive_entry_gid
-                                          , archive_entry_mtime
-                                          , archive_entry_mtime_nsec
-                                          , archive_entry_set_mtime
-                                          , archive_entry_set_uname
-                                          , archive_entry_set_gname
-                                          , archive_entry_set_uid
+                                          , archive_entry_uname
+                                          , archive_entry_uname_utf8
+                                          , archive_entry_uname_w
+                                          , archiveEntryIsDataEncrypted
+                                          , archiveEntryIsMetadataEncrypted
+                                          , archiveEntryIsEncrypted
+                                          , archive_entry_set_atime
+                                          , archive_entry_unset_atime
+                                          , archive_entry_set_birthtime
+                                          , archive_entry_unset_birthtime
+                                          , archive_entry_set_ctime
+                                          , archive_entry_unset_ctime
+                                          , archive_entry_set_dev
+                                          , archive_entry_set_devmajor
+                                          , archive_entry_set_devminor
+                                          , archive_entry_set_fflags
+                                          , archive_entry_copy_fflags_text
+                                          , archive_entry_copy_fflags_text_w
+                                          , archive_entry_set_filetype
                                           , archive_entry_set_gid
+                                          , archive_entry_set_gname
+                                          , archive_entry_set_gname_utf8
+                                          , archive_entry_copy_gname
+                                          , archive_entry_copy_gname_w
+                                          , archiveEntryUpdateGNameUtf8
+                                          , archive_entry_set_hardlink
+                                          , archive_entry_set_hardlink_utf8
+                                          , archive_entry_copy_hardlink
+                                          , archive_entry_copy_hardlink_w
+                                          , archiveEntryUpdateHardlinkUtf8
+                                          , archive_entry_set_ino
+                                          , archive_entry_set_ino64
+                                          , archive_entry_set_link
+                                          , archive_entry_set_link_utf8
+                                          , archive_entry_copy_link
+                                          , archive_entry_copy_link_w
+                                          , archiveEntryUpdateLinkUtf8
+                                          , archive_entry_set_mode
+                                          , archive_entry_set_mtime
+                                          , archive_entry_unset_mtime
+                                          , archive_entry_set_nlink
+                                          , archive_entry_set_pathname
+                                          , archive_entry_set_pathname_utf8
+                                          , archive_entry_copy_pathname
+                                          , archive_entry_copy_pathname_w
+                                          , archiveEntryUpdatePathnameUtf8
+                                          , archive_entry_set_perm
+                                          , archive_entry_set_rdev
+                                          , archive_entry_set_rdevmajor
+                                          , archive_entry_set_rdevminor
+                                          , archive_entry_set_size
+                                          , archive_entry_unset_size
+                                          , archive_entry_copy_sourcepath
+                                          , archive_entry_copy_sourcepath_w
+                                          , archive_entry_set_symlink
+                                          , archive_entry_set_symlink_utf8
+                                          , archive_entry_copy_symlink
+                                          , archive_entry_copy_symlink_w
+                                          , archiveEntryUpdateSymlinkUtf8
+                                          , archive_entry_set_uid
+                                          , archive_entry_set_uname
+                                          , archive_entry_set_uname_utf8
+                                          , archive_entry_copy_uname
+                                          , archive_entry_copy_uname_w
+                                          , archiveEntryUpdateUNameUtf8
+                                          , archive_entry_stat
+                                          , archive_entry_copy_stat
                                           -- * File types
                                           , regular
                                           , symlink
@@ -137,7 +200,7 @@ foreign import ccall unsafe archive_entry_symlink_w :: Ptr ArchiveEntry -> IO CW
 foreign import ccall unsafe archive_entry_uid :: Ptr ArchiveEntry -> IO Id
 foreign import ccall unsafe archive_entry_uname :: Ptr ArchiveEntry -> IO CString
 foreign import ccall unsafe archive_entry_uname_utf8 :: Ptr ArchiveEntry -> IO CString
-foreign import ccall unsafe archive_entry_w :: Ptr ArchiveEntry -> IO CWString
+foreign import ccall unsafe archive_entry_uname_w :: Ptr ArchiveEntry -> IO CWString
 foreign import ccall unsafe archive_entry_is_data_encrypted :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall unsafe archive_entry_is_metadata_encrypted :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall unsafe archive_entry_is_encrypted :: Ptr ArchiveEntry -> IO CInt
@@ -188,10 +251,21 @@ foreign import ccall unsafe archive_entry_set_rdevmajor :: Ptr ArchiveEntry -> I
 foreign import ccall unsafe archive_entry_set_rdevminor :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_set_size :: Ptr ArchiveEntry -> Int64 -> IO ()
 foreign import ccall unsafe archive_entry_unset_size :: Ptr ArchiveEntry -> IO ()
-
-foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
-foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
+foreign import ccall unsafe archive_entry_copy_sourcepath :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_sourcepath_w :: Ptr ArchiveEntry -> CWString -> IO ()
 foreign import ccall unsafe archive_entry_set_symlink :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_symlink_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_symlink :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_symlink_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_symlink_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_set_uid :: Ptr ArchiveEntry -> Id -> IO ()
+foreign import ccall unsafe archive_entry_set_uname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_set_uname_utf8 :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_uname :: Ptr ArchiveEntry -> CString -> IO ()
+foreign import ccall unsafe archive_entry_copy_uname_w :: Ptr ArchiveEntry -> CWString -> IO ()
+foreign import ccall unsafe archive_entry_update_uname_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
+foreign import ccall unsafe archive_entry_stat :: Ptr ArchiveEntry -> IO (Ptr Stat)
+foreign import ccall unsafe archive_entry_copy_stat :: Ptr ArchiveEntry -> Ptr Stat -> IO ()
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
@@ -268,3 +342,9 @@ archiveEntryUpdateLinkUtf8 = fmap intToBool .* archive_entry_update_link_utf8
 
 archiveEntryUpdatePathnameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
 archiveEntryUpdatePathnameUtf8 = fmap intToBool .* archive_entry_update_pathname_utf8
+
+archiveEntryUpdateSymlinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdateSymlinkUtf8 = fmap intToBool .* archive_entry_update_symlink_utf8
+
+archiveEntryUpdateUNameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
+archiveEntryUpdateUNameUtf8 = fmap intToBool .* archive_entry_update_uname_utf8
