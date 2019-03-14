@@ -30,7 +30,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_support_format_all
                                      , archive_read_support_format_ar
                                      , archive_read_add_passphrase
-                                     , archive_read_set_passphrase
+                                     , archive_read_set_passphrase_callback
                                      -- * Direct bindings (write)
                                      , archive_write_data
                                      , archive_write_new
@@ -130,13 +130,17 @@ foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -
 foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveError
-foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_passphrase :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
+foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
+foreign import ccall unsafe archive_read_extract2 :: Ptr Archive -> Ptr ArchiveEntry -> Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_extract_set_progress :: Ptr Archive -> (FunPtr (Ptr a -> IO ())) -> Ptr a -> IO ()
+foreign import ccall unsafe archive_read_extract_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ()
+foreign import ccall unsafe archive_read_close :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_free :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_read_support_filter_all :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_support_filter_bzip2 :: Ptr Archive -> IO ArchiveError
@@ -178,8 +182,14 @@ foreign import ccall unsafe archive_read_support_format_zip_seekable :: Ptr Arch
 foreign import ccall unsafe archive_read_set_format :: Ptr Archive -> CInt -> IO ArchiveError
 
 -- Archive write
-foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
+foreign import ccall unsafe archive_write_set_blocks_per_byte :: Ptr Archive -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_write_get_blocks_per_byte :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_set_bytes_in_last_block :: Ptr Archive -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_get_bytes_in_last_block :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_write_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
 foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
