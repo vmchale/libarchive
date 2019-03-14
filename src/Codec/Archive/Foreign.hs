@@ -5,3 +5,5 @@ module Codec.Archive.Foreign ( module Codec.Archive.Foreign.ArchiveEntry
                              , module Codec.Archive.Foreign.Archive
                              ) where
 
+import Codec.Archive.Foreign.ArchiveEntry
+import Codec.Archive.Foreign.Archive

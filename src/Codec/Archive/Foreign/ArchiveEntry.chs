@@ -53,9 +53,9 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
 import Codec.Archive.Types
 import Data.Int (Int64)
 import Data.Word (Word64)
-import Foreign.Ptr (Ptr)
 import Foreign.C.String
 import Foreign.C.Types
+import Foreign.Ptr (Ptr)
 import System.Posix.Types (CMode (..))
 
 #include <archive_entry.h>

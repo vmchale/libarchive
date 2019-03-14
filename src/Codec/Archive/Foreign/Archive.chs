@@ -96,14 +96,11 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveFilter
                                      ) where
 
-import           Codec.Archive.Foreign.ArchiveEntry
-import           Codec.Archive.Types
-import           Data.Int            (Int64)
-import           Data.Word           (Word64)
-import           Foreign.C.String
-import           Foreign.C.Types
-import           Foreign.Ptr
-import           System.Posix.Types  (CMode (..))
+import Data.Int (Int64)
+import Codec.Archive.Types
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Ptr (Ptr)
 
 -- Miscellaneous
 foreign import ccall archive_version_number :: CInt
