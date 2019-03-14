@@ -115,13 +115,13 @@ foreign import ccall archive_version_number :: CInt
 foreign import ccall archive_version_string :: CString
 foreign import ccall archive_version_details :: CString
 
-type ArchiveReadCallback = FunPtr (Ptr Archive -> CString -> Ptr CString -> IO CSize)
-type ArchiveSkipCallback = FunPtr (Ptr Archive -> CString -> Int64 -> IO Int64)
-type ArchiveSeekCallback = FunPtr (Ptr Archive -> CString -> Int64 -> CInt -> IO Int64)
-type ArchiveWriteCallback = FunPtr (Ptr Archive -> CString -> CString -> CSize -> IO CSize)
-type ArchiveOpenCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
-type ArchiveCloseCallback = FunPtr (Ptr Archive -> CString -> IO ArchiveError)
-type ArchiveSwitchCallback = FunPtr (Ptr Archive -> CString -> CString -> IO ArchiveError)
+type ArchiveReadCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize)
+type ArchiveSkipCallback a = FunPtr (Ptr Archive -> Ptr a -> Int64 -> IO Int64)
+type ArchiveSeekCallback a = FunPtr (Ptr Archive -> Ptr a -> Int64 -> CInt -> IO Int64)
+type ArchiveWriteCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO CSize)
+type ArchiveOpenCallback a = FunPtr (Ptr Archive -> Ptr a -> IO ArchiveError)
+type ArchiveCloseCallback a = FunPtr (Ptr Archive -> Ptr a -> IO ArchiveError)
+type ArchiveSwitchCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveError)
 type ArchivePassphraseCallback a = FunPtr (Ptr Archive -> Ptr a -> IO CString)
 
 -- Archive read
