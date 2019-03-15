@@ -9,7 +9,6 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_extract
                                      , archive_read_open_filename
                                      , archive_read_open_filename_w
-                                     , archive_read_open_memory
                                      , archive_read_support_filter_all
                                      , archive_read_support_filter_bzip2
                                      , archive_read_support_filter_compress
@@ -31,7 +30,70 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_support_format_ar
                                      , archive_read_add_passphrase
                                      , archive_read_set_passphrase_callback
+                                     , archive_read_extract2
+                                     , archive_read_extract_set_progress_callback
+                                     , archive_read_extract_set_skip_file
+                                     , archive_read_close
+                                     , archive_read_support_format_by_code
+                                     , archive_read_support_format_cab
+                                     , archive_read_support_format_cpio
+                                     , archive_read_support_format_empty
+                                     , archive_read_support_format_gnutar
+                                     , archive_read_support_format_iso9660
+                                     , archive_read_support_format_lha
+                                     , archive_read_support_format_mtree
+                                     , archive_read_support_format_rar
+                                     , archive_read_support_format_raw
+                                     , archive_read_support_format_tar
+                                     , archive_read_support_format_warc
+                                     , archive_read_support_format_xar
+                                     , archive_read_support_format_zip
+                                     , archive_read_support_format_zip_streamable
+                                     , archive_read_support_format_zip_seekable
+                                     , archive_read_set_format
+                                     , archive_read_append_filter
+                                     , archive_read_append_filter_program
+                                     , archive_read_append_filter_program_signature
+                                     , archive_read_set_open_callback
+                                     , archive_read_set_read_callback
+                                     , archive_read_set_seek_callback
+                                     , archive_read_set_skip_callback
+                                     , archive_read_set_close_callback
+                                     , archive_read_set_switch_callback
+                                     , archive_read_set_callback_data
+                                     , archive_read_set_callback_data2
+                                     , archive_read_add_callback_data
+                                     , archive_read_append_callback_data
+                                     , archive_read_prepend_callback_data
+                                     , archive_read_open1
+                                     , archive_read_open
+                                     , archive_read_open2
+                                     , archive_read_open_filenames
+                                     , archive_read_open_memory
+                                     , archive_read_open_memory2
+                                     , archive_read_open_fd
                                      -- * Direct bindings (write)
+                                     , archive_write_set_bytes_per_block
+                                     , archive_write_get_bytes_per_block
+                                     , archive_write_set_bytes_in_last_block
+                                     , archive_write_get_bytes_in_last_block
+                                     , archive_write_set_skip_file
+                                     , archive_write_add_filter
+                                     , archive_write_add_filter_by_name
+                                     , archive_write_add_filter_b64encode
+                                     , archive_write_add_filter_bzip2
+                                     , archive_write_add_filter_compress
+                                     , archive_write_add_filter_grzip
+                                     , archive_write_add_filter_gzip
+                                     , archive_write_add_filter_lrzip
+                                     , archive_write_add_filter_lz4
+                                     , archive_write_add_filter_lzip
+                                     , archive_write_add_filter_lzma
+                                     , archive_write_add_filter_lzop
+                                     , archive_write_add_filter_none
+                                     , archive_write_add_filter_program
+                                     , archive_write_add_filter_uuencode
+                                     , archive_write_add_filter_xz
                                      , archive_write_data
                                      , archive_write_new
                                      , archive_write_free
@@ -87,6 +149,22 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveFilterLzop
                                      , archiveFilterGrzip
                                      , archiveFilterLz4
+                                     -- * Formats
+                                     , archiveFormatCpio
+                                     , archiveFormatShar
+                                     , archiveFormatTar
+                                     , archiveFormatIso9660
+                                     , archiveFormatZip
+                                     , archiveFormatEmpty
+                                     , archiveFormatAr
+                                     , archiveFormatMtree
+                                     , archiveFormatRaw
+                                     , archiveFormatXar
+                                     , archiveFormatLha
+                                     , archiveFormatCab
+                                     , archiveFormatRar
+                                     , archiveFormat7zip
+                                     , archiveFormatWarc
                                      -- * Abstract types
                                      , Archive
                                      -- * Lower-level API types
