@@ -170,10 +170,13 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveFormatWarc
                                      -- * Abstract types
                                      , Archive
+                                     -- * Haskell types
+                                     , ArchiveEncryption (..)
                                      -- * Lower-level API types
                                      , ArchiveError
                                      , Flags
                                      , ArchiveFilter
+                                     , ArchiveFormat
                                      -- * Callback types
                                      , ArchiveReadCallback
                                      , ArchiveSkipCallback
@@ -192,6 +195,9 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , mkCloseCallback
                                      , mkSwitchCallback
                                      , mkPassphraseCallback
+                                     , mkWriteLookup
+                                     , mkReadLookup
+                                     , mkCleanup
                                      ) where
 
 import Codec.Archive.Foreign.Common
@@ -423,6 +429,7 @@ foreign import ccall unsafe archive_read_disk_open :: Ptr Archive -> CString -> 
 foreign import ccall unsafe archive_read_disk_open_w :: Ptr Archive -> CWString -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_descend :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_can_descend :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_disk_current_filesystem :: Ptr Archive -> IO CInt
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
 
