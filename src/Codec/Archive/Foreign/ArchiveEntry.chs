@@ -1,6 +1,4 @@
 -- | Functions found in @archive_entry.h@
---
--- There are several bits missing, particularly stuff related to ACL
 module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                             archive_entry_clear
                                           , archive_entry_clone

@@ -10,4 +10,4 @@ This contains partial Haskell bindings around
 formats.
 
 Right now it has high-level support for creating and unpacking archives, as well
-as direct bindings to most of the C API.
+as bindings to the C API.
