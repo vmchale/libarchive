@@ -194,6 +194,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , mkPassphraseCallback
                                      ) where
 
+import Data.Bits (Bits (..))
 import Data.Int (Int64)
 import Codec.Archive.Types
 import Foreign.C.String
@@ -206,6 +207,7 @@ foreign import ccall archive_version_number :: CInt
 foreign import ccall archive_version_string :: CString
 foreign import ccall archive_version_details :: CString
 
+-- destructors: use "dynamic" instead of "wrapper" (but we don't want that)
 -- callbacks
 foreign import ccall "wrapper" mkReadCallback :: ArchiveReadCallback a b -> IO (FunPtr (ArchiveReadCallback a b))
 foreign import ccall "wrapper" mkSkipCallback :: ArchiveSkipCallback a -> IO (FunPtr (ArchiveSkipCallback a))
@@ -227,9 +229,6 @@ type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
-foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveError
-foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
-foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> FunPtr (ArchivePassphraseCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
@@ -305,6 +304,12 @@ foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr 
 foreign import ccall unsafe archive_read_next_header2 :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
 foreign import ccall unsafe archive_read_header_position :: Ptr Archive -> IO Int64
 foreign import ccall unsafe archive_read_has_encrypted_entries :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_format_capabilities :: Ptr Archive -> IO ArchiveCapabilities
+foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -> IO CSize
+foreign import ccall unsafe archive_seek_data :: Ptr Archive -> Int64 -> CInt -> IO Int64
+foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
+foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_data_into_fd :: Ptr Archive -> Fd -> IO ArchiveError
 
 -- Archive write
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
@@ -521,3 +526,15 @@ encryptionResult 1                                                        = HasE
 encryptionResult ({# const ARCHIVE_READ_FORMAT_ENCRYPTION_UNSUPPORTED #}) = EncryptionUnsupported
 encryptionResult ({# const ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW #})   = EncryptionUnknown
 encryptionResult _                                                        = error "Should not happen."
+
+archiveReadFormatCapsNone :: ArchiveCapabilities
+archiveReadFormatCapsNone = {# const ARCHIVE_READ_FORMAT_CAPS_NONE #}
+
+(<<) :: Bits a => a -> Int -> a
+m << n = m `shift` n
+
+archiveReadFormatCapsEncryptData :: ArchiveCapabilities
+archiveReadFormatCapsEncryptData = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+
+archiveReadFormatCapsEncryptMetadata :: ArchiveCapabilities
+archiveReadFormatCapsEncryptMetadata = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}

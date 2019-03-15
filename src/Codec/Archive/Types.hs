@@ -18,12 +18,13 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ArchiveFilter (..)
                            , ArchiveFormat (..)
                            , FileType (..)
+                           , ArchiveCapabilities (..)
                            -- * Values
                            , standardPermissions
                            , executablePermissions
                            ) where
 
-import           Data.Bits          ((.|.))
+import           Data.Bits          (Bits (..))
 import qualified Data.ByteString    as BS
 import           Data.Int           (Int64)
 import           Data.Semigroup
@@ -83,6 +84,9 @@ newtype ExtractFlags = ExtractFlags CInt
 
 newtype ArchiveFilter = ArchiveFilter CInt
     deriving (Num)
+
+newtype ArchiveCapabilities = ArchiveCapabilities CInt
+    deriving (Eq, Num, Bits)
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption

@@ -1,4 +1,6 @@
 -- | Functions found in @archive_entry.h@
+--
+-- There are several bits missing, particularly stuff related to ACL
 module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                             archive_entry_clear
                                           , archive_entry_clone
@@ -119,6 +121,8 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryUpdateUNameUtf8
                                           , archive_entry_stat
                                           , archive_entry_copy_stat
+                                          , archive_entry_mac_metadata
+                                          , archive_entry_copy_mac_metadata
                                           -- * File types
                                           , regular
                                           , symlink
@@ -266,6 +270,8 @@ foreign import ccall unsafe archive_entry_copy_uname_w :: Ptr ArchiveEntry -> CW
 foreign import ccall unsafe archive_entry_update_uname_utf8 :: Ptr ArchiveEntry -> CString -> IO CInt
 foreign import ccall unsafe archive_entry_stat :: Ptr ArchiveEntry -> IO (Ptr Stat)
 foreign import ccall unsafe archive_entry_copy_stat :: Ptr ArchiveEntry -> Ptr Stat -> IO ()
+foreign import ccall unsafe archive_entry_mac_metadata :: Ptr ArchiveEntry -> Ptr CSize -> IO (Ptr a)
+foreign import ccall unsafe archive_entry_copy_mac_metadata :: Ptr ArchiveEntry -> Ptr a -> CSize -> IO ()
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
