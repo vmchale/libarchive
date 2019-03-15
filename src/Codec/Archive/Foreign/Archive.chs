@@ -195,6 +195,16 @@ foreign import ccall unsafe archive_write_add_filter_bzip2 :: Ptr Archive -> IO 
 foreign import ccall unsafe archive_write_add_filter_compress :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_add_filter_grzip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_add_filter_gzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_lrzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_lz4 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_lzip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_lzma :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_lzop :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_none :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_program :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_uuencode :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_add_filter_xz :: Ptr Archive -> IO ArchiveError
+-- foreign import ccall unsafe archive_write_add_filter_zstd :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO ArchiveError
@@ -331,3 +341,48 @@ archiveExtractSecureNoAbsolutePaths = {# const ARCHIVE_EXTRACT_SECURE_NOABSOLUTE
 
 archiveExtractClearNoChangeFFlags :: ExtractFlags
 archiveExtractClearNoChangeFFlags = {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
+
+archiveFormatCpio :: ArchiveFormat
+archiveFormatCpio = {# const ARCHIVE_FORMAT_CPIO #}
+
+archiveFormatShar :: ArchiveFormat
+archiveFormatShar = {# const ARCHIVE_FORMAT_SHAR #}
+
+archiveFormatTar :: ArchiveFormat
+archiveFormatTar = {# const ARCHIVE_FORMAT_TAR #}
+
+archiveFormatIso9660 :: ArchiveFormat
+archiveFormatIso9660 = {# const ARCHIVE_FORMAT_ISO9660 #}
+
+archiveFormatZip :: ArchiveFormat
+archiveFormatZip = {# const ARCHIVE_FORMAT_ZIP #}
+
+archiveFormatEmpty :: ArchiveFormat
+archiveFormatEmpty = {# const ARCHIVE_FORMAT_EMPTY #}
+
+archiveFormatAr :: ArchiveFormat
+archiveFormatAr = {# const ARCHIVE_FORMAT_AR #}
+
+archiveFormatMtree :: ArchiveFormat
+archiveFormatMtree = {# const ARCHIVE_FORMAT_MTREE #}
+
+archiveFormatRaw :: ArchiveFormat
+archiveFormatRaw = {# const ARCHIVE_FORMAT_RAW #}
+
+archiveFormatXar :: ArchiveFormat
+archiveFormatXar = {# const ARCHIVE_FORMAT_XAR #}
+
+archiveFormatLha :: ArchiveFormat
+archiveFormatLha = {# const ARCHIVE_FORMAT_LHA #}
+
+archiveFormatCab :: ArchiveFormat
+archiveFormatCab = {# const ARCHIVE_FORMAT_CAB #}
+
+archiveFormatRar :: ArchiveFormat
+archiveFormatRar = {# const ARCHIVE_FORMAT_RAR #}
+
+archiveFormat7zip :: ArchiveFormat
+archiveFormat7zip = {# const ARCHIVE_FORMAT_7ZIP #}
+
+archiveFormatWarc :: ArchiveFormat
+archiveFormatWarc = {# const ARCHIVE_FORMAT_WARC #}
