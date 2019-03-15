@@ -344,10 +344,40 @@ foreign import ccall unsafe archive_write_add_filter_uuencode :: Ptr Archive -> 
 foreign import ccall unsafe archive_write_add_filter_xz :: Ptr Archive -> IO ArchiveError
 -- foreign import ccall unsafe archive_write_add_filter_zstd :: Ptr Archive -> IO ArchiveError
 
-foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
+foreign import ccall unsafe archive_write_set_format :: Ptr Archive -> ArchiveFormat -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_by_name :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_7zip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_ar_bsd :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_ar_sv4 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_cpio :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_cpio_newc :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_gnutar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_iso9660 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_mtree :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_mtree_classic :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_pax :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_pax_restricted :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_raw :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_shar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_shar_dump :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_ustar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_v7tar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_warc :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_xar :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_zip :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_filter_by_ext :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_filter_by_ext_def :: Ptr Archive -> CString -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_zip_set_compression_deflate :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_zip_set_compression_store :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_write_open_fd :: Ptr Archive -> Fd -> IO ArchiveError
 foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_open_filename_w :: Ptr Archive -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_write_open_memory :: Ptr Archive -> Ptr a -> CSize -> Ptr CSize -> IO ArchiveError
+-- foreign import ccall unsafe archive_write_open_FILE
+
+foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
+foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
 foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
