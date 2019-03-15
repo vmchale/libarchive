@@ -9,4 +9,5 @@ This contains partial Haskell bindings around
 [tar](http://hackage.haskell.org/package/tar), but it supports more archive
 formats.
 
-Right now it has high-level support for creating and unpacking archives.
+Right now it has high-level support for creating and unpacking archives, as well
+as direct bindings to most of the C API.
