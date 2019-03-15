@@ -197,14 +197,24 @@ foreign import ccall archive_version_number :: CInt
 foreign import ccall archive_version_string :: CString
 foreign import ccall archive_version_details :: CString
 
-type ArchiveReadCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize)
-type ArchiveSkipCallback a = FunPtr (Ptr Archive -> Ptr a -> Int64 -> IO Int64)
-type ArchiveSeekCallback a = FunPtr (Ptr Archive -> Ptr a -> Int64 -> CInt -> IO Int64)
-type ArchiveWriteCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO CSize)
-type ArchiveOpenCallback a = FunPtr (Ptr Archive -> Ptr a -> IO ArchiveError)
-type ArchiveCloseCallback a = FunPtr (Ptr Archive -> Ptr a -> IO ArchiveError)
-type ArchiveSwitchCallback a b = FunPtr (Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveError)
-type ArchivePassphraseCallback a = FunPtr (Ptr Archive -> Ptr a -> IO CString)
+-- callbacks
+foreign import ccall "wrapper" mkReadCallback :: ArchiveReadCallback a b -> IO (FunPtr (ArchiveReadCallback a b))
+foreign import ccall "wrapper" mkSkipCallback :: ArchiveSkipCallback a -> IO (FunPtr (ArchiveSkipCallback a))
+foreign import ccall "wrapper" mkSeekCallback :: ArchiveSeekCallback a -> IO (FunPtr (ArchiveSeekCallback a))
+foreign import ccall "wrapper" mkWriteCallback :: ArchiveWriteCallback a b -> IO (FunPtr (ArchiveWriteCallback a b))
+foreign import ccall "wrapper" mkOpenCallback :: ArchiveOpenCallback a -> IO (FunPtr (ArchiveOpenCallback a))
+foreign import ccall "wrapper" mkCloseCallback :: ArchiveCloseCallback a -> IO (FunPtr (ArchiveCloseCallback a))
+foreign import ccall "wrapper" mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallback a b))
+foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
+
+type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
+type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
+type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> Int64 -> CInt -> IO Int64
+type ArchiveWriteCallback a b = Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO CSize
+type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveError
+type ArchiveCloseCallback a = Ptr Archive -> Ptr a -> IO ArchiveError
+type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveError
+type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
 -- Archive read
 foreign import ccall unsafe archive_read_new :: IO (Ptr Archive)
@@ -212,7 +222,7 @@ foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -
 foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> FunPtr (ArchivePassphraseCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract2 :: Ptr Archive -> Ptr ArchiveEntry -> Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract_set_progress_callback :: Ptr Archive -> (FunPtr (Ptr a -> IO ())) -> Ptr a -> IO ()
@@ -261,20 +271,20 @@ foreign import ccall unsafe archive_read_set_format :: Ptr Archive -> ArchiveFor
 foreign import ccall unsafe archive_read_append_filter :: Ptr Archive -> ArchiveFilter -> IO ArchiveError
 foreign import ccall unsafe archive_read_append_filter_program :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_append_filter_program_signature :: Ptr Archive -> CString -> Ptr a -> CSize -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_open_callback :: Ptr Archive -> ArchiveOpenCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_read_callback :: Ptr Archive -> ArchiveOpenCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_seek_callback :: Ptr Archive -> ArchiveOpenCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_skip_callback :: Ptr Archive -> ArchiveSkipCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_close_callback :: Ptr Archive -> ArchiveCloseCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_switch_callback :: Ptr Archive -> ArchiveSwitchCallback a b -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_open_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_read_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_seek_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_skip_callback :: Ptr Archive -> FunPtr (ArchiveSkipCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_close_callback :: Ptr Archive -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_switch_callback :: Ptr Archive -> FunPtr (ArchiveSwitchCallback a b) -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_callback_data2 :: Ptr Archive -> Ptr a -> CUInt -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_callback_data :: Ptr Archive -> Ptr a -> CUInt -> IO ArchiveError
 foreign import ccall unsafe archive_read_append_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall unsafe archive_read_prepend_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall unsafe archive_read_open1 :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_open :: Ptr Archive -> Ptr a -> ArchiveOpenCallback a -> ArchiveReadCallback a b -> ArchiveCloseCallback a -> IO ArchiveError
-foreign import ccall unsafe archive_read_open2 :: Ptr Archive -> Ptr a -> ArchiveOpenCallback a -> ArchiveReadCallback a b -> ArchiveSkipCallback a -> ArchiveCloseCallback a -> IO ArchiveError
+foreign import ccall unsafe archive_read_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_open2 :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveSkipCallback a) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filenames :: Ptr Archive -> Ptr CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
