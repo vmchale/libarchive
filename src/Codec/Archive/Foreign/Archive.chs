@@ -172,7 +172,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , Archive
                                      -- * Lower-level API types
                                      , ArchiveError
-                                     , ExtractFlags
+                                     , Flags
                                      , ArchiveFilter
                                      -- * Callback types
                                      , ArchiveReadCallback
@@ -311,7 +311,7 @@ foreign import ccall unsafe archive_read_set_options :: Ptr Archive -> CString -
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> FunPtr (ArchivePassphraseCallback a) -> IO ArchiveError
 
-foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
+foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> Flags -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract2 :: Ptr Archive -> Ptr ArchiveEntry -> Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract_set_progress_callback :: Ptr Archive -> (FunPtr (Ptr a -> IO ())) -> Ptr a -> IO ()
 foreign import ccall unsafe archive_read_extract_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ()
@@ -373,12 +373,30 @@ foreign import ccall unsafe archive_write_open :: Ptr Archive -> Ptr a -> FunPtr
 foreign import ccall unsafe archive_write_open_fd :: Ptr Archive -> Fd -> IO ArchiveError
 foreign import ccall unsafe archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_write_open_filename_w :: Ptr Archive -> CWString -> IO ArchiveError
-foreign import ccall unsafe archive_write_open_memory :: Ptr Archive -> Ptr a -> CSize -> Ptr CSize -> IO ArchiveError
 -- foreign import ccall unsafe archive_write_open_FILE
+foreign import ccall unsafe archive_write_open_memory :: Ptr Archive -> Ptr a -> CSize -> Ptr CSize -> IO ArchiveError
 
-foreign import ccall unsafe archive_write_data :: Ptr Archive -> CString -> CSize -> IO CSize
 foreign import ccall unsafe archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveError
+foreign import ccall unsafe archive_write_data :: Ptr Archive -> Ptr a -> CSize -> IO CSize
+
+foreign import ccall unsafe archive_write_data_block :: Ptr Archive -> Ptr a -> CSize -> Int64 -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_finish_entry :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_close :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_fail :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_free :: Ptr Archive -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_set_format_option :: Ptr Archive -> CString -> CString -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_filter_option :: Ptr Archive -> CString -> CString -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_option :: Ptr Archive -> CString -> CString -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_options :: Ptr Archive -> CString -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_set_passphrase :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_passphrase_callback :: Ptr Archive -> Ptr a -> FunPtr (ArchivePassphraseCallback a) -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_disk_new :: IO (Ptr Archive)
+foreign import ccall unsafe archive_write_disk_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ArchiveError
+foreign import ccall unsafe archive_write_disk_set_options :: Ptr Archive -> Flags -> IO ArchiveError
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
 
@@ -456,58 +474,58 @@ archiveFilterLz4 :: ArchiveFilter
 archiveFilterLz4 = {# const ARCHIVE_FILTER_LZ4 #}
 
 -- Extraction flags
-archiveExtractOwner :: ExtractFlags
+archiveExtractOwner :: Flags
 archiveExtractOwner = {# const ARCHIVE_EXTRACT_OWNER #}
 
-archiveExtractPerm :: ExtractFlags
+archiveExtractPerm :: Flags
 archiveExtractPerm = {# const ARCHIVE_EXTRACT_PERM #}
 
-archiveExtractTime :: ExtractFlags
+archiveExtractTime :: Flags
 archiveExtractTime = {# const ARCHIVE_EXTRACT_TIME #}
 
-archiveExtractNoOverwrite :: ExtractFlags
+archiveExtractNoOverwrite :: Flags
 archiveExtractNoOverwrite = {# const ARCHIVE_EXTRACT_NO_OVERWRITE #}
 
-archiveExtractUnlink :: ExtractFlags
+archiveExtractUnlink :: Flags
 archiveExtractUnlink = {# const ARCHIVE_EXTRACT_UNLINK #}
 
-archiveExtractACL :: ExtractFlags
+archiveExtractACL :: Flags
 archiveExtractACL = {# const ARCHIVE_EXTRACT_ACL #}
 
-archiveExtractFFlags :: ExtractFlags
+archiveExtractFFlags :: Flags
 archiveExtractFFlags = {# const ARCHIVE_EXTRACT_FFLAGS #}
 
-archiveExtractXattr :: ExtractFlags
+archiveExtractXattr :: Flags
 archiveExtractXattr = {# const ARCHIVE_EXTRACT_XATTR #}
 
-archiveExtractSecureSymlinks :: ExtractFlags
+archiveExtractSecureSymlinks :: Flags
 archiveExtractSecureSymlinks = {# const ARCHIVE_EXTRACT_SECURE_SYMLINKS #}
 
-archiveExtractSecureNoDotDot :: ExtractFlags
+archiveExtractSecureNoDotDot :: Flags
 archiveExtractSecureNoDotDot = {# const ARCHIVE_EXTRACT_SECURE_NODOTDOT #}
 
-archiveExtractNoAutodir :: ExtractFlags
+archiveExtractNoAutodir :: Flags
 archiveExtractNoAutodir = {# const ARCHIVE_EXTRACT_NO_AUTODIR #}
 
--- archiveExtractNoOverwriteNewer :: ExtractFlags
+-- archiveExtractNoOverwriteNewer :: Flags
 -- archiveExtractNoOverwriteNewer = {# const ARCHIVE_NO_OVERWRITE_NEWER #}
 
-archiveExtractSparse :: ExtractFlags
+archiveExtractSparse :: Flags
 archiveExtractSparse = {# const ARCHIVE_EXTRACT_SPARSE #}
 
-archiveExtractMacMetadata :: ExtractFlags
+archiveExtractMacMetadata :: Flags
 archiveExtractMacMetadata = {# const ARCHIVE_EXTRACT_MAC_METADATA #}
 
-archiveExtractNoHfsCompression :: ExtractFlags
+archiveExtractNoHfsCompression :: Flags
 archiveExtractNoHfsCompression = {# const ARCHIVE_EXTRACT_NO_HFS_COMPRESSION #}
 
-archiveExtractHfsCompressionForced :: ExtractFlags
+archiveExtractHfsCompressionForced :: Flags
 archiveExtractHfsCompressionForced = {# const ARCHIVE_EXTRACT_HFS_COMPRESSION_FORCED #}
 
-archiveExtractSecureNoAbsolutePaths :: ExtractFlags
+archiveExtractSecureNoAbsolutePaths :: Flags
 archiveExtractSecureNoAbsolutePaths = {# const ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS #}
 
-archiveExtractClearNoChangeFFlags :: ExtractFlags
+archiveExtractClearNoChangeFFlags :: Flags
 archiveExtractClearNoChangeFFlags = {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
 
 archiveFormatCpio :: ArchiveFormat

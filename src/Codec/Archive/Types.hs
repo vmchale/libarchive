@@ -13,7 +13,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , Permissions
                            , ArchiveEncryption (..)
                            -- * Macros
-                           , ExtractFlags (..)
+                           , Flags (..)
                            , ArchiveError (..)
                            , ArchiveFilter (..)
                            , ArchiveFormat (..)
@@ -79,7 +79,7 @@ newtype FileType = FileType CMode
 newtype ArchiveError = ArchiveError CInt
     deriving (Eq, Num)
 
-newtype ExtractFlags = ExtractFlags CInt
+newtype Flags = Flags CInt
     deriving (Num)
 
 newtype ArchiveFilter = ArchiveFilter CInt
@@ -93,9 +93,9 @@ data ArchiveEncryption = HasEncryption
                        | EncryptionUnsupported
                        | EncryptionUnknown
 
-instance Semigroup ExtractFlags where
-    (<>) (ExtractFlags x) (ExtractFlags y) = ExtractFlags (x .|. y)
+instance Semigroup Flags where
+    (<>) (Flags x) (Flags y) = Flags (x .|. y)
 
-instance Monoid ExtractFlags where
+instance Monoid Flags where
     mempty = 0
     mappend = (<>)
