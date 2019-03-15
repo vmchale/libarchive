@@ -11,6 +11,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ModTime
                            , Id
                            , Permissions
+                           , ArchiveEncryption (..)
                            -- * Macros
                            , ExtractFlags (..)
                            , ArchiveError (..)
@@ -82,6 +83,11 @@ newtype ExtractFlags = ExtractFlags CInt
 
 newtype ArchiveFilter = ArchiveFilter CInt
     deriving (Num)
+
+data ArchiveEncryption = HasEncryption
+                       | NoEncryption
+                       | EncryptionUnsupported
+                       | EncryptionUnknown
 
 instance Semigroup ExtractFlags where
     (<>) (ExtractFlags x) (ExtractFlags y) = ExtractFlags (x .|. y)
