@@ -109,6 +109,7 @@ import Codec.Archive.Types
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr (FunPtr, Ptr)
+import System.Posix.Types (Fd (..))
 
 -- Miscellaneous
 foreign import ccall archive_version_number :: CInt
@@ -130,7 +131,6 @@ foreign import ccall unsafe archive_read_data :: Ptr Archive -> Ptr a -> CSize -
 foreign import ccall unsafe archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_read_data_skip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveError
-foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_add_passphrase :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_passphrase_callback :: Ptr Archive -> Ptr a -> ArchivePassphraseCallback a -> IO ArchiveError
 foreign import ccall unsafe archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> ExtractFlags -> IO ArchiveError
@@ -198,6 +198,9 @@ foreign import ccall unsafe archive_read_open2 :: Ptr Archive -> Ptr a -> Archiv
 foreign import ccall unsafe archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filenames :: Ptr Archive -> Ptr CString -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_memory2 :: Ptr Archive -> Ptr a -> CSize -> CSize -> IO ArchiveError
+foreign import ccall unsafe archive_read_open_fd :: Ptr Archive -> Fd -> CSize -> IO ArchiveError
 
 -- Archive write
 foreign import ccall unsafe archive_write_new :: IO (Ptr Archive)
