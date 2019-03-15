@@ -194,6 +194,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , mkPassphraseCallback
                                      ) where
 
+import Codec.Archive.Foreign.Common
 import Data.Bits (Bits (..))
 import Data.Int (Int64)
 import Codec.Archive.Types
@@ -217,6 +218,10 @@ foreign import ccall "wrapper" mkOpenCallback :: ArchiveOpenCallback a -> IO (Fu
 foreign import ccall "wrapper" mkCloseCallback :: ArchiveCloseCallback a -> IO (FunPtr (ArchiveCloseCallback a))
 foreign import ccall "wrapper" mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallback a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
+
+foreign import ccall "wrapper" mkWriteLookup :: (Ptr a -> CString -> Int64 -> IO Int64) -> IO (FunPtr (Ptr a -> CString -> Int64 -> IO Int64))
+foreign import ccall "wrapper" mkReadLookup :: (Ptr a -> Int64 -> IO CString) -> IO (FunPtr (Ptr a -> Int64 -> IO CString))
+foreign import ccall "wrapper" mkCleanup :: (Ptr a -> IO ()) -> IO (FunPtr (Ptr a -> IO ()))
 
 type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
 type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
@@ -397,6 +402,27 @@ foreign import ccall unsafe archive_write_set_passphrase_callback :: Ptr Archive
 foreign import ccall unsafe archive_write_disk_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_write_disk_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ArchiveError
 foreign import ccall unsafe archive_write_disk_set_options :: Ptr Archive -> Flags -> IO ArchiveError
+
+foreign import ccall unsafe archive_write_disk_set_standard_lookup :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_disk_set_group_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> Int64 -> IO Int64) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_write_disk_set_user_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> Int64 -> IO Int64) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_write_disk_gid :: Ptr Archive -> CString -> Int64 -> IO Int64
+foreign import ccall unsafe archive_write_disk_uid :: Ptr Archive -> CString -> Int64 -> IO Int64
+
+foreign import ccall unsafe archive_read_disk_new :: IO (Ptr Archive)
+foreign import ccall unsafe archive_read_disk_set_symlink_logical :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_symlink_physically :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_symlink_hybrid :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_entry_from_file :: Ptr Archive -> Ptr ArchiveEntry -> Fd -> Ptr Stat -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_gname :: Ptr Archive -> Int64 -> IO CString
+foreign import ccall unsafe archive_read_disk_uname :: Ptr Archive -> Int64 -> IO CString
+foreign import ccall unsafe archive_read_set_standard_lookup :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_gname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_uname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_open :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_open_w :: Ptr Archive -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_descend :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_can_descend :: Ptr Archive -> IO CInt
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
 
@@ -594,3 +620,6 @@ archiveReadFormatCapsEncryptData = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DAT
 
 archiveReadFormatCapsEncryptMetadata :: ArchiveCapabilities
 archiveReadFormatCapsEncryptMetadata = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+
+archiveReadDiskCanDescend :: Ptr Archive -> IO Bool
+archiveReadDiskCanDescend = fmap intToBool . archive_read_disk_can_descend

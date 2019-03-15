@@ -137,6 +137,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , FileType
                                           ) where
 
+import Codec.Archive.Foreign.Common
 import Codec.Archive.Types
 import Control.Composition ((.*))
 import Data.Int (Int64)
@@ -303,9 +304,6 @@ directory = {# const AE_IFDIR #}
 
 fifo :: FileType
 fifo = {# const AE_IFIFO #}
-
-intToBool :: CInt -> Bool
-intToBool = toEnum . fromIntegral
 
 archiveEntryATimeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntryATimeIsSet = fmap intToBool . archive_entry_atime_is_set
