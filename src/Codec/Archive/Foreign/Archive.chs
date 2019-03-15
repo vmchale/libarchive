@@ -183,6 +183,15 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveCloseCallback
                                      , ArchiveSwitchCallback
                                      , ArchivePassphraseCallback
+                                     -- * Callback constructors
+                                     , mkReadCallback
+                                     , mkSkipCallback
+                                     , mkSeekCallback
+                                     , mkWriteCallback
+                                     , mkOpenCallback
+                                     , mkCloseCallback
+                                     , mkSwitchCallback
+                                     , mkPassphraseCallback
                                      ) where
 
 import Data.Int (Int64)
