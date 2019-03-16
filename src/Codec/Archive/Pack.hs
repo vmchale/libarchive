@@ -18,6 +18,7 @@ import           Foreign.Storable      (peek)
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> IO ()
 contentAdd (NormalFile contents) a entry = do
     archive_entry_set_filetype entry regular
+    archive_entry_set_size entry (fromIntegral (BS.length contents))
     void $ archive_write_header a entry
     useAsCStringLen contents $ \(buff, sz) ->
         void $ archive_write_data a buff (fromIntegral sz)
