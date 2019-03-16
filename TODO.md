@@ -1,9 +1,11 @@
 # Code Maintenance
 - [ ] Test suite
   - [ ] Roundtrip test
+  - [ ] Figure out how to test for memory leaks
 - [ ] Better support for error handling
 # Documentation
 - [ ] Note that we don't support deprecated functions in the documentation
+- [ ] Add example in haddocks
 # Features
 - [ ] `pipes` support?
 - [ ] check for tarbombs?
