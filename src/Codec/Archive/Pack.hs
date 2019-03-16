@@ -52,16 +52,16 @@ entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
-    -- is the order here wrong?
-    alloca $ \used -> allocaBytes bufSize $ \buffer -> do
-        void $ archive_write_open_memory a buffer bufSize used
-        packEntries a hsEntries'
-        res <- getEntriesBS a used buffer mempty
-        void $ archive_write_free a
-        pure res
+    alloca $ \used ->
+        allocaBytes bufSize $ \buffer -> do
+            void $ archive_write_open_memory a buffer bufSize used
+            packEntries a hsEntries'
+            res <- getEntriesBS a used buffer mempty
+            void $ archive_write_free a
+            pure res
 
     where bufSize :: Integral a => a
-          bufSize = 4096
+          bufSize = 1048576
           getEntriesBS :: Ptr Archive -> Ptr CSize -> CString -> BS.ByteString -> IO BS.ByteString
           getEntriesBS a used buffer bs = do
                 usedSz <- peek used
