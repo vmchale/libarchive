@@ -13,13 +13,13 @@ import           Foreign.Storable      (Storable (..))
 import           System.FilePath       ((</>))
 
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
-readEntry a entry = do
-    fp <- peekCString =<< archive_entry_pathname entry
-    perms <- archive_entry_perm entry
-    contents <- readContents a entry
-    owner <- readOwnership entry
-    times <- readTimes entry
-    pure $ Entry fp contents perms owner times
+readEntry a entry =
+    Entry
+        <$> (peekCString =<< archive_entry_pathname entry)
+        <*> readContents a entry
+        <*> archive_entry_perm entry
+        <*> readOwnership entry
+        <*> readTimes entry
 
 getHsEntry :: Ptr Archive -> IO (Maybe Entry)
 getHsEntry a = do
