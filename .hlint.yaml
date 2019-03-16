@@ -2,6 +2,7 @@
 - functions:
   - {name: undefined, within: []}
   - {name: traceShowId, within: []}
+  - {name: print, within: []}
   - {name: traceShow, within: []}
 
 - error: {lhs: "if p then x else pure ()", rhs: "when p x"}
