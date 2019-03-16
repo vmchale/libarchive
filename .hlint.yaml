@@ -4,6 +4,7 @@
   - {name: traceShowId, within: []}
   - {name: print, within: []}
   - {name: traceShow, within: []}
+  - {name: nullPtr, within: []}
 
 - error: {lhs: "if p then x else pure ()", rhs: "when p x"}
 
