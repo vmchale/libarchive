@@ -65,7 +65,6 @@ entriesToBS hsEntries' = do
             void $ archive_write_open_memory a buffer bufSize used
             packEntries a hsEntries'
             usedSz <- peek used
-            print (usedSz, bufSize)
             res <- curry packCStringLen buffer (fromIntegral usedSz)
             void $ archive_write_free a
             pure res
