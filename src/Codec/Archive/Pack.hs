@@ -48,6 +48,11 @@ setTime (time', nsec) entry = archive_entry_set_mtime entry time' nsec
 packEntries :: (Foldable t) => Ptr Archive -> t Entry -> IO ()
 packEntries a = traverse_ (archiveEntryAdd a)
 
+-- Get a number of bytes appropriate for creating the archive.
+entriesSz :: (Foldable t, Integral a) => t Entry -> a
+entriesSz _ = 1024 * 1024 * 1024 -- constant 1GB
+    -- where entrySz (Entry _ ) = 512 +
+
 entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
@@ -57,21 +62,12 @@ entriesToBS hsEntries' = do
             void $ archive_write_open_memory a buffer bufSize used
             packEntries a hsEntries'
             usedSz <- peek used
-            res <- getEntriesBS a usedSz buffer mempty
+            res <- curry packCStringLen buffer (fromIntegral usedSz)
             void $ archive_write_free a
             pure res
 
     where bufSize :: Integral a => a
-          bufSize = 1024 * 1024 * 1024 -- 10240 -- 1024 * 1024
-          -- TODO: set bufSize based on entries!
-          getEntriesBS :: Ptr Archive -> CSize -> CString -> BS.ByteString -> IO BS.ByteString
-          getEntriesBS a usedSz buffer bs = do
-                -- usedSz is smaller than it should be?? by a lot
-                bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
-                let newBS = bs <> bufBs
-                if usedSz < bufSize
-                    then pure newBS
-                    else getEntriesBS a usedSz buffer newBS
+          bufSize = entriesSz hsEntries'
 
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
