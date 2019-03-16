@@ -12,7 +12,7 @@ import           Data.Foldable         (traverse_)
 import           Data.Semigroup        ((<>))
 import           Foreign.C.String
 import           Foreign.C.Types
-import           Foreign.Marshal.Alloc (alloca)
+import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (peek)
 
@@ -52,18 +52,20 @@ entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
+    packEntries a hsEntries'
     alloca $ \used -> do
         res <- getEntriesBS a used mempty
         void $ archive_write_free a
         pure res
 
-    where bufSize :: CSize
+    where bufSize :: Integral a => a
           bufSize = 4096
           getEntriesBS :: Ptr Archive -> Ptr CSize -> BS.ByteString -> IO BS.ByteString
           getEntriesBS a used bs =
-                alloca $ \buffer -> do
+                allocaBytes bufSize $ \buffer -> do
                     void $ archive_write_open_memory a buffer bufSize used
                     usedSz <- peek used
+                    -- usedSz is wrong??
                     bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
                     let newBS = bs <> bufBs
                     if usedSz < bufSize
