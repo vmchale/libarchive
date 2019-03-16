@@ -56,20 +56,22 @@ entriesToBS hsEntries' = do
         allocaBytes bufSize $ \buffer -> do
             void $ archive_write_open_memory a buffer bufSize used
             packEntries a hsEntries'
-            res <- getEntriesBS a used buffer mempty
+            usedSz <- peek used
+            res <- getEntriesBS a usedSz buffer mempty
             void $ archive_write_free a
             pure res
 
     where bufSize :: Integral a => a
-          bufSize = 1024 * 1024 * 1024 -- FIXME: not rly what we want?
-          getEntriesBS :: Ptr Archive -> Ptr CSize -> CString -> BS.ByteString -> IO BS.ByteString
-          getEntriesBS a used buffer bs = do
-                usedSz <- peek used
+          bufSize = 1024 * 1024 * 1024 -- 10240 -- 1024 * 1024
+          -- TODO: set bufSize based on entries!
+          getEntriesBS :: Ptr Archive -> CSize -> CString -> BS.ByteString -> IO BS.ByteString
+          getEntriesBS a usedSz buffer bs = do
+                -- usedSz is smaller than it should be?? by a lot
                 bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
                 let newBS = bs <> bufBs
                 if usedSz < bufSize
                     then pure newBS
-                    else getEntriesBS a used buffer newBS
+                    else getEntriesBS a usedSz buffer newBS
 
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
