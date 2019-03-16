@@ -9,7 +9,7 @@ import           Control.Monad         (void)
 import           Data.ByteString       (packCStringLen, useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Data.Foldable         (traverse_)
-import           Data.Semigroup        ((<>))
+import           Data.Semigroup        (Sum (..), (<>))
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
@@ -50,10 +50,13 @@ packEntries a = traverse_ (archiveEntryAdd a)
 
 -- Get a number of bytes appropriate for creating the archive.
 entriesSz :: (Foldable t, Integral a) => t Entry -> a
-entriesSz _ = 1024 * 1024 * 1024 -- constant 1GB
-    -- where entrySz (Entry _ ) = 512 +
+entriesSz = getSum . foldMap (Sum . entrySz)
+    where entrySz e = 512 + 512 * (contentSz (content e) `div` 512 + 1)
+          contentSz (NormalFile str) = fromIntegral $ BS.length str
+          contentSz Directory        = 0
+          contentSz (Symlink fp)     = fromIntegral $ length fp
 
-entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
+entriesToBS :: (Foldable t) => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
@@ -62,6 +65,7 @@ entriesToBS hsEntries' = do
             void $ archive_write_open_memory a buffer bufSize used
             packEntries a hsEntries'
             usedSz <- peek used
+            print (usedSz, bufSize)
             res <- curry packCStringLen buffer (fromIntegral usedSz)
             void $ archive_write_free a
             pure res
