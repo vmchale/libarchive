@@ -52,24 +52,23 @@ entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
-    res <- getEntriesBS a mempty
-    void $ archive_write_free a
-    pure res
+    alloca $ \used -> do
+        res <- getEntriesBS a used mempty
+        void $ archive_write_free a
+        pure res
 
     where bufSize :: CSize
           bufSize = 4096
-          getEntriesBS :: Ptr Archive -> BS.ByteString -> IO BS.ByteString
-          getEntriesBS a bs =
-                alloca $ \buffer ->
-                -- FIXME: used should remain allocated until archive is closed
-                alloca $ \used -> do
+          getEntriesBS :: Ptr Archive -> Ptr CSize -> BS.ByteString -> IO BS.ByteString
+          getEntriesBS a used bs =
+                alloca $ \buffer -> do
                     void $ archive_write_open_memory a buffer bufSize used
                     usedSz <- peek used
                     bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
                     let newBS = bs <> bufBs
                     if usedSz < bufSize
                         then pure newBS
-                        else getEntriesBS a newBS
+                        else getEntriesBS a used newBS
 
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
