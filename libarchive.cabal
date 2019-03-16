@@ -9,7 +9,7 @@ author: Vanessa McHale
 bug-reports: https://github.com/vmchale/libarchive/issues
 synopsis: Haskell interface to libarchive
 description:
-    Partial Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives.
+    Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives.
 category: Codec
 build-type: Simple
 extra-source-files:
