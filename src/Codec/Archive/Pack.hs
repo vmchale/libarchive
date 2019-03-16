@@ -9,6 +9,7 @@ import           Control.Monad         (void)
 import           Data.ByteString       (packCStringLen, useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Data.Foldable         (traverse_)
+import           Data.Semigroup        ((<>))
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Marshal.Alloc (alloca)
