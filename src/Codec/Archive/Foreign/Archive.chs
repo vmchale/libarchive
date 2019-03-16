@@ -75,6 +75,14 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_next_header2
                                      , archive_read_header_position
                                      , archiveReadHasEncryptedEntries
+                                     , archive_read_format_capabilities
+                                     , archive_seek_data
+                                     , archive_read_data_into_fd
+                                     , archive_read_set_format_option
+                                     , archive_read_set_filter_option
+                                     , archive_read_set_option
+                                     , archive_read_set_options
+                                     , archive_read_disk_new
                                      -- * Direct bindings (write)
                                      , archive_write_set_bytes_per_block
                                      , archive_write_get_bytes_per_block
@@ -102,7 +110,53 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_write_free
                                      , archive_write_set_format_pax_restricted
                                      , archive_write_header
+                                     , archive_write_set_format
+                                     , archive_write_set_format_by_name
+                                     , archive_write_set_format_7zip
+                                     , archive_write_set_format_ar_bsd
+                                     , archive_write_set_format_ar_svr4
+                                     , archive_write_set_format_cpio
+                                     , archive_write_set_format_cpio_newc
+                                     , archive_write_set_format_gnutar
+                                     , archive_write_set_format_iso9660
+                                     , archive_write_set_format_mtree
+                                     , archive_write_set_format_mtree_classic
+                                     , archive_write_set_format_pax
+                                     , archive_write_set_format_raw
+                                     , archive_write_set_format_shar
+                                     , archive_write_set_format_shar_dump
+                                     , archive_write_set_format_ustar
+                                     , archive_write_set_format_v7tar
+                                     , archive_write_set_format_warc
+                                     , archive_write_set_format_xar
+                                     , archive_write_set_format_zip
+                                     , archive_write_set_format_filter_by_ext
+                                     , archive_write_set_format_filter_by_ext_def
+                                     , archive_write_zip_set_compression_deflate
+                                     , archive_write_zip_set_compression_store
+                                     , archive_write_open
+                                     , archive_write_open_fd
                                      , archive_write_open_filename
+                                     , archive_write_open_filename_w
+                                     , archive_write_open_memory
+                                     , archive_write_data_block
+                                     , archive_write_finish_entry
+                                     , archive_write_close
+                                     , archive_write_fail
+                                     , archive_write_set_format_option
+                                     , archive_write_set_filter_option
+                                     , archive_write_set_option
+                                     , archive_write_set_options
+                                     , archive_write_set_passphrase
+                                     , archive_write_set_passphrase_callback
+                                     , archive_write_disk_new
+                                     , archive_write_disk_set_skip_file
+                                     , archive_write_disk_set_options
+                                     , archive_write_disk_set_standard_lookup
+                                     , archive_write_disk_set_group_lookup
+                                     , archive_write_disk_set_user_lookup
+                                     , archive_write_disk_gid
+                                     , archive_write_disk_uid
                                      , archive_free
                                      -- * Direct bindings (version/miscellaneous)
                                      , archive_version_number
@@ -359,7 +413,7 @@ foreign import ccall unsafe archive_write_set_format :: Ptr Archive -> ArchiveFo
 foreign import ccall unsafe archive_write_set_format_by_name :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_7zip :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_ar_bsd :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_write_set_format_ar_sv4 :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_write_set_format_ar_svr4 :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_cpio :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_cpio_newc :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_write_set_format_gnutar :: Ptr Archive -> IO ArchiveError
@@ -417,14 +471,14 @@ foreign import ccall unsafe archive_write_disk_uid :: Ptr Archive -> CString -> 
 
 foreign import ccall unsafe archive_read_disk_new :: IO (Ptr Archive)
 foreign import ccall unsafe archive_read_disk_set_symlink_logical :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_disk_set_symlink_physically :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_symlink_physical :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_set_symlink_hybrid :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_entry_from_file :: Ptr Archive -> Ptr ArchiveEntry -> Fd -> Ptr Stat -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_gname :: Ptr Archive -> Int64 -> IO CString
 foreign import ccall unsafe archive_read_disk_uname :: Ptr Archive -> Int64 -> IO CString
-foreign import ccall unsafe archive_read_set_standard_lookup :: Ptr Archive -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_gname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_uname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_standard_lookup :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_gname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_uname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_open :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_open_w :: Ptr Archive -> CWString -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_descend :: Ptr Archive -> IO ArchiveError

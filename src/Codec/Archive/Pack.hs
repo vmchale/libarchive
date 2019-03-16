@@ -48,8 +48,8 @@ setTime (time', nsec) entry = archive_entry_set_mtime entry time' nsec
 packEntries :: (Foldable t) => Ptr Archive -> t Entry -> IO ()
 packEntries a = traverse_ (archiveEntryAdd a)
 
-entriesToBs :: Foldable t => t Entry -> IO BS.ByteString
-entriesToBs hsEntries' = do
+entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
+entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
     res <- getEntriesBS a mempty
@@ -61,6 +61,7 @@ entriesToBs hsEntries' = do
           getEntriesBS :: Ptr Archive -> BS.ByteString -> IO BS.ByteString
           getEntriesBS a bs =
                 alloca $ \buffer ->
+                -- FIXME: used should remain allocated until archive is closed
                 alloca $ \used -> do
                     void $ archive_write_open_memory a buffer bufSize used
                     usedSz <- peek used
