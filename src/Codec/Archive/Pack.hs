@@ -52,25 +52,24 @@ entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
-    packEntries a hsEntries'
-    alloca $ \used -> do
-        res <- getEntriesBS a used mempty
+    -- is the order here wrong?
+    alloca $ \used -> allocaBytes bufSize $ \buffer -> do
+        void $ archive_write_open_memory a buffer bufSize used
+        packEntries a hsEntries'
+        res <- getEntriesBS a used buffer mempty
         void $ archive_write_free a
         pure res
 
     where bufSize :: Integral a => a
           bufSize = 4096
-          getEntriesBS :: Ptr Archive -> Ptr CSize -> BS.ByteString -> IO BS.ByteString
-          getEntriesBS a used bs =
-                allocaBytes bufSize $ \buffer -> do
-                    void $ archive_write_open_memory a buffer bufSize used
-                    usedSz <- peek used
-                    -- usedSz is wrong??
-                    bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
-                    let newBS = bs <> bufBs
-                    if usedSz < bufSize
-                        then pure newBS
-                        else getEntriesBS a used newBS
+          getEntriesBS :: Ptr Archive -> Ptr CSize -> CString -> BS.ByteString -> IO BS.ByteString
+          getEntriesBS a used buffer bs = do
+                usedSz <- peek used
+                bufBs <- curry packCStringLen buffer (fromIntegral usedSz)
+                let newBS = bs <> bufBs
+                if usedSz < bufSize
+                    then pure newBS
+                    else getEntriesBS a used buffer newBS
 
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
