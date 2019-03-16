@@ -6,6 +6,7 @@ module Codec.Archive
       unpackToDir
     , unpackArchive
     , entriesToFile
+    , entriesToBS
     , readArchiveFile
     , readArchiveBS
     -- * Concrete (Haskell) types

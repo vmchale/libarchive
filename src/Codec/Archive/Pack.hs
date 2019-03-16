@@ -1,5 +1,6 @@
 module Codec.Archive.Pack ( packEntries
                           , entriesToFile
+                          , entriesToBS
                           ) where
 
 import           Codec.Archive.Foreign
