@@ -61,7 +61,7 @@ entriesToBS hsEntries' = do
             pure res
 
     where bufSize :: Integral a => a
-          bufSize = 1048576
+          bufSize = 1024 * 1024 * 1024 -- FIXME: not rly what we want?
           getEntriesBS :: Ptr Archive -> Ptr CSize -> CString -> BS.ByteString -> IO BS.ByteString
           getEntriesBS a used buffer bs = do
                 usedSz <- peek used
