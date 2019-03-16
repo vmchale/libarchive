@@ -25,14 +25,14 @@ library
     exposed-modules:
         Codec.Archive
         Codec.Archive.Foreign
+        Codec.Archive.Foreign.Archive
+        Codec.Archive.Foreign.ArchiveEntry
     build-tools: c2hs >=0.19.1
     pkgconfig-depends: libarchive -any
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Pack
         Codec.Archive.Unpack
-        Codec.Archive.Foreign.ArchiveEntry
-        Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.Common
         Codec.Archive.Types
     default-language: Haskell2010
