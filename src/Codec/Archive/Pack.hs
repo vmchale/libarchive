@@ -11,7 +11,6 @@ import qualified Data.ByteString       as BS
 import           Data.Foldable         (traverse_)
 import           Data.Semigroup        ((<>))
 import           Foreign.C.String
-import           Foreign.C.Types
 import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (peek)
@@ -95,4 +94,3 @@ archiveEntryAdd a (Entry fp contents perms owner mtime) =
         setOwnership owner entry
         setTime mtime entry
         contentAdd contents a entry
-        pure ()
