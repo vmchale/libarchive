@@ -7,7 +7,7 @@ import           Codec.Archive.Types
 import           Control.Monad         (void)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc (alloca)
+import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (Storable (..))
 import           System.FilePath       ((</>))
@@ -52,22 +52,19 @@ unpackEntriesFp a fp = do
             void $ archive_read_data_skip a
             unpackEntriesFp a fp
 
-readBS :: Ptr Archive -> IO BS.ByteString
-readBS a =
-    alloca $ \buff ->
-    alloca $ \sz ->
-    alloca $ \offset -> do
-        void $ archive_read_data_block a buff sz offset
-        cstr <- peek buff
-        strSz <- peek sz
-        BS.packCStringLen (cstr, fromIntegral strSz)
+readBS :: Ptr Archive -> Int -> IO BS.ByteString
+readBS a sz =
+    allocaBytes sz $ \buff -> do
+        void $ archive_read_data a buff (fromIntegral sz)
+        BS.packCStringLen (buff, sz)
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archive_entry_filetype entry
-    where go ft | ft == regular = NormalFile <$> readBS a
+    where go ft | ft == regular = NormalFile <$> (readBS a =<< sz)
                 | ft == symlink = Symlink <$> (peekCString =<< archive_entry_symlink entry)
                 | ft == directory = pure Directory
                 | otherwise = error "Unsupported filetype"
+          sz = fromIntegral <$> archive_entry_size entry
 
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry =

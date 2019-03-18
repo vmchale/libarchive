@@ -72,6 +72,7 @@ entriesToBS hsEntries' = do
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
 
+-- readArchiveFile seems to be right? which means this is wrong?
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
     a <- archive_write_new
