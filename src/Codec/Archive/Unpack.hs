@@ -54,8 +54,8 @@ unpackEntriesFp a fp = do
 
 readBS :: Ptr Archive -> Int -> IO BS.ByteString
 readBS a sz =
-    allocaBytes sz $ \buff -> do
-        void $ archive_read_data a buff (fromIntegral sz)
+    allocaBytes sz $ \buff ->
+        archive_read_data a buff (fromIntegral sz) *>
         BS.packCStringLen (buff, sz)
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
