@@ -74,7 +74,11 @@ entriesToBS hsEntries' = do
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
 
--- | Write some entries to a file.
+-- | Write some entries to a file. This is more efficient than
+--
+-- @
+-- BS.writeFile "file.tar" =<< entriesToBS entries
+-- @
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
     a <- archive_write_new

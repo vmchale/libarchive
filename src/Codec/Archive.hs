@@ -55,8 +55,13 @@ archiveFile fp = withCString fp $ \cpath -> do
     void $ archive_read_open_filename a cpath 10240
     pure a
 
+-- | This is more efficient than
+--
+-- @
+-- unpackToDir "llvm" =<< BS.readFile "llvm.tar"
+-- @
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
-              -> FilePath -- ^ Filepath to unpack to
+              -> FilePath -- ^ Dirctory to unpack in
               -> IO ()
 unpackArchive tarFp dirFp = do
     a <- archiveFile tarFp
