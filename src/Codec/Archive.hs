@@ -36,10 +36,14 @@ withArchiveRead fact a = do
     void $ archive_read_free a
     pure res
 
+-- | Read an archive from a file. The format of the archive is automatically
+-- detected.
 readArchiveFile :: FilePath -> IO [Entry]
 readArchiveFile fp =
     archiveFile fp >>= withArchiveRead hsEntries
 
+-- | Read an archive contained in a 'ByteString'. The format of the archive is
+-- automatically detected.
 readArchiveBS :: BS.ByteString -> IO [Entry]
 readArchiveBS bs =
     bsToArchive bs >>= withArchiveRead hsEntries

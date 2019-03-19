@@ -56,6 +56,7 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz Directory        = 0
           contentSz (Symlink fp)     = fromIntegral $ length fp
 
+-- | Returns a bytestring containing a tar archive with the 'Entry's
 entriesToBS :: (Foldable t) => t Entry -> IO BS.ByteString
 entriesToBS hsEntries' = do
     a <- archive_write_new
@@ -73,7 +74,7 @@ entriesToBS hsEntries' = do
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
 
--- readArchiveFile seems to be right? which means this is wrong?
+-- | Write some entries to a file.
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
     a <- archive_write_new
