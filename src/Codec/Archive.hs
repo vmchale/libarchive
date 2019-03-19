@@ -29,6 +29,7 @@ import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
 import           Foreign.Ptr           (Ptr)
+import           System.IO.Unsafe      (unsafePerformIO)
 
 withArchiveRead :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
 withArchiveRead fact a = do
@@ -44,8 +45,8 @@ readArchiveFile fp =
 
 -- | Read an archive contained in a 'ByteString'. The format of the archive is
 -- automatically detected.
-readArchiveBS :: BS.ByteString -> IO [Entry]
-readArchiveBS bs =
+readArchiveBS :: BS.ByteString -> [Entry]
+readArchiveBS bs = unsafePerformIO $
     bsToArchive bs >>= withArchiveRead hsEntries
 
 archiveFile :: FilePath -> IO (Ptr Archive)

@@ -14,6 +14,7 @@ import           Foreign.C.String
 import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (peek)
+import           System.IO.Unsafe      (unsafePerformIO)
 
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> IO ()
 contentAdd (NormalFile contents) a entry = do
@@ -56,9 +57,9 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz Directory        = 0
           contentSz (Symlink fp)     = fromIntegral $ length fp
 
--- | Returns a bytestring containing a tar archive with the 'Entry's
-entriesToBS :: (Foldable t) => t Entry -> IO BS.ByteString
-entriesToBS hsEntries' = do
+-- | Returns a 'ByteString' containing a tar archive with the 'Entry's
+entriesToBS :: (Foldable t) => t Entry -> BS.ByteString
+entriesToBS hsEntries' = unsafePerformIO $ do
     a <- archive_write_new
     void $ archive_write_set_format_pax_restricted a
     alloca $ \used ->
@@ -73,11 +74,12 @@ entriesToBS hsEntries' = do
 
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
+{-# NOINLINE entriesToBS #-}
 
 -- | Write some entries to a file. This is more efficient than
 --
 -- @
--- BS.writeFile "file.tar" =<< entriesToBS entries
+-- BS.writeFile "file.tar" (entriesToBS entries)
 -- @
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile fp hsEntries' = do
