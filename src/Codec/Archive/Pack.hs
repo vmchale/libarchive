@@ -64,6 +64,7 @@ entriesToBS hsEntries' = do
         allocaBytes bufSize $ \buffer -> do
             void $ archive_write_open_memory a buffer bufSize used
             packEntries a hsEntries'
+            void $ archive_write_close a
             usedSz <- peek used
             res <- curry packCStringLen buffer (fromIntegral usedSz)
             void $ archive_write_free a
