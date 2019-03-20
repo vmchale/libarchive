@@ -249,6 +249,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , Flags
                                      , ArchiveFilter
                                      , ArchiveFormat
+                                     , ArchiveCapabilities
                                      -- * Callback types
                                      , ArchiveReadCallback
                                      , ArchiveSkipCallback
@@ -695,10 +696,10 @@ archiveReadFormatCapsNone = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAP
 m << n = m `shift` n
 
 archiveReadFormatCapsEncryptData :: ArchiveCapabilities
-archiveReadFormatCapsEncryptData = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+archiveReadFormatCapsEncryptData = ArchiveCapabilities ({# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #})
 
 archiveReadFormatCapsEncryptMetadata :: ArchiveCapabilities
-archiveReadFormatCapsEncryptMetadata = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+archiveReadFormatCapsEncryptMetadata = ArchiveCapabilities ({# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #})
 
 archiveReadDiskCanDescend :: Ptr Archive -> IO Bool
 archiveReadDiskCanDescend = fmap intToBool . archive_read_disk_can_descend

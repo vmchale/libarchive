@@ -1,5 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 module Codec.Archive.Types ( -- * Abstract data types
                              Archive
                            , ArchiveEntry
@@ -83,12 +81,19 @@ newtype Flags = Flags CInt
 newtype ArchiveFilter = ArchiveFilter CInt
 
 newtype ArchiveCapabilities = ArchiveCapabilities CInt
-    deriving (Eq, Bits)
+    deriving (Eq)
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption
                        | EncryptionUnsupported
                        | EncryptionUnknown
+
+instance Semigroup ArchiveCapabilities where
+    (<>) (ArchiveCapabilities x) (ArchiveCapabilities y) = ArchiveCapabilities (x .|. y)
+
+instance Monoid ArchiveCapabilities where
+    mempty = ArchiveCapabilities 0
+    mappend = (<>)
 
 instance Semigroup Flags where
     (<>) (Flags x) (Flags y) = Flags (x .|. y)
