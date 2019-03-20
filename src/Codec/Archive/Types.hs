@@ -19,6 +19,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ArchiveCapabilities (..)
                            , ReadDiskFlags (..)
                            , TimeFlag (..)
+                           , EntryACL (..)
                            -- * Values
                            , standardPermissions
                            , executablePermissions
@@ -84,6 +85,8 @@ newtype ReadDiskFlags = ReadDiskFlags CInt
 
 newtype TimeFlag = TimeFlag CInt
 
+newtype EntryACL = EntryACL CInt
+
 newtype ArchiveFilter = ArchiveFilter CInt
 
 newtype ArchiveCapabilities = ArchiveCapabilities CInt
@@ -110,3 +113,8 @@ instance Semigroup Flags where
 instance Monoid Flags where
     mempty = Flags 0
     mappend = (<>)
+
+instance Semigroup EntryACL where
+    (<>) (EntryACL x) (EntryACL y) = EntryACL (x .|. y)
+
+-- TODO: `has` function for EntryACL
