@@ -1,5 +1,7 @@
 module Codec.Archive.Pack ( packEntries
                           , entriesToFile
+                          , entriesToFileZip
+                          , entriesToFile7Zip
                           , entriesToBS
                           , entriesToBSzip
                           , entriesToBS7zip
@@ -100,6 +102,12 @@ entriesToBSGeneral modifier hsEntries' = do
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile = entriesToFileGeneral archive_write_set_format_pax_restricted
 -- this is the recommended format; it is a tar archive
+
+entriesToFileZip :: Foldable t => FilePath -> t Entry -> IO ()
+entriesToFileZip = entriesToFileGeneral archive_write_set_format_zip
+
+entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> IO ()
+entriesToFile7Zip = entriesToFileGeneral archive_write_set_format_7zip
 
 entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveError) -> FilePath -> t Entry -> IO ()
 entriesToFileGeneral modifier fp hsEntries' = do

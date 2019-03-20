@@ -6,6 +6,8 @@ module Codec.Archive
       unpackToDir
     , unpackArchive
     , entriesToFile
+    , entriesToFileZip
+    , entriesToFile7Zip
     , entriesToBS
     , entriesToBS7zip
     , entriesToBSzip
