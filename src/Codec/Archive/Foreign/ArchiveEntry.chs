@@ -126,13 +126,13 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_acl_add_entry_w
                                           , archive_entry_acl_reset
                                           , archive_entry_acl_next
-                                          , archive_entry_acl_next_w
-                                          , archive_entry_acl_to_text
-                                          , archive_entry_acl_to_text_w
-                                          , archive_entry_acl_from_text
-                                          , archive_entry_acl_from_text_w
-                                          , archive_entry_acl_types
-                                          , archive_entry_count
+                                          -- , archive_entry_acl_next_w
+                                          -- , archive_entry_acl_to_text
+                                          -- , archive_entry_acl_to_text_w
+                                          -- , archive_entry_acl_from_text
+                                          -- , archive_entry_acl_from_text_w
+                                          -- , archive_entry_acl_types
+                                          -- , archive_entry_count
                                           -- * Xattr functions
                                           , archive_entry_xattr_clear
                                           , archive_entry_xattr_add_entry
@@ -353,14 +353,14 @@ foreign import ccall unsafe archive_entry_acl_add_entry :: Ptr ArchiveEntry -> E
 foreign import ccall unsafe archive_entry_acl_add_entry_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO ArchiveError
 foreign import ccall unsafe archive_entry_acl_reset :: Ptr ArchiveEntry -> EntryACL -> IO CInt
 foreign import ccall unsafe archive_entry_acl_next :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveError
-foreign import ccall unsafe archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO ArchiveError
+-- foreign import ccall unsafe archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO ArchiveError
 
-foreign import ccall unsafe archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CWString
-foreign import ccall unsafe archive_entry_acl_to_text :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CString
-foreign import ccall unsafe archive_entry_acl_from_text :: Ptr ArchiveEntry -> CString -> EntryACL -> IO ArchiveError
-foreign import ccall unsafe archive_entry_acl_from_text_w :: Ptr ArchiveEntry -> CWString -> EntryACL -> IO ArchiveError
-foreign import ccall unsafe archive_entry_acl_types :: Ptr ArchiveEntry -> IO EntryACL
-foreign import ccall unsafe archive_entry_count :: Ptr ArchiveEntry -> EntryACL -> IO CInt
+-- foreign import ccall unsafe archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CWString
+-- foreign import ccall unsafe archive_entry_acl_to_text :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CString
+-- foreign import ccall unsafe archive_entry_acl_from_text :: Ptr ArchiveEntry -> CString -> EntryACL -> IO ArchiveError
+-- foreign import ccall unsafe archive_entry_acl_from_text_w :: Ptr ArchiveEntry -> CWString -> EntryACL -> IO ArchiveError
+-- foreign import ccall unsafe archive_entry_acl_types :: Ptr ArchiveEntry -> IO EntryACL
+-- foreign import ccall unsafe archive_entry_count :: Ptr ArchiveEntry -> EntryACL -> IO CInt
 
 -- don't bother with archive_entry_acl
 

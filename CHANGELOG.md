@@ -1,5 +1,9 @@
 # libarchive
 
+## 1.0.1.0
+
+  * Remove functions from libarchive 3.3.3
+
 ## 1.0.0.0
 
   * Get rid of `cbits`
