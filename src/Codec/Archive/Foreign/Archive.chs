@@ -186,6 +186,36 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_set_error
                                      , archive_copy_error
                                      , archive_file_count
+                                     -- * Direct bindings (archive match)
+                                     , archive_match
+                                     , archive_match_free
+                                     , archiveMatchExcluded
+                                     , archiveMatchPathExcluded
+                                     , archive_match_exclude_pattern
+                                     , archive_match_exclude_pattern_w
+                                     , archiveMatchExcludePatternFromFile
+                                     , archiveMatchExcludePatternFromFileW
+                                     , archive_match_include_pattern
+                                     , archive_match_include_pattern_w
+                                     , archiveMatchIncludePatternFromFile
+                                     , archiveMatchIncludePatternFromFileW
+                                     , archive_match_path_unmatched_inclusions
+                                     , archive_match_path_unmatched_inclusions_next
+                                     , archive_match_path_unmatched_inclusions_next_w
+                                     , archiveMatchTimeExcluded
+                                     , archive_match_include_time
+                                     , archive_match_include_date
+                                     , archive_match_include_date_w
+                                     , archive_match_include_file_time
+                                     , archive_match_include_file_time_w
+                                     , archive_match_exclude_entry
+                                     , archiveMatchOwnerExcluded
+                                     , archive_match_include_uid
+                                     , archive_match_include_gid
+                                     , archive_match_include_uname
+                                     , archive_match_include_uname_w
+                                     , archive_match_include_gname
+                                     , archive_match_include_gname_w
                                      -- * Direct bindings (version/filter/miscellaneous)
                                      , archive_version_number
                                      , archive_version_string
@@ -210,6 +240,12 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveWarn
                                      , archiveFailed
                                      , archiveFatal
+                                     -- * Time matching macros
+                                     , archiveMatchMTime
+                                     , archiveMatchCTime
+                                     , archiveMatchNewer
+                                     , archiveMatchOlder
+                                     , archiveMatchEqual
                                      -- * Entry flags
                                      , archiveExtractOwner
                                      , archiveExtractPerm
@@ -301,7 +337,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      ) where
 
 import Codec.Archive.Foreign.Common
-import Control.Composition ((.**))
+import Control.Composition ((.*), (.**))
 import Data.Bits (Bits (..))
 import Data.Int (Int64)
 import Codec.Archive.Types
@@ -335,8 +371,10 @@ foreign import ccall "wrapper" preMkFilter :: (Ptr Archive -> Ptr a -> Ptr Archi
 
 mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
 mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
-    where boolToInt False = 0
-          boolToInt True = 1
+
+boolToInt :: Integral a => Bool -> a
+boolToInt False = 0
+boolToInt True = 1
 
 type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
 type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
@@ -543,6 +581,7 @@ foreign import ccall unsafe archive_read_disk_current_filesystem_is_synthetic ::
 foreign import ccall unsafe archive_read_disk_current_filesystem_is_remote :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_disk_set_atime_restored :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_set_behavior :: Ptr Archive -> ReadDiskFlags -> IO ArchiveError
+
 foreign import ccall unsafe archive_read_disk_set_matching :: Ptr Archive -> Ptr Archive -> FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> Ptr a -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_set_metadata_filter_callback :: Ptr Archive -> FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt) -> Ptr a -> IO ArchiveError
 
@@ -561,6 +600,36 @@ foreign import ccall unsafe archive_clear_error :: Ptr Archive -> IO ()
 foreign import ccall unsafe archive_set_error :: Ptr Archive -> CInt -> CString -> IO () -- TODO: variadic lol
 foreign import ccall unsafe archive_copy_error :: Ptr Archive -> Ptr Archive -> IO ()
 foreign import ccall unsafe archive_file_count :: Ptr Archive -> IO CInt
+
+foreign import ccall unsafe archive_match :: Ptr Archive
+foreign import ccall unsafe archive_match_free :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_match_excluded :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_match_path_excluded :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_match_exclude_pattern :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_exclude_pattern_w :: Ptr Archive -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_exclude_pattern_from_file :: Ptr Archive -> CString -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_match_exclude_pattern_from_file_w :: Ptr Archive -> CWString -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_pattern :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_pattern_w :: Ptr Archive -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_pattern_from_file :: Ptr Archive -> CString -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_pattern_from_file_w :: Ptr Archive -> CString -> CInt -> IO ArchiveError
+foreign import ccall unsafe archive_match_path_unmatched_inclusions :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_match_path_unmatched_inclusions_next :: Ptr Archive -> Ptr CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_path_unmatched_inclusions_next_w :: Ptr Archive -> Ptr CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_time_excluded :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_match_include_time :: Ptr Archive -> TimeFlag -> CTime -> CLong -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_date :: Ptr Archive -> TimeFlag -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_date_w :: Ptr Archive -> TimeFlag -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_file_time :: Ptr Archive -> TimeFlag -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_file_time_w :: Ptr Archive -> TimeFlag -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_exclude_entry :: Ptr Archive -> TimeFlag -> Ptr ArchiveEntry -> IO ArchiveError
+foreign import ccall unsafe archive_match_owner_excluded :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_match_include_gid :: Ptr Archive -> Id -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_uid :: Ptr Archive -> Id -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_uname :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_uname_w :: Ptr Archive -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_gname :: Ptr Archive -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_match_include_gname_w :: Ptr Archive -> CWString -> IO ArchiveError
 
 #include <archive.h>
 
@@ -786,3 +855,42 @@ archiveReadDiskNoXattr = ReadDiskFlags {# const ARCHIVE_READDISK_NO_XATTR #}
 
 -- archiveReadDiskNoFFlags :: ReadDiskFlags
 -- archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
+
+archiveMatchExcluded :: Ptr Archive -> IO Bool
+archiveMatchExcluded = fmap intToBool . archive_match_excluded
+
+archiveMatchPathExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
+archiveMatchPathExcluded = fmap intToBool .* archive_match_path_excluded
+
+archiveMatchExcludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveError
+archiveMatchExcludePatternFromFile a str b = archive_match_exclude_pattern_from_file a str (boolToInt b)
+
+archiveMatchExcludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveError
+archiveMatchExcludePatternFromFileW a str b = archive_match_exclude_pattern_from_file_w a str (boolToInt b)
+
+archiveMatchIncludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveError
+archiveMatchIncludePatternFromFile a str b = archive_match_include_pattern_from_file a str (boolToInt b)
+
+archiveMatchIncludePatternFromFileW :: Ptr Archive -> CString -> Bool -> IO ArchiveError
+archiveMatchIncludePatternFromFileW a str b = archive_match_include_pattern_from_file_w a str (boolToInt b)
+
+archiveMatchTimeExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
+archiveMatchTimeExcluded = fmap intToBool .* archive_match_time_excluded
+
+archiveMatchMTime :: TimeFlag
+archiveMatchMTime = TimeFlag {# const ARCHIVE_MATCH_MTIME #}
+
+archiveMatchCTime :: TimeFlag
+archiveMatchCTime = TimeFlag {# const ARCHIVE_MATCH_CTIME #}
+
+archiveMatchNewer :: TimeFlag
+archiveMatchNewer = TimeFlag {# const ARCHIVE_MATCH_NEWER #}
+
+archiveMatchOlder :: TimeFlag
+archiveMatchOlder = TimeFlag {# const ARCHIVE_MATCH_OLDER #}
+
+archiveMatchEqual :: TimeFlag
+archiveMatchEqual = TimeFlag {# const ARCHIVE_MATCH_EQUAL #}
+
+archiveMatchOwnerExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
+archiveMatchOwnerExcluded = fmap intToBool .* archive_match_owner_excluded

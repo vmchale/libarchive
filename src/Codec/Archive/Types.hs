@@ -18,6 +18,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , FileType (..)
                            , ArchiveCapabilities (..)
                            , ReadDiskFlags (..)
+                           , TimeFlag (..)
                            -- * Values
                            , standardPermissions
                            , executablePermissions
@@ -80,6 +81,8 @@ newtype ArchiveError = ArchiveError CInt
 newtype Flags = Flags CInt
 
 newtype ReadDiskFlags = ReadDiskFlags CInt
+
+newtype TimeFlag = TimeFlag CInt
 
 newtype ArchiveFilter = ArchiveFilter CInt
 
