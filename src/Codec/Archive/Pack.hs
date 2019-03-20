@@ -13,7 +13,7 @@ import           Control.Monad         (void)
 import           Data.ByteString       (packCStringLen, useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Data.Foldable         (traverse_)
-import           Data.Semigroup        (Sum (..), (<>))
+import           Data.Semigroup        (Sum (..))
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc (alloca, allocaBytes)
 import           Foreign.Ptr           (Ptr)
