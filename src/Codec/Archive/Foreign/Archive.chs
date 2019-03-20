@@ -97,6 +97,9 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_disk_descend
                                      , archiveReadDiskCanDescend
                                      , archive_read_disk_current_filesystem
+                                     , archiveReadDiskCurrentFilesystemIsSynthetic
+                                     , archiveReadDiskCurrentFilesystemIsRemote
+                                     , archive_read_disk_set_atime_restored
                                      -- * Direct bindings (write)
                                      , archive_write_set_bytes_per_block
                                      , archive_write_get_bytes_per_block
@@ -503,6 +506,9 @@ foreign import ccall unsafe archive_read_disk_open_w :: Ptr Archive -> CWString 
 foreign import ccall unsafe archive_read_disk_descend :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_read_disk_can_descend :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_disk_current_filesystem :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_disk_current_filesystem_is_synthetic :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_disk_current_filesystem_is_remote :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_read_disk_set_atime_restored :: Ptr Archive -> IO ArchiveError
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
 
@@ -703,3 +709,9 @@ archiveReadFormatCapsEncryptMetadata = ArchiveCapabilities ({# const ARCHIVE_REA
 
 archiveReadDiskCanDescend :: Ptr Archive -> IO Bool
 archiveReadDiskCanDescend = fmap intToBool . archive_read_disk_can_descend
+
+archiveReadDiskCurrentFilesystemIsSynthetic :: Ptr Archive -> IO Bool
+archiveReadDiskCurrentFilesystemIsSynthetic = fmap intToBool . archive_read_disk_current_filesystem_is_synthetic
+
+archiveReadDiskCurrentFilesystemIsRemote :: Ptr Archive -> IO Bool
+archiveReadDiskCurrentFilesystemIsRemote = fmap intToBool . archive_read_disk_current_filesystem_is_remote
