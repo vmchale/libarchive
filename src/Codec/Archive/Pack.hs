@@ -103,9 +103,11 @@ entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile = entriesToFileGeneral archive_write_set_format_pax_restricted
 -- this is the recommended format; it is a tar archive
 
+-- | Write some entries to a file, creating a zip archive.
 entriesToFileZip :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFileZip = entriesToFileGeneral archive_write_set_format_zip
 
+-- | Write some entries to a file, creating a @.7z@ archive.
 entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile7Zip = entriesToFileGeneral archive_write_set_format_7zip
 
