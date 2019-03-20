@@ -131,6 +131,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , fifo
                                           -- * Abstract types
                                           , ArchiveEntry
+                                          , Stat
                                           -- * Lower-level API types
                                           , FileType
                                           ) where
@@ -274,7 +275,7 @@ foreign import ccall unsafe archive_entry_copy_mac_metadata :: Ptr ArchiveEntry 
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
-mode_t = fromIntegral . asOctal
+mode_t = FileType . fromIntegral . asOctal
 
 -- converts 0020000 to 16384 etc.
 asOctal :: Integral a => a -> a

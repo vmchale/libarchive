@@ -83,6 +83,20 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_read_set_option
                                      , archive_read_set_options
                                      , archive_read_disk_new
+                                     , archive_read_disk_set_symlink_logical
+                                     , archive_read_disk_set_symlink_physical
+                                     , archive_read_disk_set_symlink_hybrid
+                                     , archive_read_disk_entry_from_file
+                                     , archive_read_disk_gname
+                                     , archive_read_disk_uname
+                                     , archive_read_disk_set_standard_lookup
+                                     , archive_read_disk_set_gname_lookup
+                                     , archive_read_disk_set_uname_lookup
+                                     , archive_read_disk_open
+                                     , archive_read_disk_open_w
+                                     , archive_read_disk_descend
+                                     , archiveReadDiskCanDescend
+                                     , archive_read_disk_current_filesystem
                                      -- * Direct bindings (write)
                                      , archive_write_set_bytes_per_block
                                      , archive_write_get_bytes_per_block
@@ -166,6 +180,10 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveVersionNumber
                                      , archiveVersionOnlyString
                                      , archiveVersionString
+                                     -- * Capability macros
+                                     , archiveReadFormatCapsNone
+                                     , archiveReadFormatCapsEncryptData
+                                     , archiveReadFormatCapsEncryptMetadata
                                      -- * Header read macros
                                      , archiveOk
                                      , archiveEOF
@@ -500,165 +518,165 @@ archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
 -- TODO: make ArchiveError a sum type
 archiveOk :: ArchiveError
-archiveOk = {# const ARCHIVE_OK #}
+archiveOk = ArchiveError {# const ARCHIVE_OK #}
 
 archiveEOF :: ArchiveError
-archiveEOF = {# const ARCHIVE_EOF #}
+archiveEOF = ArchiveError {# const ARCHIVE_EOF #}
 
 archiveRetry :: ArchiveError
-archiveRetry = {# const ARCHIVE_RETRY #}
+archiveRetry = ArchiveError ({# const ARCHIVE_RETRY #})
 
 archiveWarn :: ArchiveError
-archiveWarn = {# const ARCHIVE_WARN #}
+archiveWarn = ArchiveError ({# const ARCHIVE_WARN #})
 
 archiveFailed :: ArchiveError
-archiveFailed = {# const ARCHIVE_FAILED #}
+archiveFailed = ArchiveError ({# const ARCHIVE_FAILED #})
 
 archiveFatal :: ArchiveError
-archiveFatal = {# const ARCHIVE_FATAL #}
+archiveFatal = ArchiveError ({# const ARCHIVE_FATAL #})
 
 -- Archive filter
 archiveFilterNone :: ArchiveFilter
-archiveFilterNone = {# const ARCHIVE_FILTER_NONE #}
+archiveFilterNone = ArchiveFilter {# const ARCHIVE_FILTER_NONE #}
 
 archiveFilterGzip :: ArchiveFilter
-archiveFilterGzip = {# const ARCHIVE_FILTER_GZIP #}
+archiveFilterGzip = ArchiveFilter {# const ARCHIVE_FILTER_GZIP #}
 
 archiveFilterBzip2 :: ArchiveFilter
-archiveFilterBzip2 = {# const ARCHIVE_FILTER_BZIP2 #}
+archiveFilterBzip2 = ArchiveFilter {# const ARCHIVE_FILTER_BZIP2 #}
 
 archiveFilterCompress :: ArchiveFilter
-archiveFilterCompress = {# const ARCHIVE_FILTER_COMPRESS #}
+archiveFilterCompress = ArchiveFilter {# const ARCHIVE_FILTER_COMPRESS #}
 
 archiveFilterProgram :: ArchiveFilter
-archiveFilterProgram = {# const ARCHIVE_FILTER_PROGRAM #}
+archiveFilterProgram = ArchiveFilter {# const ARCHIVE_FILTER_PROGRAM #}
 
 archiveFilterLzma :: ArchiveFilter
-archiveFilterLzma = {# const ARCHIVE_FILTER_LZMA #}
+archiveFilterLzma = ArchiveFilter {# const ARCHIVE_FILTER_LZMA #}
 
 archiveFilterXz :: ArchiveFilter
-archiveFilterXz = {# const ARCHIVE_FILTER_XZ #}
+archiveFilterXz = ArchiveFilter {# const ARCHIVE_FILTER_XZ #}
 
 archiveFilterUu :: ArchiveFilter
-archiveFilterUu = {# const ARCHIVE_FILTER_UU #}
+archiveFilterUu = ArchiveFilter {# const ARCHIVE_FILTER_UU #}
 
 archiveFilterRpm :: ArchiveFilter
-archiveFilterRpm = {# const ARCHIVE_FILTER_RPM #}
+archiveFilterRpm = ArchiveFilter {# const ARCHIVE_FILTER_RPM #}
 
 archiveFilterLzip :: ArchiveFilter
-archiveFilterLzip = {# const ARCHIVE_FILTER_LZIP #}
+archiveFilterLzip = ArchiveFilter {# const ARCHIVE_FILTER_LZIP #}
 
 archiveFilterLrzip :: ArchiveFilter
-archiveFilterLrzip = {# const ARCHIVE_FILTER_LRZIP #}
+archiveFilterLrzip = ArchiveFilter {# const ARCHIVE_FILTER_LRZIP #}
 
 archiveFilterLzop :: ArchiveFilter
-archiveFilterLzop = {# const ARCHIVE_FILTER_LZOP #}
+archiveFilterLzop = ArchiveFilter {# const ARCHIVE_FILTER_LZOP #}
 
 archiveFilterGrzip :: ArchiveFilter
-archiveFilterGrzip = {# const ARCHIVE_FILTER_GRZIP #}
+archiveFilterGrzip = ArchiveFilter {# const ARCHIVE_FILTER_GRZIP #}
 
 archiveFilterLz4 :: ArchiveFilter
-archiveFilterLz4 = {# const ARCHIVE_FILTER_LZ4 #}
+archiveFilterLz4 = ArchiveFilter {# const ARCHIVE_FILTER_LZ4 #}
 
 -- Extraction flags
 archiveExtractOwner :: Flags
-archiveExtractOwner = {# const ARCHIVE_EXTRACT_OWNER #}
+archiveExtractOwner = Flags {# const ARCHIVE_EXTRACT_OWNER #}
 
 archiveExtractPerm :: Flags
-archiveExtractPerm = {# const ARCHIVE_EXTRACT_PERM #}
+archiveExtractPerm = Flags {# const ARCHIVE_EXTRACT_PERM #}
 
 archiveExtractTime :: Flags
-archiveExtractTime = {# const ARCHIVE_EXTRACT_TIME #}
+archiveExtractTime = Flags {# const ARCHIVE_EXTRACT_TIME #}
 
 archiveExtractNoOverwrite :: Flags
-archiveExtractNoOverwrite = {# const ARCHIVE_EXTRACT_NO_OVERWRITE #}
+archiveExtractNoOverwrite = Flags {# const ARCHIVE_EXTRACT_NO_OVERWRITE #}
 
 archiveExtractUnlink :: Flags
-archiveExtractUnlink = {# const ARCHIVE_EXTRACT_UNLINK #}
+archiveExtractUnlink = Flags {# const ARCHIVE_EXTRACT_UNLINK #}
 
 archiveExtractACL :: Flags
-archiveExtractACL = {# const ARCHIVE_EXTRACT_ACL #}
+archiveExtractACL = Flags {# const ARCHIVE_EXTRACT_ACL #}
 
 archiveExtractFFlags :: Flags
-archiveExtractFFlags = {# const ARCHIVE_EXTRACT_FFLAGS #}
+archiveExtractFFlags = Flags {# const ARCHIVE_EXTRACT_FFLAGS #}
 
 archiveExtractXattr :: Flags
-archiveExtractXattr = {# const ARCHIVE_EXTRACT_XATTR #}
+archiveExtractXattr = Flags {# const ARCHIVE_EXTRACT_XATTR #}
 
 archiveExtractSecureSymlinks :: Flags
-archiveExtractSecureSymlinks = {# const ARCHIVE_EXTRACT_SECURE_SYMLINKS #}
+archiveExtractSecureSymlinks = Flags {# const ARCHIVE_EXTRACT_SECURE_SYMLINKS #}
 
 archiveExtractSecureNoDotDot :: Flags
-archiveExtractSecureNoDotDot = {# const ARCHIVE_EXTRACT_SECURE_NODOTDOT #}
+archiveExtractSecureNoDotDot = Flags {# const ARCHIVE_EXTRACT_SECURE_NODOTDOT #}
 
 archiveExtractNoAutodir :: Flags
-archiveExtractNoAutodir = {# const ARCHIVE_EXTRACT_NO_AUTODIR #}
+archiveExtractNoAutodir = Flags {# const ARCHIVE_EXTRACT_NO_AUTODIR #}
 
 -- archiveExtractNoOverwriteNewer :: Flags
--- archiveExtractNoOverwriteNewer = {# const ARCHIVE_NO_OVERWRITE_NEWER #}
+-- archiveExtractNoOverwriteNewer = Flags {# const ARCHIVE_NO_OVERWRITE_NEWER #}
 
 archiveExtractSparse :: Flags
-archiveExtractSparse = {# const ARCHIVE_EXTRACT_SPARSE #}
+archiveExtractSparse = Flags {# const ARCHIVE_EXTRACT_SPARSE #}
 
 archiveExtractMacMetadata :: Flags
-archiveExtractMacMetadata = {# const ARCHIVE_EXTRACT_MAC_METADATA #}
+archiveExtractMacMetadata = Flags {# const ARCHIVE_EXTRACT_MAC_METADATA #}
 
 archiveExtractNoHfsCompression :: Flags
-archiveExtractNoHfsCompression = {# const ARCHIVE_EXTRACT_NO_HFS_COMPRESSION #}
+archiveExtractNoHfsCompression = Flags {# const ARCHIVE_EXTRACT_NO_HFS_COMPRESSION #}
 
 archiveExtractHfsCompressionForced :: Flags
-archiveExtractHfsCompressionForced = {# const ARCHIVE_EXTRACT_HFS_COMPRESSION_FORCED #}
+archiveExtractHfsCompressionForced = Flags {# const ARCHIVE_EXTRACT_HFS_COMPRESSION_FORCED #}
 
 archiveExtractSecureNoAbsolutePaths :: Flags
-archiveExtractSecureNoAbsolutePaths = {# const ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS #}
+archiveExtractSecureNoAbsolutePaths = Flags {# const ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS #}
 
 archiveExtractClearNoChangeFFlags :: Flags
-archiveExtractClearNoChangeFFlags = {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
+archiveExtractClearNoChangeFFlags = Flags {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
 
 archiveFormatCpio :: ArchiveFormat
-archiveFormatCpio = {# const ARCHIVE_FORMAT_CPIO #}
+archiveFormatCpio = ArchiveFormat {# const ARCHIVE_FORMAT_CPIO #}
 
 archiveFormatShar :: ArchiveFormat
-archiveFormatShar = {# const ARCHIVE_FORMAT_SHAR #}
+archiveFormatShar = ArchiveFormat {# const ARCHIVE_FORMAT_SHAR #}
 
 archiveFormatTar :: ArchiveFormat
-archiveFormatTar = {# const ARCHIVE_FORMAT_TAR #}
+archiveFormatTar = ArchiveFormat {# const ARCHIVE_FORMAT_TAR #}
 
 archiveFormatIso9660 :: ArchiveFormat
-archiveFormatIso9660 = {# const ARCHIVE_FORMAT_ISO9660 #}
+archiveFormatIso9660 = ArchiveFormat {# const ARCHIVE_FORMAT_ISO9660 #}
 
 archiveFormatZip :: ArchiveFormat
-archiveFormatZip = {# const ARCHIVE_FORMAT_ZIP #}
+archiveFormatZip = ArchiveFormat {# const ARCHIVE_FORMAT_ZIP #}
 
 archiveFormatEmpty :: ArchiveFormat
-archiveFormatEmpty = {# const ARCHIVE_FORMAT_EMPTY #}
+archiveFormatEmpty = ArchiveFormat {# const ARCHIVE_FORMAT_EMPTY #}
 
 archiveFormatAr :: ArchiveFormat
-archiveFormatAr = {# const ARCHIVE_FORMAT_AR #}
+archiveFormatAr = ArchiveFormat {# const ARCHIVE_FORMAT_AR #}
 
 archiveFormatMtree :: ArchiveFormat
-archiveFormatMtree = {# const ARCHIVE_FORMAT_MTREE #}
+archiveFormatMtree = ArchiveFormat {# const ARCHIVE_FORMAT_MTREE #}
 
 archiveFormatRaw :: ArchiveFormat
-archiveFormatRaw = {# const ARCHIVE_FORMAT_RAW #}
+archiveFormatRaw = ArchiveFormat {# const ARCHIVE_FORMAT_RAW #}
 
 archiveFormatXar :: ArchiveFormat
-archiveFormatXar = {# const ARCHIVE_FORMAT_XAR #}
+archiveFormatXar = ArchiveFormat {# const ARCHIVE_FORMAT_XAR #}
 
 archiveFormatLha :: ArchiveFormat
-archiveFormatLha = {# const ARCHIVE_FORMAT_LHA #}
+archiveFormatLha = ArchiveFormat {# const ARCHIVE_FORMAT_LHA #}
 
 archiveFormatCab :: ArchiveFormat
-archiveFormatCab = {# const ARCHIVE_FORMAT_CAB #}
+archiveFormatCab = ArchiveFormat {# const ARCHIVE_FORMAT_CAB #}
 
 archiveFormatRar :: ArchiveFormat
-archiveFormatRar = {# const ARCHIVE_FORMAT_RAR #}
+archiveFormatRar = ArchiveFormat {# const ARCHIVE_FORMAT_RAR #}
 
 archiveFormat7zip :: ArchiveFormat
-archiveFormat7zip = {# const ARCHIVE_FORMAT_7ZIP #}
+archiveFormat7zip = ArchiveFormat {# const ARCHIVE_FORMAT_7ZIP #}
 
 archiveFormatWarc :: ArchiveFormat
-archiveFormatWarc = {# const ARCHIVE_FORMAT_WARC #}
+archiveFormatWarc = ArchiveFormat {# const ARCHIVE_FORMAT_WARC #}
 
 archiveReadHasEncryptedEntries :: Ptr Archive -> IO ArchiveEncryption
 archiveReadHasEncryptedEntries = fmap encryptionResult . archive_read_has_encrypted_entries
@@ -671,16 +689,16 @@ encryptionResult ({# const ARCHIVE_READ_FORMAT_ENCRYPTION_DONT_KNOW #})   = Encr
 encryptionResult _                                                        = error "Should not happen."
 
 archiveReadFormatCapsNone :: ArchiveCapabilities
-archiveReadFormatCapsNone = {# const ARCHIVE_READ_FORMAT_CAPS_NONE #}
+archiveReadFormatCapsNone = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAPS_NONE #}
 
 (<<) :: Bits a => a -> Int -> a
 m << n = m `shift` n
 
 archiveReadFormatCapsEncryptData :: ArchiveCapabilities
-archiveReadFormatCapsEncryptData = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+archiveReadFormatCapsEncryptData = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
 
 archiveReadFormatCapsEncryptMetadata :: ArchiveCapabilities
-archiveReadFormatCapsEncryptMetadata = {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
+archiveReadFormatCapsEncryptMetadata = ArchiveCapabilities {# const ARCHIVE_READ_FORMAT_CAPS_ENCRYPT_DATA #}
 
 archiveReadDiskCanDescend :: Ptr Archive -> IO Bool
 archiveReadDiskCanDescend = fmap intToBool . archive_read_disk_can_descend

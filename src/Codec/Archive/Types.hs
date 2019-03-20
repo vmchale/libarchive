@@ -70,23 +70,20 @@ executablePermissions :: Permissions
 executablePermissions = 0o755
 
 newtype ArchiveFormat = ArchiveFormat CInt
-    deriving (Num)
 
 newtype FileType = FileType CMode
-    deriving (Eq, Num)
+    deriving (Eq)
 
 -- TODO: make this a sum type ?
 newtype ArchiveError = ArchiveError CInt
-    deriving (Eq, Num)
+    deriving (Eq)
 
 newtype Flags = Flags CInt
-    deriving (Num)
 
 newtype ArchiveFilter = ArchiveFilter CInt
-    deriving (Num)
 
 newtype ArchiveCapabilities = ArchiveCapabilities CInt
-    deriving (Eq, Num, Bits)
+    deriving (Eq, Bits)
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption
@@ -97,5 +94,5 @@ instance Semigroup Flags where
     (<>) (Flags x) (Flags y) = Flags (x .|. y)
 
 instance Monoid Flags where
-    mempty = 0
+    mempty = Flags 0
     mappend = (<>)
