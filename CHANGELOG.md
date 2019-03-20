@@ -1,5 +1,10 @@
 # libarchive
 
+
+## 1.0.2.0
+
+  * Add `Eq` instance for `ArchiveFormat`
+
 ## 1.0.1.0
 
   * Remove functions from libarchive 3.3.3
