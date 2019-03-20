@@ -1,6 +1,8 @@
 module Codec.Archive.Pack ( packEntries
                           , entriesToFile
                           , entriesToBS
+                          , entriesToBSzip
+                          , entriesToBS7zip
                           ) where
 
 import           Codec.Archive.Foreign
@@ -58,10 +60,24 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz (Symlink fp)     = fromIntegral $ length fp
 
 -- | Returns a 'ByteString' containing a tar archive with the 'Entry's
-entriesToBS :: (Foldable t) => t Entry -> BS.ByteString
-entriesToBS hsEntries' = unsafePerformIO $ do
+entriesToBS :: Foldable t => t Entry -> BS.ByteString
+entriesToBS = unsafePerformIO . entriesToBSGeneral archive_write_set_format_pax_restricted
+{-# NOINLINE entriesToBS #-}
+
+-- | Returns a 'ByteString' containing a @.7z@ archive with the 'Entry's
+entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
+entriesToBS7zip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_7zip
+{-# NOINLINE entriesToBS7zip #-}
+
+-- | Returns a 'ByteString' containing a zip archive with the 'Entry's
+entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
+entriesToBSzip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_zip
+{-# NOINLINE entriesToBSzip #-}
+
+entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveError) -> t Entry -> IO BS.ByteString
+entriesToBSGeneral modifier hsEntries' = do
     a <- archive_write_new
-    void $ archive_write_set_format_pax_restricted a
+    void $ modifier a
     alloca $ \used ->
         allocaBytes bufSize $ \buffer -> do
             void $ archive_write_open_memory a buffer bufSize used
@@ -74,18 +90,21 @@ entriesToBS hsEntries' = unsafePerformIO $ do
 
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
-{-# NOINLINE entriesToBS #-}
 
--- | Write some entries to a file. This is more efficient than
+-- | Write some entries to a file, creating a tar archive. This is more
+-- efficient than
 --
 -- @
 -- BS.writeFile "file.tar" (entriesToBS entries)
 -- @
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
-entriesToFile fp hsEntries' = do
+entriesToFile = entriesToFileGeneral archive_write_set_format_pax_restricted
+-- this is the recommended format; it is a tar archive
+
+entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveError) -> FilePath -> t Entry -> IO ()
+entriesToFileGeneral modifier fp hsEntries' = do
     a <- archive_write_new
-    -- this is the recommended format; it is a tar archive
-    void $ archive_write_set_format_pax_restricted a
+    void $ modifier a
     withCString fp $ \fpc ->
         void $ archive_write_open_filename a fpc
     packEntries a hsEntries'

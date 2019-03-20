@@ -7,6 +7,8 @@ module Codec.Archive
     , unpackArchive
     , entriesToFile
     , entriesToBS
+    , entriesToBS7zip
+    , entriesToBSzip
     , readArchiveFile
     , readArchiveBS
     -- * Concrete (Haskell) types
