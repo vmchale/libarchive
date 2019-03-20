@@ -8,6 +8,5 @@
 
 - error: {lhs: "if p then x else pure ()", rhs: "when p x"}
 
-- fixity: infixr 3 ***
-- fixity: infixr 3 &&&
-- fixity: infixr 1 <=<
+- fixity: infixr 8 .*
+- fixity: infixr 8 .**
