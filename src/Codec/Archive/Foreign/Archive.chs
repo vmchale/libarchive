@@ -1,4 +1,4 @@
--- | Module corresponding loosely to @archive.h@
+-- | This module corresponds to @archive.h@
 module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                        archive_read_new
                                      , archive_read_data_skip
