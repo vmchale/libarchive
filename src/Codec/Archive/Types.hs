@@ -17,6 +17,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                            , ArchiveFormat (..)
                            , FileType (..)
                            , ArchiveCapabilities (..)
+                           , ReadDiskFlags (..)
                            -- * Values
                            , standardPermissions
                            , executablePermissions
@@ -78,6 +79,8 @@ newtype ArchiveError = ArchiveError CInt
 
 newtype Flags = Flags CInt
 
+newtype ReadDiskFlags = ReadDiskFlags CInt
+
 newtype ArchiveFilter = ArchiveFilter CInt
 
 newtype ArchiveCapabilities = ArchiveCapabilities CInt
@@ -94,6 +97,9 @@ instance Semigroup ArchiveCapabilities where
 instance Monoid ArchiveCapabilities where
     mempty = ArchiveCapabilities 0
     mappend = (<>)
+
+instance Semigroup ReadDiskFlags where
+    (<>) (ReadDiskFlags x) (ReadDiskFlags y) = ReadDiskFlags (x .|. y)
 
 instance Semigroup Flags where
     (<>) (Flags x) (Flags y) = Flags (x .|. y)

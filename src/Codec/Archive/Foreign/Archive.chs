@@ -100,6 +100,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadDiskCurrentFilesystemIsSynthetic
                                      , archiveReadDiskCurrentFilesystemIsRemote
                                      , archive_read_disk_set_atime_restored
+                                     , archive_read_disk_set_behavior
                                      -- * Direct bindings (write)
                                      , archive_write_set_bytes_per_block
                                      , archive_write_get_bytes_per_block
@@ -243,6 +244,12 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveFormatRar
                                      , archiveFormat7zip
                                      , archiveFormatWarc
+                                     -- * Read disk flags
+                                     , archiveReadDiskRestoreATime
+                                     , archiveReadDiskHonorNoDump
+                                     , archiveReadDiskMacCopyFile
+                                     , archiveReadDiskNoTraverseMounts
+                                     , archiveReadDiskNoXattr
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -274,9 +281,12 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , mkWriteLookup
                                      , mkReadLookup
                                      , mkCleanup
+                                     , mkMatch
+                                     , mkFilter
                                      ) where
 
 import Codec.Archive.Foreign.Common
+import Control.Composition ((.**))
 import Data.Bits (Bits (..))
 import Data.Int (Int64)
 import Codec.Archive.Types
@@ -304,6 +314,14 @@ foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback
 foreign import ccall "wrapper" mkWriteLookup :: (Ptr a -> CString -> Int64 -> IO Int64) -> IO (FunPtr (Ptr a -> CString -> Int64 -> IO Int64))
 foreign import ccall "wrapper" mkReadLookup :: (Ptr a -> Int64 -> IO CString) -> IO (FunPtr (Ptr a -> Int64 -> IO CString))
 foreign import ccall "wrapper" mkCleanup :: (Ptr a -> IO ()) -> IO (FunPtr (Ptr a -> IO ()))
+
+foreign import ccall "wrapper" mkMatch :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()))
+foreign import ccall "wrapper" preMkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
+
+mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
+mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
+    where boolToInt False = 0
+          boolToInt True = 1
 
 type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
 type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
@@ -509,8 +527,25 @@ foreign import ccall unsafe archive_read_disk_current_filesystem :: Ptr Archive 
 foreign import ccall unsafe archive_read_disk_current_filesystem_is_synthetic :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_disk_current_filesystem_is_remote :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_read_disk_set_atime_restored :: Ptr Archive -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_behavior :: Ptr Archive -> ReadDiskFlags -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_matching :: Ptr Archive -> Ptr Archive -> FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> Ptr a -> IO ArchiveError
+foreign import ccall unsafe archive_read_disk_set_metadata_filter_callback :: Ptr Archive -> FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt) -> Ptr a -> IO ArchiveError
 
 foreign import ccall unsafe archive_free :: Ptr Archive -> IO ArchiveError
+
+foreign import ccall unsafe archive_filter_count :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_filter_bytes :: Ptr Archive -> CInt -> Int64
+foreign import ccall unsafe archive_filter_code :: Ptr Archive -> CInt -> IO Int
+foreign import ccall unsafe archive_filter_name :: Ptr Archive -> CInt -> IO CString
+
+foreign import ccall unsafe archive_errno :: Ptr Archive -> IO CInt
+foreign import ccall unsafe archive_error_string :: Ptr Archive -> IO CString
+foreign import ccall unsafe archive_format_name :: Ptr Archive -> IO CString
+foreign import ccall unsafe archive_format :: Ptr Archive -> IO ArchiveFormat
+foreign import ccall unsafe archive_clear_error :: Ptr Archive -> IO ()
+foreign import ccall unsafe archive_set_error :: Ptr Archive -> CInt -> CString -> IO () -- TODO: variadic lol
+foreign import ccall unsafe archive_copy_error :: Ptr Archive -> Ptr Archive -> IO ()
+foreign import ccall unsafe archive_file_count :: Ptr Archive -> IO CInt
 
 #include <archive.h>
 
@@ -715,3 +750,24 @@ archiveReadDiskCurrentFilesystemIsSynthetic = fmap intToBool . archive_read_disk
 
 archiveReadDiskCurrentFilesystemIsRemote :: Ptr Archive -> IO Bool
 archiveReadDiskCurrentFilesystemIsRemote = fmap intToBool . archive_read_disk_current_filesystem_is_remote
+
+archiveReadDiskRestoreATime :: ReadDiskFlags
+archiveReadDiskRestoreATime = ReadDiskFlags {# const ARCHIVE_READDISK_RESTORE_ATIME #}
+
+archiveReadDiskHonorNoDump :: ReadDiskFlags
+archiveReadDiskHonorNoDump = ReadDiskFlags {# const ARCHIVE_READDISK_HONOR_NODUMP #}
+
+archiveReadDiskMacCopyFile :: ReadDiskFlags
+archiveReadDiskMacCopyFile = ReadDiskFlags {# const ARCHIVE_READDISK_MAC_COPYFILE #}
+
+archiveReadDiskNoTraverseMounts :: ReadDiskFlags
+archiveReadDiskNoTraverseMounts = ReadDiskFlags {# const ARCHIVE_READDISK_NO_TRAVERSE_MOUNTS #}
+
+archiveReadDiskNoXattr :: ReadDiskFlags
+archiveReadDiskNoXattr = ReadDiskFlags {# const ARCHIVE_READDISK_NO_XATTR #}
+
+-- archiveReadDiskNoAcl :: ReadDiskFlags
+-- archiveReadDiskNoAcl = ReadDiskFlags {# const ARCHIVE_READDISK_NO_ACL #}
+
+-- archiveReadDiskNoFFlags :: ReadDiskFlags
+-- archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
