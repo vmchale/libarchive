@@ -2,6 +2,7 @@ module Codec.Archive.Types ( -- * Abstract data types
                              Archive
                            , ArchiveEntry
                            , Stat
+                           , LinkResolver
                            -- * Concrete (Haskell) data types
                            , Entry (..)
                            , EntryContent (..)
@@ -39,6 +40,8 @@ data Archive
 data ArchiveEntry
 
 data Stat
+
+data LinkResolver
 
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
 data EntryContent = NormalFile !BS.ByteString

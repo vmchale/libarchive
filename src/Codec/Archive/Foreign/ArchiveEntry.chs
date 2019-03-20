@@ -121,6 +121,38 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_copy_stat
                                           , archive_entry_mac_metadata
                                           , archive_entry_copy_mac_metadata
+                                          -- * ACL functions
+                                          , archive_entry_acl_add_entry
+                                          , archive_entry_acl_add_entry_w
+                                          , archive_entry_acl_reset
+                                          , archive_entry_acl_next
+                                          , archive_entry_acl_next_w
+                                          , archive_entry_acl_to_text
+                                          , archive_entry_acl_to_text_w
+                                          , archive_entry_acl_from_text
+                                          , archive_entry_acl_from_text_w
+                                          , archive_entry_acl_types
+                                          , archive_entry_count
+                                          -- * Xattr functions
+                                          , archive_entry_xattr_clear
+                                          , archive_entry_xattr_add_entry
+                                          , archive_entry_xattr_count
+                                          , archive_entry_xattr_reset
+                                          , archive_entry_xattr_next
+                                          -- * For sparse archives
+                                          , archive_entry_sparse_clear
+                                          , archive_entry_sparse_add_entry
+                                          , archive_entry_sparse_count
+                                          , archive_entry_sparse_reset
+                                          , archive_entry_sparse_next
+                                          -- * Link resolver
+                                          , archive_entry_linkresolver_new
+                                          , archive_entry_linkresolver_set_strategy
+                                          , archive_entry_linkresolver_free
+                                          , archive_entry_linkify
+                                          , archive_entry_partial_links
+                                          -- * ACL
+                                          , archive_entry_acl_clear
                                           -- * File types
                                           , regular
                                           , symlink
@@ -168,9 +200,12 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryACLMask
                                           , archiveEntryACLOther
                                           , archiveEntryACLEveryone
+                                          , archiveEntryACLStyleExtraID
+                                          , archiveEntryACLStyleMarkDefault
                                           -- * Abstract types
                                           , ArchiveEntry
                                           , Stat
+                                          , LinkResolver
                                           -- * Lower-level API types
                                           , FileType
                                           , EntryACL
@@ -312,6 +347,41 @@ foreign import ccall unsafe archive_entry_stat :: Ptr ArchiveEntry -> IO (Ptr St
 foreign import ccall unsafe archive_entry_copy_stat :: Ptr ArchiveEntry -> Ptr Stat -> IO ()
 foreign import ccall unsafe archive_entry_mac_metadata :: Ptr ArchiveEntry -> Ptr CSize -> IO (Ptr a)
 foreign import ccall unsafe archive_entry_copy_mac_metadata :: Ptr ArchiveEntry -> Ptr a -> CSize -> IO ()
+
+foreign import ccall unsafe archive_entry_acl_clear :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_acl_add_entry :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CString -> IO ArchiveError
+foreign import ccall unsafe archive_entry_acl_add_entry_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO ArchiveError
+foreign import ccall unsafe archive_entry_acl_reset :: Ptr ArchiveEntry -> EntryACL -> IO CInt
+foreign import ccall unsafe archive_entry_acl_next :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveError
+foreign import ccall unsafe archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO ArchiveError
+
+foreign import ccall unsafe archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CWString
+foreign import ccall unsafe archive_entry_acl_to_text :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CString
+foreign import ccall unsafe archive_entry_acl_from_text :: Ptr ArchiveEntry -> CString -> EntryACL -> IO ArchiveError
+foreign import ccall unsafe archive_entry_acl_from_text_w :: Ptr ArchiveEntry -> CWString -> EntryACL -> IO ArchiveError
+foreign import ccall unsafe archive_entry_acl_types :: Ptr ArchiveEntry -> IO EntryACL
+foreign import ccall unsafe archive_entry_count :: Ptr ArchiveEntry -> EntryACL -> IO CInt
+
+-- don't bother with archive_entry_acl
+
+foreign import ccall unsafe archive_entry_xattr_clear :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_xattr_add_entry :: Ptr ArchiveEntry -> CString -> Ptr a -> CSize -> IO ()
+foreign import ccall unsafe archive_entry_xattr_count :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_xattr_reset :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_xattr_next :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveError
+-- TODO: higher level archiveEntryXattrList?
+
+foreign import ccall unsafe archive_entry_sparse_clear :: Ptr ArchiveEntry -> IO ()
+foreign import ccall unsafe archive_entry_sparse_add_entry :: Ptr ArchiveEntry -> Int64 -> Int64 -> IO ()
+foreign import ccall unsafe archive_entry_sparse_count :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_sparse_reset :: Ptr ArchiveEntry -> IO CInt
+foreign import ccall unsafe archive_entry_sparse_next :: Ptr ArchiveEntry -> Ptr Int64 -> Ptr Int64 -> IO ArchiveError
+
+foreign import ccall unsafe archive_entry_linkresolver_new :: Ptr LinkResolver
+foreign import ccall unsafe archive_entry_linkresolver_set_strategy :: Ptr LinkResolver -> ArchiveFormat -> IO ()
+foreign import ccall unsafe archive_entry_linkresolver_free :: Ptr LinkResolver -> IO ()
+foreign import ccall unsafe archive_entry_linkify :: Ptr LinkResolver -> Ptr (Ptr ArchiveEntry) -> Ptr (Ptr ArchiveEntry) -> IO ()
+foreign import ccall unsafe archive_entry_partial_links :: Ptr LinkResolver -> Ptr CUInt -> IO (Ptr ArchiveEntry)
 
 -- stupid function to work around some annoying C quirk
 mode_t :: Integer -> FileType
@@ -508,3 +578,18 @@ archiveEntryACLOther = EntryACL {# const ARCHIVE_ENTRY_ACL_OTHER #}
 
 archiveEntryACLEveryone :: EntryACL
 archiveEntryACLEveryone = EntryACL {# const ARCHIVE_ENTRY_ACL_EVERYONE #}
+
+archiveEntryACLStyleExtraID :: EntryACL
+archiveEntryACLStyleExtraID = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_EXTRA_ID #}
+
+archiveEntryACLStyleMarkDefault :: EntryACL
+archiveEntryACLStyleMarkDefault = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_MARK_DEFAULT #}
+
+-- archiveEntryACLStyleSolaris :: EntryACL
+-- archiveEntryACLStyleSolaris = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_SOLARIS #}
+
+-- archiveEntryACLStyleSeparatorComma :: EntryACL
+-- archiveEntryACLStyleSeparatorComma = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_SEPARATOR_COMMA #}
+
+-- archiveEntryACLStyleCompact :: EntryACL
+-- archiveEntryACLStyleCompact = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_COMPACT #}
