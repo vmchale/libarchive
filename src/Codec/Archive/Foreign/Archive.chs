@@ -101,6 +101,8 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadDiskCurrentFilesystemIsRemote
                                      , archive_read_disk_set_atime_restored
                                      , archive_read_disk_set_behavior
+                                     , archive_read_disk_set_matching
+                                     , archive_read_disk_set_metadata_filter_callback
                                      -- * Direct bindings (write)
                                      , archive_write_set_bytes_per_block
                                      , archive_write_get_bytes_per_block
@@ -175,11 +177,24 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_write_disk_set_user_lookup
                                      , archive_write_disk_gid
                                      , archive_write_disk_uid
-                                     , archive_free
-                                     -- * Direct bindings (version/miscellaneous)
+                                     -- * Direct bindings (archive error)
+                                     , archive_errno
+                                     , archive_error_string
+                                     , archive_format_name
+                                     , archive_format
+                                     , archive_clear_error
+                                     , archive_set_error
+                                     , archive_copy_error
+                                     , archive_file_count
+                                     -- * Direct bindings (version/filter/miscellaneous)
                                      , archive_version_number
                                      , archive_version_string
                                      , archive_version_details
+                                     , archive_free
+                                     , archive_filter_count
+                                     , archive_filter_bytes
+                                     , archive_filter_code
+                                     , archive_filter_name
                                      -- * Version macros
                                      , archiveVersionNumber
                                      , archiveVersionOnlyString
