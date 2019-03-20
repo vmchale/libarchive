@@ -187,7 +187,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_copy_error
                                      , archive_file_count
                                      -- * Direct bindings (archive match)
-                                     , archive_match
+                                     , archive_match_new
                                      , archive_match_free
                                      , archiveMatchExcluded
                                      , archiveMatchPathExcluded
@@ -603,7 +603,7 @@ foreign import ccall unsafe archive_set_error :: Ptr Archive -> CInt -> CString 
 foreign import ccall unsafe archive_copy_error :: Ptr Archive -> Ptr Archive -> IO ()
 foreign import ccall unsafe archive_file_count :: Ptr Archive -> IO CInt
 
-foreign import ccall unsafe archive_match :: Ptr Archive
+foreign import ccall unsafe archive_match_new :: Ptr Archive
 foreign import ccall unsafe archive_match_free :: Ptr Archive -> IO ArchiveError
 foreign import ccall unsafe archive_match_excluded :: Ptr Archive -> IO CInt
 foreign import ccall unsafe archive_match_path_excluded :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
