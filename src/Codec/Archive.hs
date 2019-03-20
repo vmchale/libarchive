@@ -48,6 +48,7 @@ readArchiveFile fp =
 readArchiveBS :: BS.ByteString -> [Entry]
 readArchiveBS bs = unsafePerformIO $
     bsToArchive bs >>= withArchiveRead hsEntries
+{-# NOINLINE readArchiveBS #-}
 
 archiveFile :: FilePath -> IO (Ptr Archive)
 archiveFile fp = withCString fp $ \cpath -> do
