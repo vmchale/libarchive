@@ -311,6 +311,8 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveFilter
                                      , ArchiveFormat
                                      , ArchiveCapabilities
+                                     , ReadDiskFlags
+                                     , TimeFlag
                                      -- * Callback types
                                      , ArchiveReadCallback
                                      , ArchiveSkipCallback
