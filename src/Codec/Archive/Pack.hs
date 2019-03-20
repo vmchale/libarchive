@@ -61,17 +61,17 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz Directory        = 0
           contentSz (Symlink fp)     = fromIntegral $ length fp
 
--- | Returns a 'ByteString' containing a tar archive with the 'Entry's
+-- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's
 entriesToBS :: Foldable t => t Entry -> BS.ByteString
 entriesToBS = unsafePerformIO . entriesToBSGeneral archive_write_set_format_pax_restricted
 {-# NOINLINE entriesToBS #-}
 
--- | Returns a 'ByteString' containing a @.7z@ archive with the 'Entry's
+-- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
 entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
 entriesToBS7zip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_7zip
 {-# NOINLINE entriesToBS7zip #-}
 
--- | Returns a 'ByteString' containing a zip archive with the 'Entry's
+-- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
 entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
 entriesToBSzip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_zip
 {-# NOINLINE entriesToBSzip #-}

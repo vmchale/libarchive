@@ -47,7 +47,7 @@ readArchiveFile :: FilePath -> IO [Entry]
 readArchiveFile fp =
     archiveFile fp >>= withArchiveRead hsEntries
 
--- | Read an archive contained in a 'ByteString'. The format of the archive is
+-- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
 readArchiveBS :: BS.ByteString -> [Entry]
 readArchiveBS bs = unsafePerformIO $
@@ -84,7 +84,7 @@ bsToArchive bs = do
     pure a
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
-            -> BS.ByteString -- ^ 'ByteString' containing archive
+            -> BS.ByteString -- ^ 'BS.ByteString' containing archive
             -> IO ()
 unpackToDir fp bs = do
     a <- bsToArchive bs

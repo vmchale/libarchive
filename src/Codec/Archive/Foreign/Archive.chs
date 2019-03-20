@@ -216,7 +216,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_match_include_uname_w
                                      , archive_match_include_gname
                                      , archive_match_include_gname_w
-                                     -- * Direct bindings (version/filter/miscellaneous)
+                                     -- * Direct bindings (version\/filter\/miscellaneous)
                                      , archive_version_number
                                      , archive_version_string
                                      , archive_version_details
