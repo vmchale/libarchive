@@ -76,6 +76,7 @@ entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
 entriesToBSzip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_zip
 {-# NOINLINE entriesToBSzip #-}
 
+-- | Internal function to be used with 'archive_write_set_format_pax' etc.
 entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveError) -> t Entry -> IO BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
     a <- archive_write_new

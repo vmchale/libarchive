@@ -22,23 +22,23 @@ readEntry a entry =
         <*> readTimes entry
 
 getHsEntry :: Ptr Archive -> IO (Maybe Entry)
-getHsEntry a = do
-    entry <- getEntry a
+getHsEntry a =
+    getEntry a >>= \entry ->
     case entry of
         Nothing -> pure Nothing
         Just x  -> Just <$> readEntry a x
 
 hsEntries :: Ptr Archive -> IO [Entry]
-hsEntries a = do
-    next <- getHsEntry a
+hsEntries a =
+    getHsEntry a >>= \next ->
     case next of
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntries a
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: Ptr Archive -> FilePath -> IO ()
-unpackEntriesFp a fp = do
-    res <- getEntry a
+unpackEntriesFp a fp =
+    getEntry a >>= \res ->
     case res of
         Nothing -> pure ()
         Just x  -> do

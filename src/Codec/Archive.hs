@@ -28,7 +28,7 @@ import           Codec.Archive.Foreign
 import           Codec.Archive.Pack
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
-import           Control.Monad         (void)
+import           Control.Monad         (void, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
 import           Foreign.C.String
@@ -44,14 +44,12 @@ withArchiveRead fact a = do
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
 readArchiveFile :: FilePath -> IO [Entry]
-readArchiveFile fp =
-    archiveFile fp >>= withArchiveRead hsEntries
+readArchiveFile = withArchiveRead hsEntries <=< archiveFile
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
 readArchiveBS :: BS.ByteString -> [Entry]
-readArchiveBS bs = unsafePerformIO $
-    bsToArchive bs >>= withArchiveRead hsEntries
+readArchiveBS = unsafePerformIO . (withArchiveRead hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
 archiveFile :: FilePath -> IO (Ptr Archive)
