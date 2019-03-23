@@ -21,24 +21,26 @@ readEntry a entry =
         <*> readOwnership entry
         <*> readTimes entry
 
+-- | Yield the next entry in an archive
 getHsEntry :: Ptr Archive -> IO (Maybe Entry)
-getHsEntry a =
-    getEntry a >>= \entry ->
+getHsEntry a = do
+    entry <- getEntry a
     case entry of
         Nothing -> pure Nothing
         Just x  -> Just <$> readEntry a x
 
+-- | Return a list of 'Entry's.
 hsEntries :: Ptr Archive -> IO [Entry]
-hsEntries a =
-    getHsEntry a >>= \next ->
+hsEntries a = do
+    next <- getHsEntry a
     case next of
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntries a
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: Ptr Archive -> FilePath -> IO ()
-unpackEntriesFp a fp =
-    getEntry a >>= \res ->
+unpackEntriesFp a fp = do
+    res <- getEntry a
     case res of
         Nothing -> pure ()
         Just x  -> do
@@ -78,6 +80,7 @@ readTimes :: Ptr ArchiveEntry -> IO ModTime
 readTimes entry =
     (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
 
+-- | Get the next 'ArchiveEntry' in an 'Archive'
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
     let done res = not (res == archiveOk || res == archiveRetry)

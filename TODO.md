@@ -9,7 +9,6 @@
 # Features
 - [ ] `pipes` support?
 - [ ] check for tarbombs?
-- [ ] pack a `[Entry]` to archive and return bytestring
 - [ ] Write archives besides just tarballs (e.g. zipfiles?)
 # Performance
 - [ ] Lots of the memory stuff is inefficient as-is
