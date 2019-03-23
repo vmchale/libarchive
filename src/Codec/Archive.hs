@@ -35,21 +35,18 @@ import           Foreign.C.String
 import           Foreign.Ptr           (Ptr)
 import           System.IO.Unsafe      (unsafePerformIO)
 
-withArchiveRead :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
-withArchiveRead fact a = do
-    res <- fact a
-    void $ archive_read_free a
-    pure res
+actFree :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
+actFree fact a = fact a <* archive_read_free a
 
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
 readArchiveFile :: FilePath -> IO [Entry]
-readArchiveFile = withArchiveRead hsEntries <=< archiveFile
+readArchiveFile = actFree hsEntries <=< archiveFile
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
 readArchiveBS :: BS.ByteString -> [Entry]
-readArchiveBS = unsafePerformIO . (withArchiveRead hsEntries <=< bsToArchive)
+readArchiveBS = unsafePerformIO . (actFree hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
 archiveFile :: FilePath -> IO (Ptr Archive)
