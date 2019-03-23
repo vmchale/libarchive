@@ -7,6 +7,7 @@
   - {name: nullPtr, within: []}
 
 - error: {lhs: "if p then x else pure ()", rhs: "when p x"}
+- ignore: {name: Use lambda-case}
 
 - fixity: infixr 8 .*
 - fixity: infixr 8 .**
