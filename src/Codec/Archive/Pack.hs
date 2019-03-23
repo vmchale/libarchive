@@ -1,5 +1,4 @@
-module Codec.Archive.Pack ( packEntries
-                          , entriesToFile
+module Codec.Archive.Pack ( entriesToFile
                           , entriesToFileZip
                           , entriesToFile7Zip
                           , entriesToBS
