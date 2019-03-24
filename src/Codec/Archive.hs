@@ -20,6 +20,7 @@ module Codec.Archive
     , Permissions
     , ModTime
     , Id
+    -- * Permissions helpers
     , standardPermissions
     , executablePermissions
     ) where
@@ -35,6 +36,7 @@ import           Foreign.C.String
 import           Foreign.Ptr           (Ptr)
 import           System.IO.Unsafe      (unsafePerformIO)
 
+-- | Read from an 'Archive' and then free it
 actFree :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
 actFree fact a = fact a <* archive_read_free a
 
