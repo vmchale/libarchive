@@ -431,8 +431,8 @@ foreign import ccall unsafe archive_read_append_filter :: Ptr Archive -> Archive
 foreign import ccall unsafe archive_read_append_filter_program :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall unsafe archive_read_append_filter_program_signature :: Ptr Archive -> CString -> Ptr a -> CSize -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_open_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_read_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
-foreign import ccall unsafe archive_read_set_seek_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_read_callback :: Ptr Archive -> FunPtr (ArchiveReadCallback a b) -> IO ArchiveError
+foreign import ccall unsafe archive_read_set_seek_callback :: Ptr Archive -> FunPtr (ArchiveSeekCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_skip_callback :: Ptr Archive -> FunPtr (ArchiveSkipCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_close_callback :: Ptr Archive -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
 foreign import ccall unsafe archive_read_set_switch_callback :: Ptr Archive -> FunPtr (ArchiveSwitchCallback a b) -> IO ArchiveError

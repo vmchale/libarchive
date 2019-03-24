@@ -1,5 +1,9 @@
 # libarchive
 
+## 1.0.3.0
+
+  * Fix types for `archive_set_read_callback` and
+    `archive_read_set_seek_callback`
 
 ## 1.0.2.0
 
