@@ -1,5 +1,9 @@
 # libarchive
 
+## 1.0.4.0
+
+  * Add `noOpenCallback`
+
 ## 1.0.3.0
 
   * Fix types for `archive_set_read_callback` and

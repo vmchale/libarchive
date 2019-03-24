@@ -323,6 +323,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveSwitchCallback
                                      , ArchivePassphraseCallback
                                      -- * Callback constructors
+                                     , noOpenCallback
                                      , mkReadCallback
                                      , mkSkipCallback
                                      , mkSeekCallback
@@ -345,7 +346,7 @@ import Data.Int (Int64)
 import Codec.Archive.Types
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Ptr (FunPtr, Ptr)
+import Foreign.Ptr
 import System.Posix.Types (Fd (..))
 
 -- Miscellaneous
@@ -363,6 +364,12 @@ foreign import ccall "wrapper" mkOpenCallback :: ArchiveOpenCallback a -> IO (Fu
 foreign import ccall "wrapper" mkCloseCallback :: ArchiveCloseCallback a -> IO (FunPtr (ArchiveCloseCallback a))
 foreign import ccall "wrapper" mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallback a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
+
+-- | Don't use an open callback. This is the recommended argument to 'archive_open_read'
+--
+-- @since 1.0.4.0
+noOpenCallback :: FunPtr (ArchiveOpenCallback a)
+noOpenCallback = castPtrToFunPtr nullPtr
 
 foreign import ccall "wrapper" mkWriteLookup :: (Ptr a -> CString -> Int64 -> IO Int64) -> IO (FunPtr (Ptr a -> CString -> Int64 -> IO Int64))
 foreign import ccall "wrapper" mkReadLookup :: (Ptr a -> Int64 -> IO CString) -> IO (FunPtr (Ptr a -> Int64 -> IO CString))
