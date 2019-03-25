@@ -4,6 +4,7 @@
 module Codec.Archive
     ( -- * High-level functionality
       unpackToDir
+    , unpackToDirLazy
     , unpackArchive
     , entriesToFile
     , entriesToFileZip
@@ -13,6 +14,7 @@ module Codec.Archive
     , entriesToBSzip
     , readArchiveFile
     , readArchiveBS
+    , readArchiveBSL
     -- * Concrete (Haskell) types
     , Entry (..)
     , EntryContent (..)
@@ -32,8 +34,13 @@ import           Codec.Archive.Unpack
 import           Control.Monad         (void, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString       as BS
+import qualified Data.ByteString.Lazy  as BSL
+import           Data.Functor          (($>))
+import           Data.IORef
 import           Foreign.C.String
+import           Foreign.Marshal.Alloc (allocaBytes)
 import           Foreign.Ptr           (Ptr)
+import           Foreign.Storable      (poke)
 import           System.IO.Unsafe      (unsafePerformIO)
 
 -- | Read from an 'Archive' and then free it
@@ -44,6 +51,11 @@ actFree fact a = fact a <* archive_read_free a
 -- detected.
 readArchiveFile :: FilePath -> IO [Entry]
 readArchiveFile = actFree hsEntries <=< archiveFile
+
+-- | Read an archive lazily. The format of the archive is automatically
+-- detected.
+readArchiveBSL :: BSL.ByteString -> [Entry]
+readArchiveBSL = unsafePerformIO . (actFree hsEntries <=< bslToArchive)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
@@ -71,6 +83,29 @@ unpackArchive tarFp dirFp = do
     unpackEntriesFp a dirFp
     void $ archive_read_free a
 
+-- | Lazily stream a 'BSL.ByteString'
+bslToArchive :: BSL.ByteString -> IO (Ptr Archive)
+bslToArchive bs = do
+    a <- archive_read_new
+    void $ archive_read_support_format_all a
+    cc <- mkCloseCallback doNothing
+    bsChunksRef <- newIORef bsChunks
+    rc <- mkReadCallback (readBSL bsChunksRef)
+    allocaBytes 0 $ \nothingPtr ->
+        void $ archive_read_open a nothingPtr noOpenCallback rc cc
+    pure a
+    where doNothing _ _ = pure archiveOk
+          readBSL bsRef _ _ dataPtr = do
+                bs' <- readIORef bsRef
+                case bs' of
+                    [] -> pure 0
+                    (x:_) -> do
+                        modifyIORef bsRef tail
+                        useAsCStringLen x $ \(charPtr, sz) ->
+                            poke dataPtr charPtr $>
+                            fromIntegral sz
+          bsChunks = BSL.toChunks bs
+
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
     a <- archive_read_new
@@ -85,5 +120,13 @@ unpackToDir :: FilePath -- ^ Directory to unpack in
             -> IO ()
 unpackToDir fp bs = do
     a <- bsToArchive bs
+    unpackEntriesFp a fp
+    void $ archive_read_free a
+
+unpackToDirLazy :: FilePath -- ^ Directory to unpack in
+                -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
+                -> IO ()
+unpackToDirLazy fp bs = do
+    a <- bslToArchive bs
     unpackEntriesFp a fp
     void $ archive_read_free a
