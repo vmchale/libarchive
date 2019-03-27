@@ -27,19 +27,22 @@ unpackToDirLazy :: FilePath -- ^ Directory to unpack in
                 -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
                 -> IO ()
 unpackToDirLazy fp bs = do
-    (a, cc, bufPtr) <- bslToArchive bs
+    (a, act) <- bslToArchive bs
     unpackEntriesFp a fp
     void $ archive_read_free a
-    void $ freeHaskellFunPtr cc
-    void $ free bufPtr
+    act
 
 -- | Read an archive lazily. The format of the archive is automatically
 -- detected.
 readArchiveBSL :: BSL.ByteString -> [Entry]
 readArchiveBSL = unsafePerformIO . (actFreeCallback hsEntries <=< bslToArchive)
 
+freeBits :: FunPtr a -> Ptr b -> IO ()
+freeBits fp ptr = freeHaskellFunPtr fp *> free ptr
+
 -- | Lazily stream a 'BSL.ByteString'
-bslToArchive :: BSL.ByteString -> IO (Ptr Archive, FunPtr (ArchiveCloseCallback a), Ptr a)
+bslToArchive :: BSL.ByteString
+             -> IO (Ptr Archive, IO ()) -- ^ Returns an 'IO' action that can be used to free things after we're done with the archive
 bslToArchive bs = do
     a <- archive_read_new
     void $ archive_read_support_format_all a
@@ -53,7 +56,8 @@ bslToArchive bs = do
               , archive_read_set_callback_data a nothingPtr
               , archive_read_open1 a
               ]
-    pure (a, cc, bufPtr)
+    let act = freeBits cc bufPtr
+    pure (a, act)
     where readBSL bsRef bufPtr _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of

@@ -10,5 +10,5 @@ import           Foreign.Ptr
 actFree :: (Ptr Archive -> IO a) -> Ptr Archive -> IO a
 actFree fact a = fact a <* archive_free a
 
-actFreeCallback :: (Ptr Archive -> IO a) -> (Ptr Archive, FunPtr (ArchiveCloseCallback b), Ptr c) -> IO a
-actFreeCallback fact (a, cc, bufPtr) = fact a <* archive_free a <* freeHaskellFunPtr cc <* free bufPtr
+actFreeCallback :: (Ptr Archive -> IO a) -> (Ptr Archive, IO ()) -> IO a
+actFreeCallback fact (a, freeAct) = fact a <* archive_free a <* freeAct
