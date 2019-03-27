@@ -3,6 +3,7 @@
 ## 1.0.4.0
 
   * Add `noOpenCallback`
+  * Remove `unsafe` stuff everywhere
 
 ## 1.0.3.0
 
