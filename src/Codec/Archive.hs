@@ -38,7 +38,7 @@ import qualified Data.ByteString.Lazy  as BSL
 import           Data.Functor          (($>))
 import           Data.IORef
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc (allocaBytes)
+import           Foreign.Marshal.Alloc (free, mallocBytes)
 import           Foreign.Ptr           (Ptr)
 import           Foreign.Storable      (poke)
 import           System.IO.Unsafe      (unsafePerformIO)
@@ -88,14 +88,18 @@ bslToArchive :: BSL.ByteString -> IO (Ptr Archive)
 bslToArchive bs = do
     a <- archive_read_new
     void $ archive_read_support_format_all a
-    cc <- mkCloseCallback doNothing
     bsChunksRef <- newIORef bsChunks
     rc <- mkReadCallback (readBSL bsChunksRef)
-    allocaBytes 0 $ \nothingPtr ->
-        void $ archive_read_open a nothingPtr noOpenCallback rc cc
+    cc <- mkCloseCallback (\_ ptr -> free ptr $> archiveOk)
+    nothingPtr <- mallocBytes 0
+    sequence_ [ archive_read_set_read_callback a rc
+              , archive_read_set_close_callback a cc
+              , archive_read_set_callback_data a nothingPtr
+              -- this is where it hangs indefinitely
+              , archive_read_open1 a
+              ]
     pure a
-    where doNothing _ _ = pure archiveOk
-          readBSL bsRef _ _ dataPtr = do
+    where readBSL bsRef _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of
                     [] -> pure 0
