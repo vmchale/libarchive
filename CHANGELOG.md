@@ -1,5 +1,10 @@
 # libarchive
 
+## 1.0.5.0
+
+  * Add facilities for lazy packing, e.g. `entriesToBSL`
+  * Minor documentation fixes
+
 ## 1.0.4.0
 
   * Add `noOpenCallback`
