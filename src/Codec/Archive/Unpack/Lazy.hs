@@ -65,7 +65,6 @@ bslToArchive bs = do
                     (x:_) -> do
                         modifyIORef bsRef tail
                         useAsCStringLen x $ \(charPtr, sz) -> do
-                            -- FIXME: should be freed..? foreignPtr?
                             void $ memcpy bufPtr charPtr (fromIntegral sz)
                             poke dataPtr bufPtr $> fromIntegral sz
           bsChunks = BSL.toChunks bs
