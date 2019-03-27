@@ -1,6 +1,6 @@
 cabal-version: 1.18
 name: libarchive
-version: 1.0.4.0
+version: 1.0.5.0
 license: BSD3
 license-file: LICENSE
 copyright: Copyright: (c) 2018-2019 Vanessa McHale
@@ -33,6 +33,7 @@ library
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Pack
+        Codec.Archive.Pack.Lazy
         Codec.Archive.Unpack.Lazy
         Codec.Archive.Unpack
         Codec.Archive.Foreign.Common
@@ -44,8 +45,9 @@ library
     build-depends:
         base >=4.9 && <5,
         bytestring -any,
-        filepath -any,
-        composition-prelude -any
+        composition-prelude -any,
+        dlist -any,
+        filepath -any
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists

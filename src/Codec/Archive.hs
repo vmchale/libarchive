@@ -12,6 +12,9 @@ module Codec.Archive
     , entriesToBS
     , entriesToBS7zip
     , entriesToBSzip
+    , entriesToBSL
+    , entriesToBSLzip
+    , entriesToBSL7zip
     , readArchiveFile
     , readArchiveBS
     , readArchiveBSL
@@ -28,6 +31,7 @@ module Codec.Archive
     ) where
 
 import           Codec.Archive.Pack
+import           Codec.Archive.Pack.Lazy
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
 import           Codec.Archive.Unpack.Lazy

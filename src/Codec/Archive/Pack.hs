@@ -4,6 +4,7 @@ module Codec.Archive.Pack ( entriesToFile
                           , entriesToBS
                           , entriesToBSzip
                           , entriesToBS7zip
+                          , packEntries
                           ) where
 
 import           Codec.Archive.Foreign
