@@ -3,6 +3,8 @@
 ## 1.0.4.0
 
   * Add `noOpenCallback`
+  * Add various facilities for lazy/streaming archives, viz. `unpackToDirLazy`,
+    `bslToArchive`, and `readArchiveBSL`.
   * Remove `unsafe` stuff everywhere
 
 ## 1.0.3.0
