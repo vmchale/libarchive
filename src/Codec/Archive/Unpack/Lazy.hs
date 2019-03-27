@@ -23,6 +23,7 @@ foreign import ccall memcpy :: Ptr a -- ^ Destination
                             -> CSize -- ^ Size
                             -> IO (Ptr a) -- ^ Pointer to destination
 
+-- | @since 1.0.4.0
 unpackToDirLazy :: FilePath -- ^ Directory to unpack in
                 -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
                 -> IO ()
@@ -34,10 +35,13 @@ unpackToDirLazy fp bs = do
 
 -- | Read an archive lazily. The format of the archive is automatically
 -- detected.
+--
+-- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> [Entry]
 readArchiveBSL = unsafePerformIO . (actFreeCallback hsEntries <=< bslToArchive)
 
 -- | Lazily stream a 'BSL.ByteString'
+-- @since 1.0.4.0
 bslToArchive :: BSL.ByteString
              -> IO (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
