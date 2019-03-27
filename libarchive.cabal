@@ -40,7 +40,7 @@ library
         Codec.Archive.Common
     default-language: Haskell2010
     ghc-options: -Wall -Wincomplete-uni-patterns
-                 -Wincomplete-record-updates -Wredundant-constraints -Widentities
+                 -Wincomplete-record-updates -Wredundant-constraints
     build-depends:
         base >=4.9 && <5,
         bytestring -any,
