@@ -34,7 +34,6 @@ entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL = unsafePerformIO . entriesToBSLGeneral archive_write_set_format_pax_restricted
 {-# NOINLINE entriesToBSL #-}
 
--- I'm not sure if this actually streams anything or not but like...
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveError) -> t Entry -> IO BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
     a <- archive_write_new
