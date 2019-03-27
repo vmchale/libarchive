@@ -10,4 +10,4 @@ This contains Haskell bindings to
 formats.
 
 It has a high-level Haskell API for creating and unpacking archives in addition
-to the C API.
+to the C API. Like the `tar` package, it can stream from lazy `ByteString`s.

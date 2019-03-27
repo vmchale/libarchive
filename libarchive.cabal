@@ -10,7 +10,7 @@ tested-with: ghc ==8.4.4 ghc ==8.2.2 ghc ==8.6.4 ghc ==8.0.2
 bug-reports: https://github.com/vmchale/libarchive/issues
 synopsis: Haskell interface to libarchive
 description:
-    Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives.
+    Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives, including the ability to unpack archives lazily.
 category: Codec
 build-type: Simple
 extra-source-files:
