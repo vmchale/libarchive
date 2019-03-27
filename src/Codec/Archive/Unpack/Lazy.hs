@@ -56,8 +56,8 @@ bslToArchive bs = do
               , archive_read_set_callback_data a nothingPtr
               , archive_read_open1 a
               ]
-    let act = freeBits cc bufPtr
-    pure (a, act)
+    pure (a, freeBits cc bufPtr)
+
     where readBSL bsRef bufPtr _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of
