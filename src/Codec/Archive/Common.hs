@@ -3,7 +3,6 @@ module Codec.Archive.Common ( actFree
                             ) where
 
 import           Codec.Archive.Foreign
-import           Foreign.Marshal.Alloc (free)
 import           Foreign.Ptr
 
 -- | Read from an 'Archive' and then free it
