@@ -62,16 +62,22 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz (Symlink fp)     = fromIntegral $ length fp
 
 -- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's
+--
+-- @since 1.0.0.0
 entriesToBS :: Foldable t => t Entry -> BS.ByteString
 entriesToBS = unsafePerformIO . entriesToBSGeneral archive_write_set_format_pax_restricted
 {-# NOINLINE entriesToBS #-}
 
 -- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
+--
+-- @since 1.0.0.0
 entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
 entriesToBS7zip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_7zip
 {-# NOINLINE entriesToBS7zip #-}
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
+--
+-- @since 1.0.0.0
 entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
 entriesToBSzip = unsafePerformIO . entriesToBSGeneral archive_write_set_format_zip
 {-# NOINLINE entriesToBSzip #-}
@@ -100,15 +106,21 @@ entriesToBSGeneral modifier hsEntries' = do
 -- @
 -- BS.writeFile "file.tar" (entriesToBS entries)
 -- @
+--
+-- @since 1.0.0.0
 entriesToFile :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile = entriesToFileGeneral archive_write_set_format_pax_restricted
 -- this is the recommended format; it is a tar archive
 
 -- | Write some entries to a file, creating a zip archive.
+--
+-- @since 1.0.0.0
 entriesToFileZip :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFileZip = entriesToFileGeneral archive_write_set_format_zip
 
 -- | Write some entries to a file, creating a @.7z@ archive.
+--
+-- @since 1.0.0.0
 entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> IO ()
 entriesToFile7Zip = entriesToFileGeneral archive_write_set_format_7zip
 

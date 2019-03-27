@@ -22,6 +22,8 @@ import           System.IO.Unsafe      (unsafePerformIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
+--
+-- @since 1.0.0.0
 readArchiveBS :: BS.ByteString -> [Entry]
 readArchiveBS = unsafePerformIO . (actFree hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
@@ -37,6 +39,8 @@ bsToArchive bs = do
 
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
+--
+-- @since 1.0.0.0
 readArchiveFile :: FilePath -> IO [Entry]
 readArchiveFile = actFree hsEntries <=< archiveFile
 
