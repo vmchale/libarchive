@@ -1,5 +1,6 @@
 module Codec.Archive.Unpack.Lazy ( readArchiveBSL
                                  , bslToArchive
+                                 , unpackToDirLazy
                                  ) where
 
 import           Codec.Archive.Common
@@ -15,6 +16,14 @@ import           Foreign.Marshal.Alloc (free, mallocBytes)
 import           Foreign.Ptr
 import           Foreign.Storable      (poke)
 import           System.IO.Unsafe      (unsafePerformIO)
+
+unpackToDirLazy :: FilePath -- ^ Directory to unpack in
+                -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
+                -> IO ()
+unpackToDirLazy fp bs = do
+    a <- bslToArchive bs
+    unpackEntriesFp a fp
+    void $ archive_read_free a
 
 -- | Read an archive lazily. The format of the archive is automatically
 -- detected.
