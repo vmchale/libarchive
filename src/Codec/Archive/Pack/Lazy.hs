@@ -27,7 +27,9 @@ entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL7zip = unsafePerformIO . entriesToBSLGeneral archive_write_set_format_7zip
 {-# NOINLINE entriesToBSL7zip #-}
 
--- | @since 1.0.5.0
+-- | In general, this will be more efficient than 'entriesToBS'
+--
+-- @since 1.0.5.0
 entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL = unsafePerformIO . entriesToBSLGeneral archive_write_set_format_pax_restricted
 {-# NOINLINE entriesToBSL #-}
