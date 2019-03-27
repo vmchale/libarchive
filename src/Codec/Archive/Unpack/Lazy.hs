@@ -1,5 +1,4 @@
 module Codec.Archive.Unpack.Lazy ( readArchiveBSL
-                                 , bslToArchive
                                  , unpackToDirLazy
                                  ) where
 
