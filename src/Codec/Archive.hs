@@ -30,27 +30,22 @@ module Codec.Archive
 import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Pack
-import           Codec.Archive.Pack.Lazy
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
-import           Control.Monad           (void, (<=<))
-import           Data.ByteString         (useAsCStringLen)
-import qualified Data.ByteString         as BS
-import qualified Data.ByteString.Lazy    as BSL
+import           Codec.Archive.Unpack.Lazy
+import           Control.Monad             (void, (<=<))
+import           Data.ByteString           (useAsCStringLen)
+import qualified Data.ByteString           as BS
+import qualified Data.ByteString.Lazy      as BSL
 import           Foreign.C.String
-import           Foreign.Ptr             (Ptr)
-import           System.IO.Unsafe        (unsafePerformIO)
+import           Foreign.Ptr               (Ptr)
+import           System.IO.Unsafe          (unsafePerformIO)
 
 
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
 readArchiveFile :: FilePath -> IO [Entry]
 readArchiveFile = actFree hsEntries <=< archiveFile
-
--- | Read an archive lazily. The format of the archive is automatically
--- detected.
-readArchiveBSL :: BSL.ByteString -> [Entry]
-readArchiveBSL = unsafePerformIO . (actFree hsEntries <=< bslToArchive)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.

@@ -33,7 +33,7 @@ library
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Pack
-        Codec.Archive.Pack.Lazy
+        Codec.Archive.Unpack.Lazy
         Codec.Archive.Unpack
         Codec.Archive.Foreign.Common
         Codec.Archive.Types

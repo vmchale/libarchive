@@ -1,8 +1,12 @@
-module Codec.Archive.Pack.Lazy (bslToArchive) where
+module Codec.Archive.Unpack.Lazy ( readArchiveBSL
+                                 , bslToArchive
+                                 ) where
 
+import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
-import           Control.Monad         (void)
+import           Codec.Archive.Unpack
+import           Control.Monad         (void, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString.Lazy  as BSL
 import           Data.Functor          (($>))
@@ -10,6 +14,12 @@ import           Data.IORef            (modifyIORef, newIORef, readIORef)
 import           Foreign.Marshal.Alloc (free, mallocBytes)
 import           Foreign.Ptr
 import           Foreign.Storable      (poke)
+import           System.IO.Unsafe      (unsafePerformIO)
+
+-- | Read an archive lazily. The format of the archive is automatically
+-- detected.
+readArchiveBSL :: BSL.ByteString -> [Entry]
+readArchiveBSL = unsafePerformIO . (actFree hsEntries <=< bslToArchive)
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString -> IO (Ptr Archive)
