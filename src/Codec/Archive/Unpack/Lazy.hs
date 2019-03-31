@@ -22,6 +22,9 @@ foreign import ccall memcpy :: Ptr a -- ^ Destination
                             -> CSize -- ^ Size
                             -> IO (Ptr a) -- ^ Pointer to destination
 
+hmemcpy :: Ptr a -> Ptr b -> CSize -> IO ()
+hmemcpy = void .* memcpy
+
 -- | In general, this will be more efficient than 'unpackToDir'
 --
 -- @since 1.0.4.0
@@ -68,6 +71,6 @@ bslToArchive bs = do
                     (x:_) -> do
                         modifyIORef bsRef tail
                         useAsCStringLen x $ \(charPtr, sz) -> do
-                            void $ memcpy bufPtr charPtr (fromIntegral sz)
+                            hmemcpy bufPtr charPtr (fromIntegral sz)
                             poke dataPtr bufPtr $> fromIntegral sz
           bsChunks = BSL.toChunks bs
