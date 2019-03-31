@@ -44,7 +44,6 @@ readArchiveBSL :: BSL.ByteString -> [Entry]
 readArchiveBSL = unsafePerformIO . (actFreeCallback hsEntries <=< bslToArchive)
 
 -- | Lazily stream a 'BSL.ByteString'
--- @since 1.0.4.0
 bslToArchive :: BSL.ByteString
              -> IO (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
