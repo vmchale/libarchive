@@ -6,6 +6,7 @@
 # Documentation
 - [ ] Note that we don't support deprecated functions in the documentation
 - [ ] Add example in haddocks
+- [ ] Write a blog post on lazy I/O??
 # Features
 - [ ] `pipes` support?
 - [ ] check for tarbombs?
