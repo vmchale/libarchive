@@ -6,6 +6,7 @@ import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
+import           Control.Composition   ((.**))
 import           Control.Monad         (void, (<=<))
 import           Data.ByteString       (useAsCStringLen)
 import qualified Data.ByteString.Lazy  as BSL
@@ -23,7 +24,7 @@ foreign import ccall memcpy :: Ptr a -- ^ Destination
                             -> IO (Ptr a) -- ^ Pointer to destination
 
 hmemcpy :: Ptr a -> Ptr b -> CSize -> IO ()
-hmemcpy = void .* memcpy
+hmemcpy = void .** memcpy
 
 -- | In general, this will be more efficient than 'unpackToDir'
 --
