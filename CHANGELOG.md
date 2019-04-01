@@ -1,5 +1,9 @@
 # libarchive
 
+## 1.0.5.1
+
+  * Fix typo in documentation
+
 ## 1.0.5.0
 
   * Add facilities for lazy packing, e.g. `entriesToBSL`
