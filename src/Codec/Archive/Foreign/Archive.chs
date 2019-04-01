@@ -365,7 +365,7 @@ foreign import ccall "wrapper" mkCloseCallback :: ArchiveCloseCallback a -> IO (
 foreign import ccall "wrapper" mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallback a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
 
--- | Don't use an open callback. This is the recommended argument to 'archive_open_reada
+-- | Don't use an open callback. This is the recommended argument to 'archive_open_read'
 noOpenCallback :: FunPtr (ArchiveOpenCallback a)
 noOpenCallback = castPtrToFunPtr nullPtr
 
