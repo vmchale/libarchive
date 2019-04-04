@@ -32,6 +32,7 @@ library
     pkgconfig-depends: libarchive -any
     hs-source-dirs: src
     other-modules:
+        Codec.Archive.Foreign.Archive.Macros
         Codec.Archive.Pack
         Codec.Archive.Pack.Lazy
         Codec.Archive.Unpack.Lazy
