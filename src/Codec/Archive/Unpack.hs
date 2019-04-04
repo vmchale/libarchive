@@ -33,8 +33,8 @@ bsToArchive bs = do
     a <- archive_read_new
     void $ archive_read_support_format_all a
     useAsCStringLen bs $
-        \(charPtr, sz) ->
-            void $ archive_read_open_memory a charPtr (fromIntegral sz)
+        \(buf, sz) ->
+            void $ archive_read_open_memory a buf (fromIntegral sz)
     pure a
 
 -- | Read an archive from a file. The format of the archive is automatically
