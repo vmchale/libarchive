@@ -11,6 +11,8 @@
     throwing an exception
   * `readArchiveFile` now returns an `ArchiveM [Entry]` rather than returning an
     `IO [Entry]`
+  * `enriesToFile`, `entriesToFile7Zip`, and `entriesToFileZip` now occur in the
+    `ArchiveM` monad
 
 ## 1.0.5.0
 

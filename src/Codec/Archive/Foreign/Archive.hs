@@ -312,6 +312,12 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadSetCloseCallback
                                      , archiveReadSetCallbackData
                                      , archiveReadOpen1
+                                     , archiveWriteOpenFilename
+                                     , archiveWriteOpenMemory
+                                     , archiveWriteClose
+                                     , archiveWriteHeader
+                                     , archiveFree
+                                     , archiveWriteOpen
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -354,7 +360,8 @@ import           Codec.Archive.Foreign.Archive.Macros
 import           Codec.Archive.Foreign.Archive.Raw
 import           Codec.Archive.Foreign.Common
 import           Codec.Archive.Types
-import           Control.Composition                  ((.*), (.**))
+import           Control.Composition                  ((.*), (.**), (.***),
+                                                       (.****))
 import           Data.Int                             (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
@@ -454,3 +461,21 @@ archiveReadSetCallbackData = fmap errorRes .* archive_read_set_callback_data
 
 archiveReadOpen1 :: Ptr Archive -> IO ArchiveResult
 archiveReadOpen1 = fmap errorRes . archive_read_open1
+
+archiveWriteOpenFilename :: Ptr Archive -> CString -> IO ArchiveResult
+archiveWriteOpenFilename = fmap errorRes .* archive_write_open_filename
+
+archiveWriteOpenMemory :: Ptr Archive -> Ptr a -> CSize -> Ptr CSize -> IO ArchiveResult
+archiveWriteOpenMemory = fmap errorRes .*** archive_write_open_memory
+
+archiveWriteClose :: Ptr Archive -> IO ArchiveResult
+archiveWriteClose = fmap errorRes . archive_write_close
+
+archiveWriteHeader :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveResult
+archiveWriteHeader = fmap errorRes .* archive_write_header
+
+archiveFree :: Ptr Archive -> IO ArchiveResult
+archiveFree = fmap errorRes . archive_free
+
+archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
+archiveWriteOpen = fmap errorRes .**** archive_write_open
