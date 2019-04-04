@@ -38,6 +38,7 @@ library
         Codec.Archive.Unpack
         Codec.Archive.Foreign.Common
         Codec.Archive.Types
+        Codec.Archive.Permissions
         Codec.Archive.Common
     default-language: Haskell2010
     ghc-options: -Wall -Wincomplete-uni-patterns

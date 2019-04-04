@@ -32,6 +32,7 @@ module Codec.Archive
 
 import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Lazy
+import           Codec.Archive.Permissions
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
 import           Codec.Archive.Unpack.Lazy
