@@ -73,7 +73,7 @@ foreign import ccall archive_read_open2 :: Ptr Archive -> Ptr a -> FunPtr (Archi
 foreign import ccall archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_filenames :: Ptr Archive -> Ptr CString -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
-foreign import ccall archive_read_open_memory :: Ptr Archive -> Ptr CChar -> CSize -> IO ArchiveError
+foreign import ccall archive_read_open_memory :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_memory2 :: Ptr Archive -> Ptr a -> CSize -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_fd :: Ptr Archive -> Fd -> CSize -> IO ArchiveError
 -- foreign import ccall archive_read_open_FILE

@@ -306,6 +306,8 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadDiskNoXattr
                                      -- * Higher-level function equivalents
                                      , archiveReadNextHeader
+                                     , archiveReadOpenFilename
+                                     , archiveReadOpenMemory
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -430,3 +432,9 @@ archiveMatchOwnerExcluded = fmap intToBool .* archive_match_owner_excluded
 
 archiveReadNextHeader :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveResult
 archiveReadNextHeader = fmap errorRes .* archive_read_next_header
+
+archiveReadOpenFilename :: Ptr Archive -> CString -> CSize -> IO ArchiveResult
+archiveReadOpenFilename = fmap errorRes .** archive_read_open_filename
+
+archiveReadOpenMemory :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveResult
+archiveReadOpenMemory = fmap errorRes .** archive_read_open_memory

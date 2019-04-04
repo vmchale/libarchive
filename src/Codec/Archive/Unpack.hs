@@ -8,48 +8,48 @@ module Codec.Archive.Unpack ( hsEntries
 
 import           Codec.Archive.Common
 import           Codec.Archive.Foreign
+import           Codec.Archive.Monad
 import           Codec.Archive.Types
-import           Control.Monad         (void, (<=<))
-import           Data.ByteString       (useAsCStringLen)
-import qualified Data.ByteString       as BS
+import           Control.Monad          (void, (<=<))
+import           Control.Monad.IO.Class (MonadIO (..))
+import           Data.ByteString        (useAsCStringLen)
+import qualified Data.ByteString        as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc (alloca, allocaBytes)
-import           Foreign.Ptr           (Ptr)
-import           Foreign.Storable      (Storable (..))
-import           System.FilePath       ((</>))
-import           System.IO.Unsafe      (unsafePerformIO)
-
+import           Foreign.Marshal.Alloc  (alloca, allocaBytes)
+import           Foreign.Ptr            (Ptr)
+import           Foreign.Storable       (Storable (..))
+import           System.FilePath        ((</>))
+import           System.IO.Unsafe       (unsafePerformIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
 --
 -- @since 1.0.0.0
-readArchiveBS :: BS.ByteString -> [Entry]
-readArchiveBS = unsafePerformIO . (actFree hsEntries <=< bsToArchive)
+readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
+readArchiveBS = unsafePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
--- TODO: error handling...
-bsToArchive :: BS.ByteString -> IO (Ptr Archive)
+bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive)
 bsToArchive bs = do
-    a <- archive_read_new
-    void $ archive_read_support_format_all a
-    useAsCStringLen bs $
+    a <- liftIO archive_read_new
+    ignore $ archive_read_support_format_all a
+    useAsCStringLenArchiveM bs $
         \(buf, sz) ->
-            void $ archive_read_open_memory a buf (fromIntegral sz)
+            handle $ archiveReadOpenMemory a buf (fromIntegral sz)
     pure a
 
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
 --
 -- @since 1.0.0.0
-readArchiveFile :: FilePath -> IO [Entry]
+readArchiveFile :: FilePath -> ArchiveM [Entry]
 readArchiveFile = actFree hsEntries <=< archiveFile
 
-archiveFile :: FilePath -> IO (Ptr Archive)
-archiveFile fp = withCString fp $ \cpath -> do
-    a <- archive_read_new
-    void $ archive_read_support_format_all a
-    void $ archive_read_open_filename a cpath 10240
+archiveFile :: FilePath -> ArchiveM (Ptr Archive)
+archiveFile fp = withCStringArchiveM fp $ \cpath -> do
+    a <- liftIO archive_read_new
+    ignore $ archive_read_support_format_all a
+    handle $ archiveReadOpenFilename a cpath 10240
     pure a
 
 -- | This is more efficient than
@@ -59,11 +59,11 @@ archiveFile fp = withCString fp $ \cpath -> do
 -- @
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Dirctory to unpack in
-              -> IO ()
+              -> ArchiveM ()
 unpackArchive tarFp dirFp = do
     a <- archiveFile tarFp
     unpackEntriesFp a dirFp
-    void $ archive_read_free a
+    ignore $ archive_read_free a
 
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry =
@@ -75,15 +75,15 @@ readEntry a entry =
         <*> readTimes entry
 
 -- | Yield the next entry in an archive
-getHsEntry :: Ptr Archive -> IO (Maybe Entry)
+getHsEntry :: MonadIO m => Ptr Archive -> m (Maybe Entry)
 getHsEntry a = do
-    entry <- getEntry a
+    entry <- liftIO $ getEntry a
     case entry of
         Nothing -> pure Nothing
-        Just x  -> Just <$> readEntry a x
+        Just x  -> Just <$> liftIO (readEntry a x)
 
 -- | Return a list of 'Entry's.
-hsEntries :: Ptr Archive -> IO [Entry]
+hsEntries :: MonadIO m => Ptr Archive -> m [Entry]
 hsEntries a = do
     next <- getHsEntry a
     case next of
@@ -91,20 +91,20 @@ hsEntries a = do
         Just x  -> (x:) <$> hsEntries a
 
 -- | Unpack an archive in a given directory
-unpackEntriesFp :: Ptr Archive -> FilePath -> IO ()
+unpackEntriesFp :: Ptr Archive -> FilePath -> ArchiveM ()
 unpackEntriesFp a fp = do
-    res <- getEntry a
+    res <- liftIO $ getEntry a
     case res of
         Nothing -> pure ()
         Just x  -> do
-            preFile <- archive_entry_pathname x
-            file <- peekCString preFile
+            preFile <- liftIO $ archive_entry_pathname x
+            file <- liftIO $ peekCString preFile
             let file' = fp </> file
-            withCString file' $ \fileC ->
+            liftIO $ withCString file' $ \fileC ->
                 archive_entry_set_pathname x fileC
-            void $ archive_read_extract a x archiveExtractTime
-            archive_entry_set_pathname x preFile
-            void $ archive_read_data_skip a
+            void $ liftIO $ archive_read_extract a x archiveExtractTime
+            liftIO $ archive_entry_set_pathname x preFile
+            void $ liftIO $ archive_read_data_skip a
             unpackEntriesFp a fp
 
 readBS :: Ptr Archive -> Int -> IO BS.ByteString
@@ -146,8 +146,8 @@ getEntry a = alloca $ \ptr -> do
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive
-            -> IO ()
+            -> ArchiveM ()
 unpackToDir fp bs = do
     a <- bsToArchive bs
     unpackEntriesFp a fp
-    void $ archive_read_free a
+    void $ liftIO $ archive_free a

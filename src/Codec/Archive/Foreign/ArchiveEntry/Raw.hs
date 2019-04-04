@@ -156,7 +156,6 @@ foreign import ccall archive_entry_xattr_add_entry :: Ptr ArchiveEntry -> CStrin
 foreign import ccall archive_entry_xattr_count :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_entry_xattr_reset :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_entry_xattr_next :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveError
--- TODO: higher level archiveEntryXattrList?
 
 foreign import ccall archive_entry_sparse_clear :: Ptr ArchiveEntry -> IO ()
 foreign import ccall archive_entry_sparse_add_entry :: Ptr ArchiveEntry -> Int64 -> Int64 -> IO ()

@@ -222,6 +222,8 @@ import           Control.Composition                       ((.*))
 import           Foreign.C.String
 import           Foreign.Ptr                               (Ptr)
 
+-- TODO: higher level archiveEntryXattrList?
+
 archiveEntryATimeIsSet :: Ptr ArchiveEntry -> IO Bool
 archiveEntryATimeIsSet = fmap intToBool . archive_entry_atime_is_set
 

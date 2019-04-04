@@ -4,6 +4,8 @@
 
   * Fix typo in documentation
   * Improve docs
+  * `archive_read_open_memory` now accepts an argument of type `Ptr a` rather
+    than `Ptr CChar`
 
 ## 1.0.5.0
 

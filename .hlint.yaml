@@ -7,6 +7,8 @@
   - {name: nullPtr, within: [Codec.Archive.Foreign.Archive]}
 
 - error: {lhs: "if p then x else pure ()", rhs: "when p x"}
+- error: {lhs: "liftIO (void x)", rhs: "ignore x"}
+- error: {lhs: "liftIO $ void x", rhs: "ignore x"}
 - ignore: {name: Use lambda-case}
 
 - fixity: infixr 8 .*

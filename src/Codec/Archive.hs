@@ -25,11 +25,15 @@ module Codec.Archive
     , Permissions
     , ModTime
     , Id
+    -- * Archive monad
+    , ArchiveM
+    , runArchiveM
     -- * Permissions helpers
     , standardPermissions
     , executablePermissions
     ) where
 
+import           Codec.Archive.Monad
 import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Lazy
 import           Codec.Archive.Permissions
