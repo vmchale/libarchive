@@ -14,6 +14,8 @@ import           Control.Monad.IO.Class
 import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
+import           Foreign.Marshal.Alloc  (allocaBytes)
+import           Foreign.Ptr            (Ptr)
 
 type ArchiveM = ExceptT ArchiveResult IO
 
@@ -32,15 +34,24 @@ handle act = do
         ArchiveRetry -> pure ()
         x            -> throwError x
 
-flipArchiveM :: IO (Either a b) -> ExceptT a IO b
-flipArchiveM act = do
+flipExceptIO :: IO (Either a b) -> ExceptT a IO b
+flipExceptIO act = do
     res <- liftIO act
     case res of
         Right x -> pure x
         Left y  -> throwError y
 
+genBracket :: (a -> (b -> IO (Either c d)) -> IO (Either c d)) -- ^ Function like 'withCString' we are trying to life
+           -> a -- ^ Fed to @b@
+           -> (b -> ExceptT c IO d) -- ^ Actual action
+           -> ExceptT c IO d
+genBracket f x = flipExceptIO . f x . (runExceptT .)
+
+allocaBytesArchiveM :: Int -> (Ptr a -> ExceptT b IO c) -> ExceptT b IO c
+allocaBytesArchiveM = genBracket allocaBytes
+
 withCStringArchiveM :: String -> (CString -> ExceptT a IO b) -> ExceptT a IO b
-withCStringArchiveM str f = flipArchiveM $ withCString str $ runExceptT . f
+withCStringArchiveM = genBracket withCString
 
 useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
-useAsCStringLenArchiveM bs f = flipArchiveM $ useAsCStringLen bs $ runExceptT . f
+useAsCStringLenArchiveM = genBracket useAsCStringLen
