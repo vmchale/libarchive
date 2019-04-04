@@ -1,4 +1,7 @@
 -- | Functions found in @archive_entry.h@
+--
+-- Functions in this module are stateful and hence take place in the 'IO'
+-- monad.
 module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                             archive_entry_clear
                                           , archive_entry_clone
