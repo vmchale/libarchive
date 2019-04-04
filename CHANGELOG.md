@@ -3,6 +3,7 @@
 ## 1.0.5.1
 
   * Fix typo in documentation
+  * Improve docs
 
 ## 1.0.5.0
 
