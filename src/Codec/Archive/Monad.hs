@@ -22,6 +22,8 @@ import           Foreign.Storable       (Storable)
 
 type ArchiveM = ExceptT ArchiveResult IO
 
+-- TODO: ArchiveM a -> IO a where we throw exceptions using the error string?
+
 -- for stuff we think isn't going to fail
 ignore :: IO ArchiveError -> ArchiveM ()
 ignore = void . liftIO
@@ -44,14 +46,14 @@ flipExceptIO act = do
         Right x -> pure x
         Left y  -> throwError y
 
-genBracket :: (a -> (b -> IO (Either c d)) -> IO (Either c d)) -- ^ Function like 'withCString' we are trying to life
+genBracket :: (a -> (b -> IO (Either c d)) -> IO (Either c d)) -- ^ Function like 'withCString' we are trying to lift
            -> a -- ^ Fed to @b@
-           -> (b -> ExceptT c IO d) -- ^ Actual action
+           -> (b -> ExceptT c IO d) -- ^ The action
            -> ExceptT c IO d
 genBracket f x = flipExceptIO . f x . (runExceptT .)
 
 allocaArchiveM :: Storable a => (Ptr a -> ExceptT b IO c) -> ExceptT b IO c
-allocaArchiveM = flipExceptIO . alloca . (runExceptT .)
+allocaArchiveM = genBracket (pure alloca) ()
 
 allocaBytesArchiveM :: Int -> (Ptr a -> ExceptT b IO c) -> ExceptT b IO c
 allocaBytesArchiveM = genBracket allocaBytes
