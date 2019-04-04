@@ -19,6 +19,7 @@ module Codec.Archive
     , readArchiveBS
     , readArchiveBSL
     -- * Concrete (Haskell) types
+    , ArchiveResult (..)
     , Entry (..)
     , EntryContent (..)
     , Ownership (..)
