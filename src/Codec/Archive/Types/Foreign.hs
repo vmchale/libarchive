@@ -3,9 +3,9 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , ArchiveSkipCallback
                                    , ArchiveSeekCallback
                                    , ArchiveWriteCallback
-                                   , ArchiveCloseCallback
-                                   , ArchiveOpenCallback
-                                   , ArchiveSwitchCallback
+                                   , ArchiveCloseCallbackRaw
+                                   , ArchiveOpenCallbackRaw
+                                   , ArchiveSwitchCallbackRaw
                                    , ArchivePassphraseCallback
                                    -- * Abstract types
                                    , Archive
@@ -46,11 +46,10 @@ type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
 type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
 type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> Int64 -> CInt -> IO Int64
 type ArchiveWriteCallback a b = Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO CSize
-type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveError
-type ArchiveCloseCallback a = Ptr Archive -> Ptr a -> IO ArchiveError
-type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveError
+type ArchiveOpenCallbackRaw a = Ptr Archive -> Ptr a -> IO ArchiveError
+type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO ArchiveError
+type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveError
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
-
 
 newtype ArchiveError = ArchiveError CInt
     deriving (Eq)

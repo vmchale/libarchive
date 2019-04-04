@@ -40,7 +40,7 @@ entriesToBSLGeneral modifier hsEntries' = do
     bsRef <- newIORef mempty
     oc <- mkOpenCallback doNothing
     wc <- mkWriteCallback (writeBSL bsRef)
-    cc <- mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> archiveOk)
+    cc <- mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     nothingPtr <- mallocBytes 0
     void $ modifier a
     void $ archive_write_open a nothingPtr oc wc cc
@@ -53,4 +53,4 @@ entriesToBSLGeneral modifier hsEntries' = do
             bsl <- packCStringLen (bufPtr, fromIntegral bytesRead)
             modifyIORef' bsRef (`DL.snoc` bsl)
             pure bytesRead
-          doNothing _ _ = pure archiveOk
+          doNothing _ _ = pure ArchiveOk

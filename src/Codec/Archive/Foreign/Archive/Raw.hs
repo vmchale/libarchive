@@ -56,20 +56,20 @@ foreign import ccall archive_read_set_format :: Ptr Archive -> ArchiveFormat -> 
 foreign import ccall archive_read_append_filter :: Ptr Archive -> ArchiveFilter -> IO ArchiveError
 foreign import ccall archive_read_append_filter_program :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall archive_read_append_filter_program_signature :: Ptr Archive -> CString -> Ptr a -> CSize -> IO ArchiveError
-foreign import ccall archive_read_set_open_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallback a) -> IO ArchiveError
+foreign import ccall archive_read_set_open_callback :: Ptr Archive -> FunPtr (ArchiveOpenCallbackRaw a) -> IO ArchiveError
 foreign import ccall archive_read_set_read_callback :: Ptr Archive -> FunPtr (ArchiveReadCallback a b) -> IO ArchiveError
 foreign import ccall archive_read_set_seek_callback :: Ptr Archive -> FunPtr (ArchiveSeekCallback a) -> IO ArchiveError
 foreign import ccall archive_read_set_skip_callback :: Ptr Archive -> FunPtr (ArchiveSkipCallback a) -> IO ArchiveError
-foreign import ccall archive_read_set_close_callback :: Ptr Archive -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
-foreign import ccall archive_read_set_switch_callback :: Ptr Archive -> FunPtr (ArchiveSwitchCallback a b) -> IO ArchiveError
+foreign import ccall archive_read_set_close_callback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveError
+foreign import ccall archive_read_set_switch_callback :: Ptr Archive -> FunPtr (ArchiveSwitchCallbackRaw a b) -> IO ArchiveError
 foreign import ccall archive_read_set_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall archive_read_set_callback_data2 :: Ptr Archive -> Ptr a -> CUInt -> IO ArchiveError
 foreign import ccall archive_read_add_callback_data :: Ptr Archive -> Ptr a -> CUInt -> IO ArchiveError
 foreign import ccall archive_read_append_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall archive_read_prepend_callback_data :: Ptr Archive -> Ptr a -> IO ArchiveError
 foreign import ccall archive_read_open1 :: Ptr Archive -> IO ArchiveError
-foreign import ccall archive_read_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
-foreign import ccall archive_read_open2 :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveSkipCallback a) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
+foreign import ccall archive_read_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveError
+foreign import ccall archive_read_open2 :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveReadCallback a b) -> FunPtr (ArchiveSkipCallback a) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveError
 foreign import ccall archive_read_open_filename :: Ptr Archive -> CString -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_filenames :: Ptr Archive -> Ptr CString -> CSize -> IO ArchiveError
 foreign import ccall archive_read_open_filename_w :: Ptr Archive -> CWString -> CSize -> IO ArchiveError
@@ -155,7 +155,7 @@ foreign import ccall archive_write_set_format_filter_by_ext :: Ptr Archive -> CS
 foreign import ccall archive_write_set_format_filter_by_ext_def :: Ptr Archive -> CString -> CString -> IO ArchiveError
 foreign import ccall archive_write_zip_set_compression_deflate :: Ptr Archive -> IO ArchiveError
 foreign import ccall archive_write_zip_set_compression_store :: Ptr Archive -> IO ArchiveError
-foreign import ccall archive_write_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallback a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallback a) -> IO ArchiveError
+foreign import ccall archive_write_open :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveError
 foreign import ccall archive_write_open_fd :: Ptr Archive -> Fd -> IO ArchiveError
 foreign import ccall archive_write_open_filename :: Ptr Archive -> CString -> IO ArchiveError
 foreign import ccall archive_write_open_filename_w :: Ptr Archive -> CWString -> IO ArchiveError

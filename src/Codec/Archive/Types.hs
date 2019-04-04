@@ -7,7 +7,12 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , Permissions
                            , ArchiveEncryption (..)
                            , ArchiveResult (..)
+                           -- * Foreign types
                            , module Codec.Archive.Types.Foreign
+                           -- * Callbacks
+                           , ArchiveOpenCallback
+                           , ArchiveCloseCallback
+                           , ArchiveSwitchCallback
                            ) where
 
 import           Codec.Archive.Types.Foreign
@@ -15,7 +20,12 @@ import qualified Data.ByteString             as BS
 import           Data.Int                    (Int64)
 import           Data.Semigroup
 import           Foreign.C.Types             (CLong, CTime)
+import           Foreign.Ptr                 (Ptr)
 import           System.Posix.Types          (CMode (..))
+
+type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
+type ArchiveCloseCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
+type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveResult
 
 data ArchiveResult = ArchiveOk
                    | ArchiveEOF

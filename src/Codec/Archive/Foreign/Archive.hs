@@ -304,6 +304,8 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadDiskMacCopyFile
                                      , archiveReadDiskNoTraverseMounts
                                      , archiveReadDiskNoXattr
+                                     -- * Higher-level function equivalents
+                                     , archiveReadNextHeader
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -321,9 +323,9 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , ArchiveSkipCallback
                                      , ArchiveSeekCallback
                                      , ArchiveWriteCallback
-                                     , ArchiveOpenCallback
-                                     , ArchiveCloseCallback
-                                     , ArchiveSwitchCallback
+                                     , ArchiveOpenCallbackRaw
+                                     , ArchiveCloseCallbackRaw
+                                     , ArchiveSwitchCallbackRaw
                                      , ArchivePassphraseCallback
                                      -- * Callback constructors
                                      , noOpenCallback
@@ -331,10 +333,10 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , mkSkipCallback
                                      , mkSeekCallback
                                      , mkWriteCallback
+                                     , mkPassphraseCallback
                                      , mkOpenCallback
                                      , mkCloseCallback
                                      , mkSwitchCallback
-                                     , mkPassphraseCallback
                                      , mkWriteLookup
                                      , mkReadLookup
                                      , mkCleanup
@@ -358,13 +360,13 @@ foreign import ccall "wrapper" mkReadCallback :: ArchiveReadCallback a b -> IO (
 foreign import ccall "wrapper" mkSkipCallback :: ArchiveSkipCallback a -> IO (FunPtr (ArchiveSkipCallback a))
 foreign import ccall "wrapper" mkSeekCallback :: ArchiveSeekCallback a -> IO (FunPtr (ArchiveSeekCallback a))
 foreign import ccall "wrapper" mkWriteCallback :: ArchiveWriteCallback a b -> IO (FunPtr (ArchiveWriteCallback a b))
-foreign import ccall "wrapper" mkOpenCallback :: ArchiveOpenCallback a -> IO (FunPtr (ArchiveOpenCallback a))
-foreign import ccall "wrapper" mkCloseCallback :: ArchiveCloseCallback a -> IO (FunPtr (ArchiveCloseCallback a))
-foreign import ccall "wrapper" mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallback a b))
+foreign import ccall "wrapper" mkOpenCallbackRaw :: ArchiveOpenCallbackRaw a -> IO (FunPtr (ArchiveOpenCallbackRaw a))
+foreign import ccall "wrapper" mkCloseCallbackRaw :: ArchiveCloseCallbackRaw a -> IO (FunPtr (ArchiveCloseCallbackRaw a))
+foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
 
 -- | Don't use an open callback. This is the recommended argument to 'archive_open_read'
-noOpenCallback :: FunPtr (ArchiveOpenCallback a)
+noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
 noOpenCallback = castPtrToFunPtr nullPtr
 
 foreign import ccall "wrapper" mkWriteLookup :: (Ptr a -> CString -> Int64 -> IO Int64) -> IO (FunPtr (Ptr a -> CString -> Int64 -> IO Int64))
@@ -373,6 +375,15 @@ foreign import ccall "wrapper" mkCleanup :: (Ptr a -> IO ()) -> IO (FunPtr (Ptr 
 
 foreign import ccall "wrapper" mkMatch :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()))
 foreign import ccall "wrapper" preMkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
+
+mkOpenCallback :: ArchiveOpenCallback a -> IO (FunPtr (ArchiveOpenCallbackRaw a))
+mkOpenCallback f = let f' = fmap resultToErr .* f in mkOpenCallbackRaw f'
+
+mkCloseCallback :: ArchiveCloseCallback a -> IO (FunPtr (ArchiveCloseCallbackRaw a))
+mkCloseCallback f = let f' = fmap resultToErr .* f in mkCloseCallbackRaw f'
+
+mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
+mkSwitchCallback f = let f' = fmap resultToErr .** f in mkSwitchCallbackRaw f'
 
 mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
 mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
@@ -416,3 +427,6 @@ archiveReadHasEncryptedEntries = fmap encryptionResult . archive_read_has_encryp
 
 archiveMatchOwnerExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
 archiveMatchOwnerExcluded = fmap intToBool .* archive_match_owner_excluded
+
+archiveReadNextHeader :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveResult
+archiveReadNextHeader = fmap errorRes .* archive_read_next_header

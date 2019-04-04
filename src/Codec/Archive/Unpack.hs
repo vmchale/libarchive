@@ -28,6 +28,7 @@ readArchiveBS :: BS.ByteString -> [Entry]
 readArchiveBS = unsafePerformIO . (actFree hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
+-- TODO: error handling...
 bsToArchive :: BS.ByteString -> IO (Ptr Archive)
 bsToArchive bs = do
     a <- archive_read_new
@@ -135,8 +136,10 @@ readTimes entry =
 -- | Get the next 'ArchiveEntry' in an 'Archive'
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = alloca $ \ptr -> do
-    let done res = not (res == archiveOk || res == archiveRetry)
-    stop <- done <$> archive_read_next_header a ptr
+    let done ArchiveOk    = False
+        done ArchiveRetry = False
+        done _            = True
+    stop <- done <$> archiveReadNextHeader a ptr
     if stop
         then pure Nothing
         else Just <$> peek ptr

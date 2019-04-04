@@ -56,7 +56,7 @@ bslToArchive bs = do
     bufPtr <- mallocBytes (32 * 1024) -- default to 32k byte chunks; should really do something more rigorous
     bsChunksRef <- newIORef bsChunks
     rc <- mkReadCallback (readBSL bsChunksRef bufPtr)
-    cc <- mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> archiveOk)
+    cc <- mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     nothingPtr <- mallocBytes 0
     sequence_ [ archive_read_set_read_callback a rc
               , archive_read_set_close_callback a cc

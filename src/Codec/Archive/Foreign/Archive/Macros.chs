@@ -88,7 +88,7 @@ archiveVersionString :: String
 archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
 resultToErr :: ArchiveResult -> ArchiveError
-resultToErr ArchiveOk = archiveOk
+resultToErr ArchiveOk     = archiveOk
 resultToErr ArchiveEOF    = archiveEOF
 resultToErr ArchiveRetry  = archiveRetry
 resultToErr ArchiveWarn   = archiveWarn
