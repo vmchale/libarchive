@@ -351,7 +351,6 @@ import           Data.Int                             (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr
-import           System.Posix.Types                   (Fd (..))
 
 -- destructors: use "dynamic" instead of "wrapper" (but we don't want that)
 -- callbacks

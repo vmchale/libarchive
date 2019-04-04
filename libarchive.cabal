@@ -33,6 +33,7 @@ library
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Foreign.Archive.Raw
+        Codec.Archive.Foreign.ArchiveEntry.Raw
         Codec.Archive.Foreign.Archive.Macros
         Codec.Archive.Foreign.ArchiveEntry.Macros
         Codec.Archive.Pack
