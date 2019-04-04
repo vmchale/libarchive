@@ -1,11 +1,16 @@
 # libarchive
 
-## 1.0.5.1
+## 1.1.0.0
 
   * Fix typo in documentation
   * Improve docs
   * `archive_read_open_memory` now accepts an argument of type `Ptr a` rather
     than `Ptr CChar`
+  * `unpackToDirLazy`, `unpackArchive`, and `archiveUnpackToDir` now occur in the `ArchiveM` monadA
+  * `readArchiveBSL` and `readArchiveBS` now returnxs `Either ArchiveResult [Entry]` rather than
+    throwing an exception
+  * `readArchiveFile` now returns an `ArchiveM [Entry]` rather than returning an
+    `IO [Entry]`
 
 ## 1.0.5.0
 
