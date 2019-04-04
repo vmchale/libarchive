@@ -308,6 +308,10 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadNextHeader
                                      , archiveReadOpenFilename
                                      , archiveReadOpenMemory
+                                     , archiveReadSetReadCallback
+                                     , archiveReadSetCloseCallback
+                                     , archiveReadSetCallbackData
+                                     , archiveReadOpen1
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -438,3 +442,15 @@ archiveReadOpenFilename = fmap errorRes .** archive_read_open_filename
 
 archiveReadOpenMemory :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveResult
 archiveReadOpenMemory = fmap errorRes .** archive_read_open_memory
+
+archiveReadSetReadCallback :: Ptr Archive -> FunPtr (ArchiveReadCallback a b) -> IO ArchiveResult
+archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
+
+archiveReadSetCloseCallback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
+archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
+
+archiveReadSetCallbackData :: Ptr Archive -> Ptr a -> IO ArchiveResult
+archiveReadSetCallbackData = fmap errorRes .* archive_read_set_callback_data
+
+archiveReadOpen1 :: Ptr Archive -> IO ArchiveResult
+archiveReadOpen1 = fmap errorRes . archive_read_open1

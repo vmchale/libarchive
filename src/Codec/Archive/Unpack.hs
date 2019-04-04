@@ -12,7 +12,6 @@ import           Codec.Archive.Monad
 import           Codec.Archive.Types
 import           Control.Monad          (void, (<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc  (alloca, allocaBytes)

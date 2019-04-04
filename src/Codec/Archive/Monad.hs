@@ -39,8 +39,8 @@ flipArchiveM act = do
         Right x -> pure x
         Left y  -> throwError y
 
-withCStringArchiveM :: String -> (CString -> ArchiveM a) -> ArchiveM a
-withCStringArchiveM str f = flipArchiveM $ withCString str $ runArchiveM . f
+withCStringArchiveM :: String -> (CString -> ExceptT a IO b) -> ExceptT a IO b
+withCStringArchiveM str f = flipArchiveM $ withCString str $ runExceptT . f
 
-useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ArchiveM a) -> ArchiveM a
-useAsCStringLenArchiveM bs f = flipArchiveM $ useAsCStringLen bs $ runArchiveM . f
+useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
+useAsCStringLenArchiveM bs f = flipArchiveM $ useAsCStringLen bs $ runExceptT . f

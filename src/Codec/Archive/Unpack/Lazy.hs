@@ -12,6 +12,7 @@ import           Control.Monad          (void, (<=<))
 import           Control.Monad.IO.Class
 import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString.Lazy   as BSL
+import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
 import           Data.IORef             (modifyIORef, newIORef, readIORef)
 import           Foreign.C.Types
@@ -60,11 +61,12 @@ bslToArchive bs = do
     rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufPtr)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     nothingPtr <- liftIO $ mallocBytes 0
-    sequence_ [ liftIO $ archive_read_set_read_callback a rc
-              , liftIO $ archive_read_set_close_callback a cc
-              , liftIO $ archive_read_set_callback_data a nothingPtr
-              , liftIO $ archive_read_open1 a
-              ]
+    let seqErr = traverse_ handle
+    seqErr [ archiveReadSetReadCallback a rc
+           , archiveReadSetCloseCallback a cc
+           , archiveReadSetCallbackData a nothingPtr
+           , archiveReadOpen1 a
+           ]
     pure (a, freeHaskellFunPtr cc *> free bufPtr)
 
     where readBSL bsRef bufPtr _ _ dataPtr = do
