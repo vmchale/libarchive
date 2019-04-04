@@ -18,7 +18,6 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
 import           Codec.Archive.Types.Foreign
 import qualified Data.ByteString             as BS
 import           Data.Int                    (Int64)
-import           Data.Semigroup
 import           Foreign.C.Types             (CLong, CTime)
 import           Foreign.Ptr                 (Ptr)
 import           System.Posix.Types          (CMode (..))
