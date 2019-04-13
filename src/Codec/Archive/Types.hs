@@ -32,6 +32,7 @@ data ArchiveResult = ArchiveOk
                    | ArchiveWarn
                    | ArchiveFailed
                    | ArchiveFatal
+                   deriving (Eq, Show)
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption

@@ -1,0 +1,16 @@
+module Main ( main ) where
+
+import           Codec.Archive
+import           Control.Monad.IO.Class (liftIO)
+import qualified Data.ByteString.Lazy   as BSL
+import           Data.Either            (isRight)
+import           Test.Hspec
+
+roundtrip :: IO (Either ArchiveResult BSL.ByteString)
+roundtrip = fmap entriesToBSL . readArchiveBSL <$> BSL.readFile "libarchive-0.2.1.2.tar"
+
+main :: IO ()
+main = hspec $
+    describe "roundtrip" $ parallel $
+        it "Sucessfully packs/unpacks itself" $
+            roundtrip >>= (`shouldSatisfy` isRight)

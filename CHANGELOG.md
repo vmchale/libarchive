@@ -19,6 +19,7 @@
     add `errorRes` to convert a `CInt` to the Haskell `ArchiveResult` sum type.
   * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
     rather than `Codec.Archive.Foreign`
+  * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
 
 ## 1.0.5.0
 
