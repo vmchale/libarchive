@@ -7,9 +7,10 @@ import           Control.Monad.IO.Class (liftIO)
 import           Criterion.Main
 import qualified Data.ByteString.Lazy   as BSL
 import           System.IO.Temp         (withSystemTempDirectory)
+import           System.IO.Unsafe       (unsafePerformIO)
 
 roundtrip :: BSL.ByteString -> Either ArchiveResult BSL.ByteString
-roundtrip = fmap entriesToBSL . readArchiveBSL
+roundtrip = fmap (unsafePerformIO . entriesToBSL) . readArchiveBSL
 
 failTar :: Entries a -> Either a [Tar.Entry]
 failTar (Next e es) = (e :) <$> failTar es

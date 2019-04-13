@@ -11,7 +11,7 @@ import           Codec.Archive.Monad
 import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Composition       ((.@))
+import           Control.Monad             ((<=<))
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
@@ -21,10 +21,9 @@ import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr
-import           System.IO.Unsafe          (unsafePerformIO)
 
-packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
-packer = traverse mkEntry .@ fmap
+packer :: (Traversable t) => (t Entry -> IO BSL.ByteString) -> t FilePath -> IO BSL.ByteString
+packer f = f <=< traverse mkEntry
 
 -- | @since 1.1.0.0
 packFiles :: Traversable t
@@ -41,21 +40,18 @@ packFiles7zip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
-entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
-{-# NOINLINE entriesToBSLzip #-}
+entriesToBSLzip :: Foldable t => t Entry -> IO BSL.ByteString
+entriesToBSLzip = noFail . entriesToBSLGeneral archiveWriteSetFormatZip
 
 -- | @since 1.0.5.0
-entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
-{-# NOINLINE entriesToBSL7zip #-}
+entriesToBSL7zip :: Foldable t => t Entry -> IO BSL.ByteString
+entriesToBSL7zip = noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
-entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
-{-# NOINLINE entriesToBSL #-}
+entriesToBSL :: Foldable t => t Entry -> IO BSL.ByteString
+entriesToBSL = noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
@@ -63,13 +59,14 @@ entriesToBSLGeneral modifier hsEntries' = do
     bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
+    -- FIXME: cc should be freed... fixIO seems clever?
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     nothingPtr <- liftIO $ mallocBytes 0
     ignore $ modifier a
     handle $ archiveWriteOpen a nothingPtr oc wc cc
     packEntries a hsEntries'
     ignore $ archiveFree a
-    BSL.fromChunks . toList <$> liftIO (readIORef bsRef)
+    BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc)
 
     where writeBSL bsRef _ _ bufPtr sz = do
             let bytesRead = min sz (32 * 1024)

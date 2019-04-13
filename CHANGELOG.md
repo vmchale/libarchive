@@ -20,6 +20,7 @@
   * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
     rather than `Codec.Archive.Foreign`
   * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
+  * `entriesToBSL` and friends now occur in the `IO` monad
 
 ## 1.0.5.0
 

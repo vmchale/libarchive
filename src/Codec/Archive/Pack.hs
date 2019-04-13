@@ -24,7 +24,6 @@ import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
 import           Foreign.Ptr               (Ptr)
 import           Foreign.Storable          (peek)
-import           System.IO.Unsafe          (unsafePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
@@ -77,23 +76,20 @@ entriesSz = getSum . foldMap (Sum . entrySz)
 -- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBS :: Foldable t => t Entry -> BS.ByteString
-entriesToBS = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
-{-# NOINLINE entriesToBS #-}
+entriesToBS :: Foldable t => t Entry -> IO BS.ByteString
+entriesToBS = noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
 
 -- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
-entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7Zip
-{-# NOINLINE entriesToBS7zip #-}
+entriesToBS7zip :: Foldable t => t Entry -> IO BS.ByteString
+entriesToBS7zip = noFail . entriesToBSGeneral archiveWriteSetFormat7Zip
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
-entriesToBSzip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatZip
-{-# NOINLINE entriesToBSzip #-}
+entriesToBSzip :: Foldable t => t Entry -> IO BS.ByteString
+entriesToBSzip = noFail . entriesToBSGeneral archiveWriteSetFormatZip
 
 -- This is for things we don't think will fail. When making a 'BS.ByteString'
 -- from a bunch of 'Entry's, for instance, we don't anticipate any errors
