@@ -95,33 +95,14 @@ resultToErr ArchiveWarn   = archiveWarn
 resultToErr ArchiveFailed = archiveFailed
 resultToErr ArchiveFatal  = archiveFatal
 
-errorRes :: ArchiveError -> ArchiveResult
-errorRes x | x == archiveOk     = ArchiveOk
-           | x == archiveEOF    = ArchiveEOF
-           | x == archiveRetry  = ArchiveRetry
-           | x == archiveWarn   = ArchiveWarn
-           | x == archiveFailed = ArchiveFailed
-           | x == archiveFatal  = ArchiveFatal
-           | otherwise = error "conversion failed"
-
--- TODO: make ArchiveError a sum type
-archiveOk :: ArchiveError
-archiveOk = ArchiveError {# const ARCHIVE_OK #}
-
-archiveEOF :: ArchiveError
-archiveEOF = ArchiveError {# const ARCHIVE_EOF #}
-
-archiveRetry :: ArchiveError
-archiveRetry = ArchiveError ({# const ARCHIVE_RETRY #})
-
-archiveWarn :: ArchiveError
-archiveWarn = ArchiveError ({# const ARCHIVE_WARN #})
-
-archiveFailed :: ArchiveError
-archiveFailed = ArchiveError ({# const ARCHIVE_FAILED #})
-
-archiveFatal :: ArchiveError
-archiveFatal = ArchiveError ({# const ARCHIVE_FATAL #})
+errorRes :: CInt -> ArchiveResult
+errorRes {# const ARCHIVE_OK #}       = ArchiveOk
+errorRes {# const ARCHIVE_EOF #}      = ArchiveEOF
+errorRes ({# const ARCHIVE_RETRY #})  = ArchiveRetry
+errorRes ({# const ARCHIVE_WARN #})   = ArchiveWarn
+errorRes ({# const ARCHIVE_FAILED #}) = ArchiveFailed
+errorRes ({# const ARCHIVE_FATAL #})  = ArchiveFatal
+errorRes _ = error "conversion failed"
 
 -- Archive filter
 archiveFilterNone :: ArchiveFilter
