@@ -11,10 +11,10 @@ actFree :: MonadIO m
         => (Ptr Archive -> m a)
         -> Ptr Archive
         -> m a
-actFree fact a = fact a <* liftIO (archive_free a)
+actFree fact a = fact a <* liftIO (archiveFree a)
 
 actFreeCallback :: MonadIO m
                 => (Ptr Archive -> m a)
                 -> (Ptr Archive, IO ()) -- ^ 'Ptr' to an 'Archive' and an 'IO' action to clean up when done
                 -> m a
-actFreeCallback fact (a, freeAct) = fact a <* liftIO (archive_free a) <* liftIO freeAct
+actFreeCallback fact (a, freeAct) = fact a <* liftIO (archiveFree a) <* liftIO freeAct

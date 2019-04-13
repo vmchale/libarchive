@@ -1,12 +1,6 @@
 module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumber
                                             , archiveVersionOnlyString
                                             , archiveVersionString
-                                            , archiveOk
-                                            , archiveEOF
-                                            , archiveWarn
-                                            , archiveRetry
-                                            , archiveFailed
-                                            , archiveFatal
                                             , archiveReadFormatCapsNone
                                             , archiveReadFormatCapsEncryptData
                                             , archiveReadFormatCapsEncryptMetadata
@@ -87,13 +81,13 @@ archiveVersionOnlyString = {# const ARCHIVE_VERSION_ONLY_STRING #}
 archiveVersionString :: String
 archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
-resultToErr :: ArchiveResult -> ArchiveError
-resultToErr ArchiveOk     = archiveOk
-resultToErr ArchiveEOF    = archiveEOF
-resultToErr ArchiveRetry  = archiveRetry
-resultToErr ArchiveWarn   = archiveWarn
-resultToErr ArchiveFailed = archiveFailed
-resultToErr ArchiveFatal  = archiveFatal
+resultToErr :: ArchiveResult -> CInt
+resultToErr ArchiveOk     = {# const ARCHIVE_OK #}
+resultToErr ArchiveEOF    = {# const ARCHIVE_EOF #}
+resultToErr ArchiveRetry  = {# const ARCHIVE_RETRY #}
+resultToErr ArchiveWarn   = {# const ARCHIVE_WARN #}
+resultToErr ArchiveFailed = {# const ARCHIVE_FAILED #}
+resultToErr ArchiveFatal  = {# const ARCHIVE_FATAL #}
 
 errorRes :: CInt -> ArchiveResult
 errorRes {# const ARCHIVE_OK #}       = ArchiveOk

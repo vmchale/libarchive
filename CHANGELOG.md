@@ -15,6 +15,10 @@
     `ArchiveM` monad
   * Make various parts of an `Entry` optional
   * Add `packToFile` functions and `packFiles` functions
+  * Remove `ArchiveError` newtype, replace it with `CInt` in raw bindings and
+    add `errorRes` to convert a `CInt` to the Haskell `ArchiveResult` sum type.
+  * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
+    rather than `Codec.Archive.Foreign`
 
 ## 1.0.5.0
 

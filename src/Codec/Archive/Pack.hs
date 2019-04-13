@@ -78,21 +78,21 @@ entriesSz = getSum . foldMap (Sum . entrySz)
 --
 -- @since 1.0.0.0
 entriesToBS :: Foldable t => t Entry -> BS.ByteString
-entriesToBS = unsafePerformIO . noFail . entriesToBSGeneral archive_write_set_format_pax_restricted
+entriesToBS = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBS #-}
 
 -- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
 --
 -- @since 1.0.0.0
 entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
-entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archive_write_set_format_7zip
+entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7Zip
 {-# NOINLINE entriesToBS7zip #-}
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
 --
 -- @since 1.0.0.0
 entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
-entriesToBSzip = unsafePerformIO . noFail . entriesToBSGeneral archive_write_set_format_zip
+entriesToBSzip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSzip #-}
 
 -- This is for things we don't think will fail. When making a 'BS.ByteString'
@@ -105,7 +105,7 @@ noFail act = do
         Left _  -> error "Should not fail."
 
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
-entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveError) -> t Entry -> ArchiveM BS.ByteString
+entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
     a <- liftIO archive_write_new
     ignore $ modifier a
@@ -116,7 +116,7 @@ entriesToBSGeneral modifier hsEntries' = do
             handle $ archiveWriteClose a
             usedSz <- liftIO $ peek used
             res <- liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
-            ignore $ archive_write_free a
+            ignore $ archiveFree a
             pure res
 
     where bufSize :: Integral a => a
@@ -155,29 +155,29 @@ packToFile7Zip = filePacker entriesToFile7Zip
 --
 -- @since 1.0.0.0
 entriesToFile :: Foldable t => FilePath -> t Entry -> ArchiveM ()
-entriesToFile = entriesToFileGeneral archive_write_set_format_pax_restricted
+entriesToFile = entriesToFileGeneral archiveWriteSetFormatPaxRestricted
 -- this is the recommended format; it is a tar archive
 
 -- | Write some entries to a file, creating a zip archive.
 --
 -- @since 1.0.0.0
 entriesToFileZip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
-entriesToFileZip = entriesToFileGeneral archive_write_set_format_zip
+entriesToFileZip = entriesToFileGeneral archiveWriteSetFormatZip
 
 -- | Write some entries to a file, creating a @.7z@ archive.
 --
 -- @since 1.0.0.0
 entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
-entriesToFile7Zip = entriesToFileGeneral archive_write_set_format_7zip
+entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7Zip
 
-entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveError) -> FilePath -> t Entry -> ArchiveM ()
+entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
     a <- liftIO archive_write_new
     ignore $ modifier a
     withCStringArchiveM fp $ \fpc ->
         handle $ archiveWriteOpenFilename a fpc
     packEntries a hsEntries'
-    ignore $ archive_write_free a
+    ignore $ archiveFree a
 
 withArchiveEntry :: MonadIO m => (Ptr ArchiveEntry -> m a) -> m a
 withArchiveEntry fact = do

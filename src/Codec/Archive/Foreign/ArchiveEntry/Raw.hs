@@ -136,10 +136,10 @@ foreign import ccall archive_entry_mac_metadata :: Ptr ArchiveEntry -> Ptr CSize
 foreign import ccall archive_entry_copy_mac_metadata :: Ptr ArchiveEntry -> Ptr a -> CSize -> IO ()
 
 foreign import ccall archive_entry_acl_clear :: Ptr ArchiveEntry -> IO ()
-foreign import ccall archive_entry_acl_add_entry :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CString -> IO ArchiveError
-foreign import ccall archive_entry_acl_add_entry_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO ArchiveError
+foreign import ccall archive_entry_acl_add_entry :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CString -> IO CInt
+foreign import ccall archive_entry_acl_add_entry_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO CInt
 foreign import ccall archive_entry_acl_reset :: Ptr ArchiveEntry -> EntryACL -> IO CInt
-foreign import ccall archive_entry_acl_next :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveError
+foreign import ccall archive_entry_acl_next :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO CInt
 -- foreign import ccall archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO ArchiveError
 
 -- foreign import ccall archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> CSize -> EntryACL -> IO CWString
@@ -155,13 +155,13 @@ foreign import ccall archive_entry_xattr_clear :: Ptr ArchiveEntry -> IO ()
 foreign import ccall archive_entry_xattr_add_entry :: Ptr ArchiveEntry -> CString -> Ptr a -> CSize -> IO ()
 foreign import ccall archive_entry_xattr_count :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_entry_xattr_reset :: Ptr ArchiveEntry -> IO CInt
-foreign import ccall archive_entry_xattr_next :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveError
+foreign import ccall archive_entry_xattr_next :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO CInt
 
 foreign import ccall archive_entry_sparse_clear :: Ptr ArchiveEntry -> IO ()
 foreign import ccall archive_entry_sparse_add_entry :: Ptr ArchiveEntry -> Int64 -> Int64 -> IO ()
 foreign import ccall archive_entry_sparse_count :: Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_entry_sparse_reset :: Ptr ArchiveEntry -> IO CInt
-foreign import ccall archive_entry_sparse_next :: Ptr ArchiveEntry -> Ptr Int64 -> Ptr Int64 -> IO ArchiveError
+foreign import ccall archive_entry_sparse_next :: Ptr ArchiveEntry -> Ptr Int64 -> Ptr Int64 -> IO CInt
 
 foreign import ccall archive_entry_linkresolver_new :: Ptr LinkResolver
 foreign import ccall archive_entry_linkresolver_set_strategy :: Ptr LinkResolver -> ArchiveFormat -> IO ()

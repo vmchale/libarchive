@@ -2,186 +2,11 @@
 --
 -- Functions in this module are stateful and hence take place in the 'IO'
 -- monad.
-module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
-                                       archive_read_new
-                                     , archive_read_data_skip
-                                     , archive_read_data
-                                     , archive_read_data_block
-                                     , archive_read_free
-                                     , archive_read_extract
-                                     , archive_read_open_filename
-                                     , archive_read_open_filename_w
-                                     , archive_read_support_filter_all
-                                     , archive_read_support_filter_bzip2
-                                     , archive_read_support_filter_compress
-                                     , archive_read_support_filter_gzip
-                                     , archive_read_support_filter_grzip
-                                     , archive_read_support_filter_lrzip
-                                     , archive_read_support_filter_lz4
-                                     , archive_read_support_filter_lzip
-                                     , archive_read_support_filter_lzma
-                                     , archive_read_support_filter_lzop
-                                     , archive_read_support_filter_none
-                                     , archive_read_support_filter_program
-                                     , archive_read_support_filter_program_signature
-                                     , archive_read_support_filter_rpm
-                                     , archive_read_support_filter_uu
-                                     , archive_read_support_filter_xz
-                                     , archive_read_support_format_7zip
-                                     , archive_read_support_format_all
-                                     , archive_read_support_format_ar
-                                     , archive_read_add_passphrase
-                                     , archive_read_set_passphrase_callback
-                                     , archive_read_extract2
-                                     , archive_read_extract_set_progress_callback
-                                     , archive_read_extract_set_skip_file
-                                     , archive_read_close
-                                     , archive_read_support_format_by_code
-                                     , archive_read_support_format_cab
-                                     , archive_read_support_format_cpio
-                                     , archive_read_support_format_empty
-                                     , archive_read_support_format_gnutar
-                                     , archive_read_support_format_iso9660
-                                     , archive_read_support_format_lha
-                                     , archive_read_support_format_mtree
-                                     , archive_read_support_format_rar
-                                     , archive_read_support_format_raw
-                                     , archive_read_support_format_tar
-                                     , archive_read_support_format_warc
-                                     , archive_read_support_format_xar
-                                     , archive_read_support_format_zip
-                                     , archive_read_support_format_zip_streamable
-                                     , archive_read_support_format_zip_seekable
-                                     , archive_read_set_format
-                                     , archive_read_append_filter
-                                     , archive_read_append_filter_program
-                                     , archive_read_append_filter_program_signature
-                                     , archive_read_set_open_callback
-                                     , archive_read_set_read_callback
-                                     , archive_read_set_seek_callback
-                                     , archive_read_set_skip_callback
-                                     , archive_read_set_close_callback
-                                     , archive_read_set_switch_callback
-                                     , archive_read_set_callback_data
-                                     , archive_read_set_callback_data2
-                                     , archive_read_add_callback_data
-                                     , archive_read_append_callback_data
-                                     , archive_read_prepend_callback_data
-                                     , archive_read_open1
-                                     , archive_read_open
-                                     , archive_read_open2
-                                     , archive_read_open_filenames
-                                     , archive_read_open_memory
-                                     , archive_read_open_memory2
-                                     , archive_read_open_fd
-                                     , archive_read_next_header
-                                     , archive_read_next_header2
-                                     , archive_read_header_position
-                                     , archiveReadHasEncryptedEntries
-                                     , archive_read_format_capabilities
-                                     , archive_seek_data
-                                     , archive_read_data_into_fd
-                                     , archive_read_set_format_option
-                                     , archive_read_set_filter_option
-                                     , archive_read_set_option
-                                     , archive_read_set_options
-                                     , archive_read_disk_new
-                                     , archive_read_disk_set_symlink_logical
-                                     , archive_read_disk_set_symlink_physical
-                                     , archive_read_disk_set_symlink_hybrid
-                                     , archive_read_disk_entry_from_file
-                                     , archive_read_disk_gname
-                                     , archive_read_disk_uname
-                                     , archive_read_disk_set_standard_lookup
-                                     , archive_read_disk_set_gname_lookup
-                                     , archive_read_disk_set_uname_lookup
-                                     , archive_read_disk_open
-                                     , archive_read_disk_open_w
-                                     , archive_read_disk_descend
+module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskCanDescend
-                                     , archive_read_disk_current_filesystem
                                      , archiveReadDiskCurrentFilesystemIsSynthetic
                                      , archiveReadDiskCurrentFilesystemIsRemote
-                                     , archive_read_disk_set_atime_restored
-                                     , archive_read_disk_set_behavior
-                                     , archive_read_disk_set_matching
-                                     , archive_read_disk_set_metadata_filter_callback
-                                     -- * Direct bindings (write)
-                                     , archive_write_set_bytes_per_block
-                                     , archive_write_get_bytes_per_block
-                                     , archive_write_set_bytes_in_last_block
-                                     , archive_write_get_bytes_in_last_block
-                                     , archive_write_set_skip_file
-                                     , archive_write_add_filter
-                                     , archive_write_add_filter_by_name
-                                     , archive_write_add_filter_b64encode
-                                     , archive_write_add_filter_bzip2
-                                     , archive_write_add_filter_compress
-                                     , archive_write_add_filter_grzip
-                                     , archive_write_add_filter_gzip
-                                     , archive_write_add_filter_lrzip
-                                     , archive_write_add_filter_lz4
-                                     , archive_write_add_filter_lzip
-                                     , archive_write_add_filter_lzma
-                                     , archive_write_add_filter_lzop
-                                     , archive_write_add_filter_none
-                                     , archive_write_add_filter_program
-                                     , archive_write_add_filter_uuencode
-                                     , archive_write_add_filter_xz
-                                     , archive_write_data
-                                     , archive_write_new
-                                     , archive_write_free
-                                     , archive_write_set_format_pax_restricted
-                                     , archive_write_header
-                                     , archive_write_set_format
-                                     , archive_write_set_format_by_name
-                                     , archive_write_set_format_7zip
-                                     , archive_write_set_format_ar_bsd
-                                     , archive_write_set_format_ar_svr4
-                                     , archive_write_set_format_cpio
-                                     , archive_write_set_format_cpio_newc
-                                     , archive_write_set_format_gnutar
-                                     , archive_write_set_format_iso9660
-                                     , archive_write_set_format_mtree
-                                     , archive_write_set_format_mtree_classic
-                                     , archive_write_set_format_pax
-                                     , archive_write_set_format_raw
-                                     , archive_write_set_format_shar
-                                     , archive_write_set_format_shar_dump
-                                     , archive_write_set_format_ustar
-                                     , archive_write_set_format_v7tar
-                                     , archive_write_set_format_warc
-                                     , archive_write_set_format_xar
-                                     , archive_write_set_format_zip
-                                     , archive_write_set_format_filter_by_ext
-                                     , archive_write_set_format_filter_by_ext_def
-                                     , archive_write_zip_set_compression_deflate
-                                     , archive_write_zip_set_compression_store
-                                     , archive_write_open
-                                     , archive_write_open_fd
-                                     , archive_write_open_filename
-                                     , archive_write_open_filename_w
-                                     , archive_write_open_memory
-                                     , archive_write_data_block
-                                     , archive_write_finish_entry
-                                     , archive_write_close
-                                     , archive_write_fail
-                                     , archive_write_set_format_option
-                                     , archive_write_set_filter_option
-                                     , archive_write_set_option
-                                     , archive_write_set_options
-                                     , archive_write_set_passphrase
-                                     , archive_write_set_passphrase_callback
-                                     , archive_write_disk_new
-                                     , archive_write_disk_set_skip_file
-                                     , archive_write_disk_set_options
-                                     , archive_write_disk_set_standard_lookup
-                                     , archive_write_disk_set_group_lookup
-                                     , archive_write_disk_set_user_lookup
-                                     , archive_write_disk_gid
-                                     , archive_write_disk_uid
-                                     -- * Direct bindings (archive error)
-                                     , archive_errno
+                                     -- * Direct bindings
                                      , archive_error_string
                                      , archive_format_name
                                      , archive_format
@@ -189,45 +14,17 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archive_set_error
                                      , archive_copy_error
                                      , archive_file_count
-                                     -- * Direct bindings (archive match)
-                                     , archive_match_new
-                                     , archive_match_free
-                                     , archiveMatchExcluded
-                                     , archiveMatchPathExcluded
-                                     , archive_match_exclude_pattern
-                                     , archive_match_exclude_pattern_w
-                                     , archiveMatchExcludePatternFromFile
-                                     , archiveMatchExcludePatternFromFileW
-                                     , archive_match_include_pattern
-                                     , archive_match_include_pattern_w
-                                     , archiveMatchIncludePatternFromFile
-                                     , archiveMatchIncludePatternFromFileW
-                                     , archive_match_path_unmatched_inclusions
-                                     , archive_match_path_unmatched_inclusions_next
-                                     , archive_match_path_unmatched_inclusions_next_w
-                                     , archiveMatchTimeExcluded
-                                     , archive_match_include_time
-                                     , archive_match_include_date
-                                     , archive_match_include_date_w
-                                     , archive_match_include_file_time
-                                     , archive_match_include_file_time_w
-                                     , archive_match_exclude_entry
-                                     , archiveMatchOwnerExcluded
-                                     , archive_match_include_uid
-                                     , archive_match_include_gid
-                                     , archive_match_include_uname
-                                     , archive_match_include_uname_w
-                                     , archive_match_include_gname
-                                     , archive_match_include_gname_w
-                                     -- * Direct bindings (version\/filter\/miscellaneous)
                                      , archive_version_number
                                      , archive_version_string
                                      , archive_version_details
-                                     , archive_free
                                      , archive_filter_count
                                      , archive_filter_bytes
                                      , archive_filter_code
                                      , archive_filter_name
+                                     , archive_write_new
+                                     , archive_write_data
+                                     , archive_read_data
+                                     , archive_read_new
                                      -- * Version macros
                                      , archiveVersionNumber
                                      , archiveVersionOnlyString
@@ -236,13 +33,6 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadFormatCapsNone
                                      , archiveReadFormatCapsEncryptData
                                      , archiveReadFormatCapsEncryptMetadata
-                                     -- * Header read macros
-                                     , archiveOk
-                                     , archiveEOF
-                                     , archiveRetry
-                                     , archiveWarn
-                                     , archiveFailed
-                                     , archiveFatal
                                      -- * Time matching macros
                                      , archiveMatchMTime
                                      , archiveMatchCTime
@@ -304,7 +94,7 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveReadDiskMacCopyFile
                                      , archiveReadDiskNoTraverseMounts
                                      , archiveReadDiskNoXattr
-                                     -- * Higher-level function equivalents
+                                     -- * Haskell-ized function equivalents
                                      , archiveReadNextHeader
                                      , archiveReadOpenFilename
                                      , archiveReadOpenMemory
@@ -318,12 +108,66 @@ module Codec.Archive.Foreign.Archive ( -- * Direct bindings (read)
                                      , archiveWriteHeader
                                      , archiveFree
                                      , archiveWriteOpen
+                                     , archiveWriteSetFormatPaxRestricted
+                                     , archiveWriteSetFormatZip
+                                     , archiveWriteSetFormat7Zip
+                                     , archiveMatchExcluded
+                                     , archiveMatchPathExcluded
+                                     , archiveMatchExcludePatternFromFile
+                                     , archiveMatchExcludePatternFromFileW
+                                     , archiveMatchIncludePatternFromFile
+                                     , archiveMatchIncludePatternFromFileW
+                                     , archiveMatchTimeExcluded
+                                     , archiveMatchOwnerExcluded
+                                     , archiveReadDataSkip
+                                     , archiveReadSupportFormatAll
+                                     , archiveReadExtract
+                                     , archiveMatchIncludeGName
+                                     , archiveMatchIncludeGNameW
+                                     , archiveMatchIncludeUName
+                                     , archiveMatchIncludeUNameW
+                                     , archiveMatchIncludeUid
+                                     , archiveMatchIncludeGid
+                                     , archiveReadSupportFilterAll
+                                     , archiveReadSupportFilterBzip2
+                                     , archiveReadSupportFilterCompress
+                                     , archiveReadSupportFilterGzip
+                                     , archiveReadSupportFilterGrzip
+                                     , archiveReadSupportFilterLrzip
+                                     , archiveReadSupportFilterLz4
+                                     , archiveReadSupportFilterLzip
+                                     , archiveReadSupportFilterLzma
+                                     , archiveReadSupportFilterLzop
+                                     , archiveReadSupportFilterNone
+                                     , archiveReadSupportFilterProgram
+                                     , archiveReadSupportFilterProgramSignature
+                                     , archiveReadSupportFilterRpm
+                                     , archiveReadSupportFilterUu
+                                     , archiveReadSupportFilterXz
+                                     , archiveReadSupportFormat7zip
+                                     , archiveReadSupportFormatAr
+                                     , archiveReadSupportFormatByCode
+                                     , archiveReadSupportFormatCab
+                                     , archiveReadSupportFormatCpio
+                                     , archiveReadSupportFormatEmpty
+                                     , archiveReadSupportFormatGnutar
+                                     , archiveReadSupportFormatIso9660
+                                     , archiveReadSupportFormatLha
+                                     , archiveReadSupportFormatMtree
+                                     , archiveReadSupportFormatRar
+                                     , archiveReadSupportFormatRaw
+                                     , archiveReadSupportFormatTar
+                                     , archiveReadSupportFormatWarc
+                                     , archiveReadSupportFormatXar
+                                     , archiveReadSupportFormatZip
+                                     , archiveReadSupportFormatZipStreamable
+                                     , archiveReadSupportFormatZipSeekable
+                                     , archiveReadSetFormat
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
                                      , ArchiveEncryption (..)
                                      -- * Lower-level API types
-                                     , ArchiveError
                                      , Flags
                                      , ArchiveFilter
                                      , ArchiveFormat
@@ -420,17 +264,17 @@ archiveMatchExcluded = fmap intToBool . archive_match_excluded
 archiveMatchPathExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
 archiveMatchPathExcluded = fmap intToBool .* archive_match_path_excluded
 
-archiveMatchExcludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveError
-archiveMatchExcludePatternFromFile a str b = archive_match_exclude_pattern_from_file a str (boolToInt b)
+archiveMatchExcludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
+archiveMatchExcludePatternFromFile a str b = errorRes <$> archive_match_exclude_pattern_from_file a str (boolToInt b)
 
-archiveMatchExcludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveError
-archiveMatchExcludePatternFromFileW a str b = archive_match_exclude_pattern_from_file_w a str (boolToInt b)
+archiveMatchExcludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveResult
+archiveMatchExcludePatternFromFileW a str b = errorRes <$> archive_match_exclude_pattern_from_file_w a str (boolToInt b)
 
-archiveMatchIncludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveError
-archiveMatchIncludePatternFromFile a str b = archive_match_include_pattern_from_file a str (boolToInt b)
+archiveMatchIncludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
+archiveMatchIncludePatternFromFile a str b = errorRes <$> archive_match_include_pattern_from_file a str (boolToInt b)
 
-archiveMatchIncludePatternFromFileW :: Ptr Archive -> CString -> Bool -> IO ArchiveError
-archiveMatchIncludePatternFromFileW a str b = archive_match_include_pattern_from_file_w a str (boolToInt b)
+archiveMatchIncludePatternFromFileW :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
+archiveMatchIncludePatternFromFileW a str b = errorRes <$> archive_match_include_pattern_from_file_w a str (boolToInt b)
 
 archiveMatchTimeExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
 archiveMatchTimeExcluded = fmap intToBool .* archive_match_time_excluded
@@ -479,3 +323,144 @@ archiveFree = fmap errorRes . archive_free
 
 archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveWriteOpen = fmap errorRes .**** archive_write_open
+
+archiveMatchIncludeGNameW :: Ptr Archive -> CWString -> IO ArchiveResult
+archiveMatchIncludeGNameW = fmap errorRes .* archive_match_include_gname_w
+
+archiveMatchIncludeGName :: Ptr Archive -> CString -> IO ArchiveResult
+archiveMatchIncludeGName = fmap errorRes .* archive_match_include_gname
+
+archiveMatchIncludeUNameW :: Ptr Archive -> CWString -> IO ArchiveResult
+archiveMatchIncludeUNameW = fmap errorRes .* archive_match_include_uname_w
+
+archiveMatchIncludeUName :: Ptr Archive -> CString -> IO ArchiveResult
+archiveMatchIncludeUName = fmap errorRes .* archive_match_include_uname
+
+archiveMatchIncludeGid :: Ptr Archive -> Id -> IO ArchiveResult
+archiveMatchIncludeGid = fmap errorRes .* archive_match_include_gid
+
+archiveMatchIncludeUid :: Ptr Archive -> Id -> IO ArchiveResult
+archiveMatchIncludeUid = fmap errorRes .* archive_match_include_uid
+
+archiveReadSupportFilterAll :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterAll = fmap errorRes . archive_read_support_filter_all
+
+archiveReadSupportFilterBzip2 :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterBzip2 = fmap errorRes . archive_read_support_filter_bzip2
+
+archiveReadSupportFilterCompress :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterCompress = fmap errorRes . archive_read_support_filter_compress
+
+archiveReadSupportFilterGzip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterGzip = fmap errorRes . archive_read_support_filter_gzip
+
+archiveReadSupportFilterGrzip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterGrzip = fmap errorRes . archive_read_support_filter_grzip
+
+archiveReadSupportFilterLrzip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterLrzip = fmap errorRes . archive_read_support_filter_lrzip
+
+archiveReadSupportFilterLz4 :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterLz4 = fmap errorRes . archive_read_support_filter_lz4
+
+archiveReadSupportFilterLzip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterLzip = fmap errorRes . archive_read_support_filter_lzip
+
+archiveReadSupportFilterLzma :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterLzma = fmap errorRes . archive_read_support_filter_lzma
+
+archiveReadSupportFilterLzop :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterLzop = fmap errorRes . archive_read_support_filter_lzop
+
+archiveReadSupportFilterNone :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterNone = fmap errorRes . archive_read_support_filter_none
+
+archiveReadSupportFilterProgram :: Ptr Archive -> CString -> IO ArchiveResult
+archiveReadSupportFilterProgram = fmap errorRes .* archive_read_support_filter_program
+
+archiveReadSupportFilterProgramSignature :: Ptr Archive -> CString -> CString -> CSize -> IO ArchiveResult
+archiveReadSupportFilterProgramSignature = fmap errorRes .*** archive_read_support_filter_program_signature
+
+archiveReadSupportFilterRpm :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterRpm = fmap errorRes . archive_read_support_filter_rpm
+
+archiveReadSupportFilterUu :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterUu = fmap errorRes . archive_read_support_filter_uu
+
+archiveReadSupportFilterXz :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFilterXz = fmap errorRes . archive_read_support_filter_xz
+
+archiveReadSupportFormat7zip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormat7zip = fmap errorRes . archive_read_support_format_7zip
+
+archiveReadSupportFormatAll :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatAll = fmap errorRes . archive_read_support_format_all
+
+archiveReadSupportFormatAr :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatAr = fmap errorRes . archive_read_support_format_ar
+
+archiveReadSupportFormatByCode :: Ptr Archive -> CInt -> IO ArchiveResult
+archiveReadSupportFormatByCode = fmap errorRes .* archive_read_support_format_by_code
+
+archiveReadSupportFormatCab :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatCab = fmap errorRes . archive_read_support_format_cab
+
+archiveReadSupportFormatCpio :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatCpio = fmap errorRes . archive_read_support_format_cpio
+
+archiveReadSupportFormatEmpty :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatEmpty = fmap errorRes . archive_read_support_format_empty
+
+archiveReadSupportFormatGnutar :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatGnutar = fmap errorRes . archive_read_support_format_gnutar
+
+archiveReadSupportFormatIso9660 :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatIso9660 = fmap errorRes . archive_read_support_format_iso9660
+
+archiveReadSupportFormatLha :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatLha = fmap errorRes . archive_read_support_format_lha
+
+archiveReadSupportFormatMtree :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatMtree = fmap errorRes . archive_read_support_format_mtree
+
+archiveReadSupportFormatRar :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatRar = fmap errorRes . archive_read_support_format_rar
+
+archiveReadSupportFormatRaw :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatRaw = fmap errorRes . archive_read_support_format_raw
+
+archiveReadSupportFormatTar :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatTar = fmap errorRes . archive_read_support_format_tar
+
+archiveReadSupportFormatWarc :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatWarc = fmap errorRes . archive_read_support_format_warc
+
+archiveReadSupportFormatXar :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatXar = fmap errorRes . archive_read_support_format_xar
+
+archiveReadSupportFormatZip :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatZip = fmap errorRes . archive_read_support_format_zip
+
+archiveReadSupportFormatZipStreamable :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatZipStreamable = fmap errorRes . archive_read_support_format_zip_streamable
+
+archiveReadSupportFormatZipSeekable :: Ptr Archive -> IO ArchiveResult
+archiveReadSupportFormatZipSeekable = fmap errorRes . archive_read_support_format_zip_seekable
+
+archiveReadSetFormat :: Ptr Archive -> ArchiveFormat -> IO ArchiveResult
+archiveReadSetFormat = fmap errorRes .* archive_read_set_format
+
+archiveWriteSetFormatZip :: Ptr Archive -> IO ArchiveResult
+archiveWriteSetFormatZip = fmap errorRes . archive_write_set_format_zip
+
+archiveWriteSetFormat7Zip :: Ptr Archive -> IO ArchiveResult
+archiveWriteSetFormat7Zip = fmap errorRes . archive_write_set_format_7zip
+
+archiveWriteSetFormatPaxRestricted :: Ptr Archive -> IO ArchiveResult
+archiveWriteSetFormatPaxRestricted = fmap errorRes . archive_write_set_format_7zip
+
+archiveReadDataSkip :: Ptr Archive -> IO ArchiveResult
+archiveReadDataSkip = fmap errorRes . archive_read_data_skip
+
+archiveReadExtract :: Ptr Archive -> Ptr ArchiveEntry -> Flags -> IO ArchiveResult
+archiveReadExtract = fmap errorRes .** archive_read_extract

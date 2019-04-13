@@ -28,12 +28,13 @@ library
         Codec.Archive.Foreign
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
+        Codec.Archive.Foreign.Raw
+        Codec.Archive.Foreign.Archive.Raw
+        Codec.Archive.Foreign.ArchiveEntry.Raw
     build-tools: c2hs >=0.19.1
     pkgconfig-depends: libarchive -any
     hs-source-dirs: src
     other-modules:
-        Codec.Archive.Foreign.Archive.Raw
-        Codec.Archive.Foreign.ArchiveEntry.Raw
         Codec.Archive.Foreign.Archive.Macros
         Codec.Archive.Foreign.ArchiveEntry.Macros
         Codec.Archive.Pack

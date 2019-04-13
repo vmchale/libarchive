@@ -42,22 +42,22 @@ packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archive_write_set_format_zip
+entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSLzip #-}
 
 -- | @since 1.0.5.0
 entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archive_write_set_format_7zip
+entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
 {-# NOINLINE entriesToBSL7zip #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
 entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archive_write_set_format_pax_restricted
+entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
-entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveError) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
     a <- liftIO archive_write_new
     bsRef <- liftIO $ newIORef mempty
@@ -68,7 +68,7 @@ entriesToBSLGeneral modifier hsEntries' = do
     ignore $ modifier a
     handle $ archiveWriteOpen a nothingPtr oc wc cc
     packEntries a hsEntries'
-    ignore $ archive_free a
+    ignore $ archiveFree a
     BSL.fromChunks . toList <$> liftIO (readIORef bsRef)
 
     where writeBSL bsRef _ _ bufPtr sz = do

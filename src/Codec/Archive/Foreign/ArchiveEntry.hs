@@ -124,11 +124,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_copy_stat
                                           , archive_entry_mac_metadata
                                           , archive_entry_copy_mac_metadata
-                                          -- * ACL functions
-                                          , archive_entry_acl_add_entry
-                                          , archive_entry_acl_add_entry_w
-                                          , archive_entry_acl_reset
-                                          , archive_entry_acl_next
                                           -- , archive_entry_acl_next_w
                                           -- , archive_entry_acl_to_text
                                           -- , archive_entry_acl_to_text_w
@@ -141,13 +136,11 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_xattr_add_entry
                                           , archive_entry_xattr_count
                                           , archive_entry_xattr_reset
-                                          , archive_entry_xattr_next
                                           -- * For sparse archives
                                           , archive_entry_sparse_clear
                                           , archive_entry_sparse_add_entry
                                           , archive_entry_sparse_count
                                           , archive_entry_sparse_reset
-                                          , archive_entry_sparse_next
                                           -- * Link resolver
                                           , archive_entry_linkresolver_new
                                           , archive_entry_linkresolver_set_strategy
@@ -164,6 +157,12 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , blockDevice
                                           , directory
                                           , fifo
+                                          -- * Haskell-ized functions
+                                          , archiveEntryAclAddEntry
+                                          , archiveEntryAclAddEntryW
+                                          , archiveEntryAclNext
+                                          , archiveEntrySparseNext
+                                          , archiveEntryXattrNext
                                           -- * ACL macros
                                           , archiveEntryACLExecute
                                           , archiveEntryACLWrite
@@ -214,12 +213,16 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , EntryACL
                                           ) where
 
+import           Codec.Archive.Foreign.Archive.Macros
 import           Codec.Archive.Foreign.ArchiveEntry.Macros
 import           Codec.Archive.Foreign.ArchiveEntry.Raw
 import           Codec.Archive.Foreign.Common
 import           Codec.Archive.Types
-import           Control.Composition                       ((.*))
+import           Control.Composition                       ((.*), (.**), (.***),
+                                                            (.*****), (.******))
+import           Data.Int                                  (Int64)
 import           Foreign.C.String
+import           Foreign.C.Types
 import           Foreign.Ptr                               (Ptr)
 
 -- TODO: higher level archiveEntryXattrList?
@@ -271,3 +274,18 @@ archiveEntryUpdateSymlinkUtf8 = fmap intToBool .* archive_entry_update_symlink_u
 
 archiveEntryUpdateUNameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
 archiveEntryUpdateUNameUtf8 = fmap intToBool .* archive_entry_update_uname_utf8
+
+archiveEntryAclAddEntry :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CString -> IO ArchiveResult
+archiveEntryAclAddEntry = fmap errorRes .***** archive_entry_acl_add_entry
+
+archiveEntryAclAddEntryW :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO ArchiveResult
+archiveEntryAclAddEntryW = fmap errorRes .***** archive_entry_acl_add_entry_w
+
+archiveEntryAclNext :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveResult
+archiveEntryAclNext = fmap errorRes .****** archive_entry_acl_next
+
+archiveEntrySparseNext :: Ptr ArchiveEntry -> Ptr Int64 -> Ptr Int64 -> IO ArchiveResult
+archiveEntrySparseNext = fmap errorRes .** archive_entry_sparse_next
+
+archiveEntryXattrNext :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveResult
+archiveEntryXattrNext = fmap errorRes .*** archive_entry_xattr_next

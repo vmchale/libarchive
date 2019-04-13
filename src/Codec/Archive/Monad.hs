@@ -25,7 +25,7 @@ type ArchiveM = ExceptT ArchiveResult IO
 -- TODO: ArchiveM a -> IO a where we throw exceptions using the error string?
 
 -- for stuff we think isn't going to fail
-ignore :: IO ArchiveError -> ArchiveM ()
+ignore :: IO ArchiveResult -> ArchiveM ()
 ignore = void . liftIO
 
 runArchiveM :: ArchiveM a -> IO (Either ArchiveResult a)

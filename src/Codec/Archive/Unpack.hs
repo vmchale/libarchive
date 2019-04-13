@@ -31,7 +31,7 @@ readArchiveBS = unsafePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchi
 bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive)
 bsToArchive bs = do
     a <- liftIO archive_read_new
-    ignore $ archive_read_support_format_all a
+    ignore $ archiveReadSupportFormatAll a
     useAsCStringLenArchiveM bs $
         \(buf, sz) ->
             handle $ archiveReadOpenMemory a buf (fromIntegral sz)
@@ -47,7 +47,7 @@ readArchiveFile = actFree hsEntries <=< archiveFile
 archiveFile :: FilePath -> ArchiveM (Ptr Archive)
 archiveFile fp = withCStringArchiveM fp $ \cpath -> do
     a <- liftIO archive_read_new
-    ignore $ archive_read_support_format_all a
+    ignore $ archiveReadSupportFormatAll a
     handle $ archiveReadOpenFilename a cpath 10240
     pure a
 
@@ -62,7 +62,7 @@ unpackArchive :: FilePath -- ^ Filepath pointing to archive
 unpackArchive tarFp dirFp = do
     a <- archiveFile tarFp
     unpackEntriesFp a dirFp
-    ignore $ archive_read_free a
+    ignore $ archiveFree a
 
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry =
@@ -101,9 +101,9 @@ unpackEntriesFp a fp = do
             let file' = fp </> file
             liftIO $ withCString file' $ \fileC ->
                 archive_entry_set_pathname x fileC
-            void $ liftIO $ archive_read_extract a x archiveExtractTime
+            ignore $ archiveReadExtract a x archiveExtractTime
             liftIO $ archive_entry_set_pathname x preFile
-            void $ liftIO $ archive_read_data_skip a
+            ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
 readBS :: Ptr Archive -> Int -> IO BS.ByteString
@@ -164,4 +164,4 @@ unpackToDir :: FilePath -- ^ Directory to unpack in
 unpackToDir fp bs = do
     a <- bsToArchive bs
     unpackEntriesFp a fp
-    void $ liftIO $ archive_free a
+    void $ liftIO $ archiveFree a

@@ -38,7 +38,7 @@ unpackToDirLazy :: FilePath -- ^ Directory to unpack in
 unpackToDirLazy fp bs = do
     (a, act) <- bslToArchive bs
     unpackEntriesFp a fp
-    ignore $ archive_read_free a
+    ignore $ archiveFree a
     liftIO act
 
 -- | Read an archive lazily. The format of the archive is automatically
@@ -55,7 +55,7 @@ bslToArchive :: BSL.ByteString
              -> ArchiveM (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
     a <- liftIO archive_read_new
-    ignore $ archive_read_support_format_all a
+    ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks; should really do something more rigorous
     bsChunksRef <- liftIO $ newIORef bsChunks
     rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufPtr)
