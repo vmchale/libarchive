@@ -6,13 +6,14 @@
   * Improve docs
   * `archive_read_open_memory` now accepts an argument of type `Ptr a` rather
     than `Ptr CChar`
-  * `unpackToDirLazy`, `unpackArchive`, and `archiveUnpackToDir` now occur in the `ArchiveM` monadA
+  * `unpackToDirLazy`, `unpackArchive`, and `archiveUnpackToDir` now occur in the `ArchiveM` monad
   * `readArchiveBSL` and `readArchiveBS` now returnxs `Either ArchiveResult [Entry]` rather than
-    throwing an exception
+    failing silently
   * `readArchiveFile` now returns an `ArchiveM [Entry]` rather than returning an
     `IO [Entry]`
   * `enriesToFile`, `entriesToFile7Zip`, and `entriesToFileZip` now occur in the
     `ArchiveM` monad
+  * Make various parts of an `Entry` optional
 
 ## 1.0.5.0
 
