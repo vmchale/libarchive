@@ -49,6 +49,7 @@ unpackToDirLazy fp bs = do
 -- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry]
 readArchiveBSL = unsafePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bslToArchive)
+{-# NOINLINE readArchiveBSL #-}
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString
