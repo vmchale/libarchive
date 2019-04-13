@@ -14,6 +14,7 @@
   * `enriesToFile`, `entriesToFile7Zip`, and `entriesToFileZip` now occur in the
     `ArchiveM` monad
   * Make various parts of an `Entry` optional
+  * Add `packToFile` functions and `packFiles` functions
 
 ## 1.0.5.0
 
