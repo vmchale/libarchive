@@ -53,7 +53,7 @@ library
     build-depends:
         base >=4.9 && <5,
         bytestring -any,
-        composition-prelude >=1.0.0.0,
+        composition-prelude >=2.0.5.0,
         dlist -any,
         filepath -any,
         mtl,
