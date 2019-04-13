@@ -163,6 +163,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadSupportFormatZipStreamable
                                      , archiveReadSupportFormatZipSeekable
                                      , archiveReadSetFormat
+                                     , archiveErrno
                                      -- * Abstract types
                                      , Archive
                                      -- * Haskell types
@@ -457,10 +458,13 @@ archiveWriteSetFormat7Zip :: Ptr Archive -> IO ArchiveResult
 archiveWriteSetFormat7Zip = fmap errorRes . archive_write_set_format_7zip
 
 archiveWriteSetFormatPaxRestricted :: Ptr Archive -> IO ArchiveResult
-archiveWriteSetFormatPaxRestricted = fmap errorRes . archive_write_set_format_7zip
+archiveWriteSetFormatPaxRestricted = fmap errorRes . archive_write_set_format_pax_restricted
 
 archiveReadDataSkip :: Ptr Archive -> IO ArchiveResult
 archiveReadDataSkip = fmap errorRes . archive_read_data_skip
 
 archiveReadExtract :: Ptr Archive -> Ptr ArchiveEntry -> Flags -> IO ArchiveResult
 archiveReadExtract = fmap errorRes .** archive_read_extract
+
+archiveErrno :: Ptr Archive -> IO ArchiveResult
+archiveErrno = fmap errorRes . archive_errno

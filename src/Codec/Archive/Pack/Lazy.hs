@@ -11,7 +11,7 @@ import           Codec.Archive.Monad
 import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Monad             ((<=<))
+import           Control.Composition       ((.@))
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
@@ -21,9 +21,10 @@ import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr
+import           System.IO.Unsafe          (unsafePerformIO)
 
-packer :: (Traversable t) => (t Entry -> IO BSL.ByteString) -> t FilePath -> IO BSL.ByteString
-packer f = f <=< traverse mkEntry
+packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
+packer = traverse mkEntry .@ fmap
 
 -- | @since 1.1.0.0
 packFiles :: Traversable t
@@ -40,18 +41,21 @@ packFiles7zip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
-entriesToBSLzip :: Foldable t => t Entry -> IO BSL.ByteString
-entriesToBSLzip = noFail . entriesToBSLGeneral archiveWriteSetFormatZip
+entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
+{-# NOINLINE entriesToBSLzip #-}
 
 -- | @since 1.0.5.0
-entriesToBSL7zip :: Foldable t => t Entry -> IO BSL.ByteString
-entriesToBSL7zip = noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
+entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
+{-# NOINLINE entriesToBSL7zip #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
-entriesToBSL :: Foldable t => t Entry -> IO BSL.ByteString
-entriesToBSL = noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
+entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
+{-# NOINLINE entriesToBSL #-}
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
