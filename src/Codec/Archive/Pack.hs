@@ -125,18 +125,21 @@ entriesToBSGeneral modifier hsEntries' = do
 filePacker :: (Traversable t) => (FilePath -> t Entry -> ArchiveM ()) -> FilePath -> t FilePath -> ArchiveM ()
 filePacker f tar fps = f tar =<< liftIO (traverse mkEntry fps)
 
+-- | @since 1.1.0.0
 packToFile :: Traversable t
            => FilePath -- ^ @.tar@ archive to be created
            -> t FilePath -- ^ Files to include
            -> ArchiveM ()
 packToFile = filePacker entriesToFile
 
+-- | @since 1.1.0.0
 packToFileZip :: Traversable t
               => FilePath
               -> t FilePath
               -> ArchiveM ()
 packToFileZip = filePacker entriesToFileZip
 
+-- | @since 1.1.0.0
 packToFile7Zip :: Traversable t
                => FilePath
                -> t FilePath
