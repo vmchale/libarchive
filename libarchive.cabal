@@ -38,6 +38,7 @@ library
         Codec.Archive.Foreign.ArchiveEntry.Macros
         Codec.Archive.Pack
         Codec.Archive.Pack.Lazy
+        Codec.Archive.Pack.Common
         Codec.Archive.Unpack.Lazy
         Codec.Archive.Unpack
         Codec.Archive.Foreign.Common
@@ -55,7 +56,8 @@ library
         composition-prelude >=1.0.0.0,
         dlist -any,
         filepath -any,
-        mtl
+        mtl,
+        unix-compat
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists

@@ -18,6 +18,9 @@ module Codec.Archive
     , readArchiveFile
     , readArchiveBS
     , readArchiveBSL
+    , packFiles
+    , packFilesZip
+    , packFiles7zip
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
     , Entry (..)
