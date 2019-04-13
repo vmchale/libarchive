@@ -6,21 +6,25 @@ module Codec.Archive.Pack ( entriesToFile
                           , entriesToBS7zip
                           , packEntries
                           , noFail
+                          , packToFile
+                          , packToFileZip
+                          , packToFile7Zip
                           ) where
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
+import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Monad          (void)
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Data.ByteString        (packCStringLen)
-import qualified Data.ByteString        as BS
-import           Data.Foldable          (sequenceA_, traverse_)
-import           Data.Semigroup         (Sum (..))
+import           Control.Monad             (void)
+import           Control.Monad.IO.Class    (MonadIO (..))
+import           Data.ByteString           (packCStringLen)
+import qualified Data.ByteString           as BS
+import           Data.Foldable             (sequenceA_, traverse_)
+import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
-import           Foreign.Ptr            (Ptr)
-import           Foreign.Storable       (peek)
-import           System.IO.Unsafe       (unsafePerformIO)
+import           Foreign.Ptr               (Ptr)
+import           Foreign.Storable          (peek)
+import           System.IO.Unsafe          (unsafePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
@@ -117,6 +121,27 @@ entriesToBSGeneral modifier hsEntries' = do
 
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
+
+filePacker :: (Traversable t) => (FilePath -> t Entry -> ArchiveM ()) -> FilePath -> t FilePath -> ArchiveM ()
+filePacker f tar fps = f tar =<< liftIO (traverse mkEntry fps)
+
+packToFile :: Traversable t
+           => FilePath -- ^ @.tar@ archive to be created
+           -> t FilePath -- ^ Files to include
+           -> ArchiveM ()
+packToFile = filePacker entriesToFile
+
+packToFileZip :: Traversable t
+              => FilePath
+              -> t FilePath
+              -> ArchiveM ()
+packToFileZip = filePacker entriesToFileZip
+
+packToFile7Zip :: Traversable t
+               => FilePath
+               -> t FilePath
+               -> ArchiveM ()
+packToFile7Zip = filePacker entriesToFile7Zip
 
 -- | Write some entries to a file, creating a tar archive. This is more
 -- efficient than

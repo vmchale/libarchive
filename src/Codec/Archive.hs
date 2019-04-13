@@ -21,6 +21,9 @@ module Codec.Archive
     , packFiles
     , packFilesZip
     , packFiles7zip
+    , packToFile
+    , packToFileZip
+    , packToFile7Zip
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
     , Entry (..)
