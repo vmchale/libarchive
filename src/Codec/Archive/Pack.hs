@@ -42,7 +42,7 @@ contentAdd (Symlink fp) a entry = do
     handle $ archiveWriteHeader a entry
 
 withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
-withMaybeCString (Just x) f = withCString x (f.Just)
+withMaybeCString (Just x) f = withCString x (f . Just)
 withMaybeCString Nothing f  = f Nothing
 
 setOwnership :: Ownership -> Ptr ArchiveEntry -> IO ()
@@ -52,8 +52,8 @@ setOwnership (Ownership uname gname uid gid) entry =
     traverse_ maybeDo
         [ archive_entry_set_uname entry <$> unameC
         , archive_entry_set_gname entry <$> gnameC
-        , archive_entry_set_uid entry <$> uid
-        , archive_entry_set_gid entry <$> gid
+        , Just (archive_entry_set_uid entry uid)
+        , Just (archive_entry_set_gid entry gid)
         ]
 
 setTime :: ModTime -> Ptr ArchiveEntry -> IO ()

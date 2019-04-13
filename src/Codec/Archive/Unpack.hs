@@ -139,8 +139,8 @@ readOwnership entry =
     Ownership
         <$> archiveGetterNull archive_entry_uname entry
         <*> archiveGetterNull archive_entry_gname entry
-        <*> fmap Just (archive_entry_uid entry)
-        <*> fmap Just (archive_entry_gid entry)
+        <*> archive_entry_uid entry
+        <*> archive_entry_gid entry
 
 readTimes :: Ptr ArchiveEntry -> IO (Maybe ModTime)
 readTimes = archiveGetterHelper go archiveEntryMTimeIsSet

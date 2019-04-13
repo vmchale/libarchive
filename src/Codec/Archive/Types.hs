@@ -52,8 +52,8 @@ data Entry = Entry { filepath    :: !FilePath
 
 data Ownership = Ownership { userName  :: !(Maybe String)
                            , groupName :: !(Maybe String)
-                           , ownerId   :: !(Maybe Id)
-                           , groupId   :: !(Maybe Id)
+                           , ownerId   :: !Id
+                           , groupId   :: !Id
                            }
 
 type Permissions = CMode

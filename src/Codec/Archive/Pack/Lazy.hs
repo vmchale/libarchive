@@ -1,22 +1,42 @@
 module Codec.Archive.Pack.Lazy ( entriesToBSL
                                , entriesToBSL7zip
                                , entriesToBSLzip
+                               , packFiles
+                               , packFilesZip
+                               , packFiles7zip
                                ) where
 
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Pack
+import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Monad.IO.Class (liftIO)
-import           Data.ByteString        (packCStringLen)
-import qualified Data.ByteString.Lazy   as BSL
-import qualified Data.DList             as DL
-import           Data.Foldable          (toList)
-import           Data.Functor           (($>))
-import           Data.IORef             (modifyIORef', newIORef, readIORef)
-import           Foreign.Marshal.Alloc  (free, mallocBytes)
+import           Control.Monad.IO.Class    (liftIO)
+import           Data.ByteString           (packCStringLen)
+import qualified Data.ByteString.Lazy      as BSL
+import qualified Data.DList                as DL
+import           Data.Foldable             (toList)
+import           Data.Functor              (($>))
+import           Data.IORef                (modifyIORef', newIORef, readIORef)
+import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr
-import           System.IO.Unsafe       (unsafePerformIO)
+import           System.IO.Unsafe          (unsafePerformIO)
+
+packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
+packer f = fmap f . traverse mkEntry
+
+-- | @since 1.1.0.0
+packFiles :: [FilePath] -- ^ Filepaths relative to the current directory
+          -> IO BSL.ByteString
+packFiles = packer entriesToBSL
+
+-- | @since 1.1.0.0
+packFilesZip :: [FilePath] -> IO BSL.ByteString
+packFilesZip = packer entriesToBSLzip
+
+-- | @since 1.1.0.0
+packFiles7zip :: [FilePath] -> IO BSL.ByteString
+packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
