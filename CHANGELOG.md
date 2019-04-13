@@ -7,7 +7,7 @@
   * `archive_read_open_memory` now accepts an argument of type `Ptr a` rather
     than `Ptr CChar`
   * `unpackToDirLazy`, `unpackArchive`, and `archiveUnpackToDir` now occur in the `ArchiveM` monad
-  * `readArchiveBSL` and `readArchiveBS` now returnxs `Either ArchiveResult [Entry]` rather than
+  * `readArchiveBSL` and `readArchiveBS` now return `Either ArchiveResult [Entry]` rather than
     failing silently
   * `readArchiveFile` now returns an `ArchiveM [Entry]` rather than returning an
     `IO [Entry]`
