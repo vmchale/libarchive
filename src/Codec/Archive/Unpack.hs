@@ -15,7 +15,7 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc  (alloca, allocaBytes)
-import           Foreign.Ptr            (Ptr)
+import           Foreign.Ptr            (Ptr, nullPtr)
 import           Foreign.Storable       (Storable (..))
 import           System.FilePath        ((</>))
 import           System.IO.Unsafe       (unsafePerformIO)
@@ -120,17 +120,32 @@ readContents a entry = go =<< archive_entry_filetype entry
                 | otherwise = error "Unsupported filetype"
           sz = fromIntegral <$> archive_entry_size entry
 
+archiveGetterHelper :: (Ptr ArchiveEntry -> IO a) -> (Ptr ArchiveEntry -> IO Bool) -> Ptr ArchiveEntry -> IO (Maybe a)
+archiveGetterHelper get check entry = do
+    check' <- check entry
+    if check'
+        then Just <$> get entry
+        else pure Nothing
+
+archiveGetterNull :: (Ptr ArchiveEntry -> IO CString) -> Ptr ArchiveEntry -> IO (Maybe String)
+archiveGetterNull get entry = do
+    res <- get entry
+    if res == nullPtr
+        then pure Nothing
+        else fmap Just (peekCString =<< get entry)
+
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry =
     Ownership
-        <$> (peekCString =<< archive_entry_uname entry)
-        <*> (peekCString =<< archive_entry_gname entry)
-        <*> archive_entry_uid entry
-        <*> archive_entry_gid entry
+        <$> archiveGetterNull archive_entry_uname entry
+        <*> archiveGetterNull archive_entry_gname entry
+        <*> fmap Just (archive_entry_uid entry)
+        <*> fmap Just (archive_entry_gid entry)
 
-readTimes :: Ptr ArchiveEntry -> IO ModTime
-readTimes entry =
-    (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
+readTimes :: Ptr ArchiveEntry -> IO (Maybe ModTime)
+readTimes = archiveGetterHelper go archiveEntryMTimeIsSet
+    where go entry =
+            (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
 
 -- | Get the next 'ArchiveEntry' in an 'Archive'
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))

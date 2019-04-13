@@ -15,12 +15,15 @@ import           Control.Monad          (void)
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.ByteString        (packCStringLen)
 import qualified Data.ByteString        as BS
-import           Data.Foldable          (traverse_)
+import           Data.Foldable          (sequenceA_, traverse_)
 import           Data.Semigroup         (Sum (..))
 import           Foreign.C.String
 import           Foreign.Ptr            (Ptr)
 import           Foreign.Storable       (peek)
 import           System.IO.Unsafe       (unsafePerformIO)
+
+maybeDo :: Applicative f => Maybe (f ()) -> f ()
+maybeDo = sequenceA_
 
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
@@ -38,15 +41,19 @@ contentAdd (Symlink fp) a entry = do
         archive_entry_set_symlink entry fpc
     handle $ archiveWriteHeader a entry
 
+withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
+withMaybeCString (Just x) f = withCString x (f.Just)
+withMaybeCString Nothing f  = f Nothing
+
 setOwnership :: Ownership -> Ptr ArchiveEntry -> IO ()
 setOwnership (Ownership uname gname uid gid) entry =
-    withCString uname $ \unameC ->
-    withCString gname $ \gnameC ->
-    sequence_
-        [ archive_entry_set_uname entry unameC
-        , archive_entry_set_gname entry gnameC
-        , archive_entry_set_uid entry uid
-        , archive_entry_set_gid entry gid
+    withMaybeCString uname $ \unameC ->
+    withMaybeCString gname $ \gnameC ->
+    traverse_ maybeDo
+        [ archive_entry_set_uname entry <$> unameC
+        , archive_entry_set_gname entry <$> gnameC
+        , archive_entry_set_uid entry <$> uid
+        , archive_entry_set_gid entry <$> gid
         ]
 
 setTime :: ModTime -> Ptr ArchiveEntry -> IO ()
@@ -158,5 +165,5 @@ archiveEntryAdd a (Entry fp contents perms owner mtime) =
             archive_entry_set_pathname entry fpc
         liftIO $ archive_entry_set_perm entry perms
         liftIO $ setOwnership owner entry
-        liftIO $ setTime mtime entry
+        liftIO $ maybeDo (setTime <$> mtime <*> pure entry)
         contentAdd contents a entry

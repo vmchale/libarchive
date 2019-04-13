@@ -47,13 +47,13 @@ data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent
                    , permissions :: !Permissions
                    , ownership   :: !Ownership
-                   , time        :: !ModTime
+                   , time        :: !(Maybe ModTime)
                    }
 
-data Ownership = Ownership { userName  :: !String
-                           , groupName :: !String
-                           , ownerId   :: !Id
-                           , groupId   :: !Id
+data Ownership = Ownership { userName  :: !(Maybe String)
+                           , groupName :: !(Maybe String)
+                           , ownerId   :: !(Maybe Id)
+                           , groupId   :: !(Maybe Id)
                            }
 
 type Permissions = CMode
