@@ -1,3 +1,6 @@
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
+
 module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                              Entry (..)
                            , EntryContent (..)
@@ -16,10 +19,12 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            ) where
 
 import           Codec.Archive.Types.Foreign
+import           Control.DeepSeq             (NFData)
 import qualified Data.ByteString             as BS
 import           Data.Int                    (Int64)
 import           Foreign.C.Types             (CLong, CTime)
 import           Foreign.Ptr                 (Ptr)
+import           GHC.Generics                (Generic)
 import           System.Posix.Types          (CMode (..))
 
 type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
@@ -32,7 +37,7 @@ data ArchiveResult = ArchiveOk
                    | ArchiveWarn
                    | ArchiveFailed
                    | ArchiveFatal
-                   deriving (Eq, Show)
+                   deriving (Eq, Show, Generic, NFData)
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption
