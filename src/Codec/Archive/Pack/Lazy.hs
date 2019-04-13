@@ -26,16 +26,17 @@ packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL
 packer f = fmap f . traverse mkEntry
 
 -- | @since 1.1.0.0
-packFiles :: [FilePath] -- ^ Filepaths relative to the current directory
+packFiles :: Traversable t
+          => t FilePath -- ^ Filepaths relative to the current directory
           -> IO BSL.ByteString
 packFiles = packer entriesToBSL
 
 -- | @since 1.1.0.0
-packFilesZip :: [FilePath] -> IO BSL.ByteString
+packFilesZip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFilesZip = packer entriesToBSLzip
 
 -- | @since 1.1.0.0
-packFiles7zip :: [FilePath] -> IO BSL.ByteString
+packFiles7zip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
