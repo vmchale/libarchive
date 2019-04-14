@@ -9,7 +9,7 @@ import           Test.Hspec
 -- FIXME entriesToBSL is fucked
 
 roundtrip :: IO (Either ArchiveResult BSL.ByteString)
-roundtrip = fmap entriesToBSL . readArchiveBSL <$> BSL.readFile "libarchive-0.2.1.2.tar"
+roundtrip = fmap entriesToBSL . readArchiveBSL <$> BSL.readFile "test/data/libarchive-0.2.1.2.tar"
 
 main :: IO ()
 main = hspec $

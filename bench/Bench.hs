@@ -39,4 +39,4 @@ main =
                       , bench "tar" $ nfIO extractTar
                       ]
                 ]
-    where file = BSL.readFile "libarchive-0.2.1.2.tar"
+    where file = BSL.readFile "test/data/libarchive-0.2.1.2.tar"

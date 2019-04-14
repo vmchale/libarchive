@@ -14,7 +14,7 @@ description:
 category: Codec
 build-type: Simple
 data-files:
-    libarchive-0.2.1.2.tar
+    test/data/libarchive-0.2.1.2.tar
 extra-source-files:
     cabal.project.local
 extra-doc-files: README.md
