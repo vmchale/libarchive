@@ -21,11 +21,15 @@ roundtripTar = fmap Tar.write . failTar . Tar.read
 
 unpack :: IO (Either ArchiveResult ())
 unpack = withSystemTempDirectory "libarchive" $
-    \fp -> runArchiveM $ unpackToDirLazy fp =<< liftIO (BSL.readFile "libarchive-0.2.1.2.tar")
+    \fp -> runArchiveM $ unpackArchive "test/data/libarchive-0.2.1.2.tar" fp
+
+unpackHs :: IO (Either ArchiveResult ())
+unpackHs = withSystemTempDirectory "libarchive" $
+    \fp -> runArchiveM $ unpackToDirLazy fp =<< liftIO (BSL.readFile "test/data/libarchive-0.2.1.2.tar")
 
 extractTar :: IO ()
 extractTar = withSystemTempDirectory "tar" $
-    \fp -> Tar.extract fp "libarchive-0.2.1.2.tar"
+    \fp -> Tar.extract fp "test/data/libarchive-0.2.1.2.tar"
 
 main :: IO ()
 main =
@@ -35,7 +39,8 @@ main =
                       , bench "tar" $ nf roundtripTar f
                       ]
                 , bgroup "unpack"
-                      [ bench "libarchive" $ nfIO unpack
+                      [ bench "libarchive (via bytestring)" $ nfIO unpackHs
+                      , bench "libarchive (C API)" $ nfIO unpack
                       , bench "tar" $ nfIO extractTar
                       ]
                 ]
