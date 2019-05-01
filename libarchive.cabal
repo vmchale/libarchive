@@ -6,7 +6,7 @@ license-file: LICENSE
 copyright: Copyright: (c) 2018-2019 Vanessa McHale
 maintainer: vanessa.mchale@iohk.io
 author: Vanessa McHale
-tested-with: ghc ==8.4.4 ghc ==8.2.2 ghc ==8.6.4 ghc ==8.0.2
+tested-with: ghc ==8.4.4 ghc ==8.6.4
 bug-reports: https://github.com/vmchale/libarchive/issues
 synopsis: Haskell interface to libarchive
 description:
