@@ -20,7 +20,10 @@
   * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
     rather than `Codec.Archive.Foreign`
   * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
-  * Add `cross` flag to cabal file
+
+## 1.0.5.1
+
+  * Add `cross` flag
 
 ## 1.0.5.0
 
