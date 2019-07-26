@@ -4,9 +4,9 @@ version: 1.1.0.0
 license: BSD3
 license-file: LICENSE
 copyright: Copyright: (c) 2018-2019 Vanessa McHale
-maintainer: vanessa.mchale@iohk.io
+maintainer: vamchale@gmail.com
 author: Vanessa McHale
-tested-with: ghc ==8.4.4 ghc ==8.6.4
+tested-with: ghc ==8.4.4 ghc ==8.6.5
 bug-reports: https://github.com/vmchale/libarchive/issues
 synopsis: Haskell interface to libarchive
 description:
@@ -15,8 +15,6 @@ category: Codec
 build-type: Simple
 data-files:
     test/data/libarchive-0.2.1.2.tar
-extra-source-files:
-    cabal.project.local
 extra-doc-files: README.md
                  CHANGELOG.md
 
@@ -39,7 +37,7 @@ library
         Codec.Archive.Foreign.Raw
         Codec.Archive.Foreign.Archive.Raw
         Codec.Archive.Foreign.ArchiveEntry.Raw
-    pkgconfig-depends: libarchive -any
+    pkgconfig-depends: libarchive >=3.2.2
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Foreign.Archive.Macros
