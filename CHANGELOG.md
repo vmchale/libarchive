@@ -20,6 +20,10 @@
   * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
     rather than `Codec.Archive.Foreign`
   * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
+  * Add `archiveEntryACLEntryInherited`, `archiveEntryACLStyleSolaris`,
+    `archiveEntryACLStyleSeparatorComma`, `archiveEntryACLStyleCompact`
+  * Add `archiveReadDiskNoAcl`, `archiveReadDiskNoFFlags`
+  * Depend on `libarchive` >= 3.3.3
 
 ## 1.0.5.1
 

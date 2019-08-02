@@ -37,7 +37,7 @@ library
         Codec.Archive.Foreign.Raw
         Codec.Archive.Foreign.Archive.Raw
         Codec.Archive.Foreign.ArchiveEntry.Raw
-    pkgconfig-depends: libarchive >=3.2.2
+    pkgconfig-depends: libarchive >=3.3.3
     hs-source-dirs: src
     other-modules:
         Codec.Archive.Foreign.Archive.Macros

@@ -60,6 +60,8 @@ module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumber
                                             , archiveReadDiskMacCopyFile
                                             , archiveReadDiskNoTraverseMounts
                                             , archiveReadDiskNoXattr
+                                            , archiveReadDiskNoAcl
+                                            , archiveReadDiskNoFFlags
                                             -- * Conversion functions
                                             , resultToErr
                                             , errorRes
@@ -275,11 +277,13 @@ archiveReadDiskNoTraverseMounts = ReadDiskFlags {# const ARCHIVE_READDISK_NO_TRA
 archiveReadDiskNoXattr :: ReadDiskFlags
 archiveReadDiskNoXattr = ReadDiskFlags {# const ARCHIVE_READDISK_NO_XATTR #}
 
--- archiveReadDiskNoAcl :: ReadDiskFlags
--- archiveReadDiskNoAcl = ReadDiskFlags {# const ARCHIVE_READDISK_NO_ACL #}
+-- | @since 1.1.0.0
+archiveReadDiskNoAcl :: ReadDiskFlags
+archiveReadDiskNoAcl = ReadDiskFlags {# const ARCHIVE_READDISK_NO_ACL #}
 
--- archiveReadDiskNoFFlags :: ReadDiskFlags
--- archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
+-- | @since 1.1.0.0
+archiveReadDiskNoFFlags :: ReadDiskFlags
+archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
 
 archiveMatchMTime :: TimeFlag
 archiveMatchMTime = TimeFlag {# const ARCHIVE_MATCH_MTIME #}
