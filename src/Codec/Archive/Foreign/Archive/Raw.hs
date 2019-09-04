@@ -2,7 +2,6 @@
 module Codec.Archive.Foreign.Archive.Raw where
 
 import           Codec.Archive.Types
-import           Data.Int            (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr         (FunPtr, Ptr)

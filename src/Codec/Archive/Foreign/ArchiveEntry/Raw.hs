@@ -3,13 +3,12 @@
 module Codec.Archive.Foreign.ArchiveEntry.Raw where
 
 import           Codec.Archive.Types
-import           Codec.Archive.Types.Foreign
-import           Data.Int                    (Int64)
-import           Data.Word                   (Word64)
+import           Data.Int            (Int64)
+import           Data.Word           (Word64)
 import           Foreign.C.String
 import           Foreign.C.Types
-import           Foreign.Ptr                 (Ptr)
-import           System.Posix.Types          (CMode (..))
+import           Foreign.Ptr         (Ptr)
+import           System.Posix.Types  (CMode (..))
 
 -- Archive entry
 foreign import ccall archive_entry_clear :: Ptr ArchiveEntry -> IO (Ptr ArchiveEntry)

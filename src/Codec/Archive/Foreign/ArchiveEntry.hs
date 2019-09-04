@@ -220,7 +220,6 @@ import           Codec.Archive.Foreign.Common
 import           Codec.Archive.Types
 import           Control.Composition                       ((.*), (.**), (.***),
                                                             (.*****), (.******))
-import           Data.Int                                  (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
 import           Foreign.Ptr                               (Ptr)
