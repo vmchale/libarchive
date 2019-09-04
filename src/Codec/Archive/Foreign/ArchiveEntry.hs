@@ -284,7 +284,7 @@ archiveEntryAclAddEntryW = fmap errorRes .***** archive_entry_acl_add_entry_w
 archiveEntryAclNext :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveResult
 archiveEntryAclNext = fmap errorRes .****** archive_entry_acl_next
 
-archiveEntrySparseNext :: Ptr ArchiveEntry -> Ptr Int64 -> Ptr Int64 -> IO ArchiveResult
+archiveEntrySparseNext :: Ptr ArchiveEntry -> Ptr LaInt64 -> Ptr LaInt64 -> IO ArchiveResult
 archiveEntrySparseNext = fmap errorRes .** archive_entry_sparse_next
 
 archiveEntryXattrNext :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveResult

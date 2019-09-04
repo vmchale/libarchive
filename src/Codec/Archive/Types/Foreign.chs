@@ -21,6 +21,9 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , ReadDiskFlags (..)
                                    , TimeFlag (..)
                                    , EntryACL (..)
+                                   -- * libarchive types
+                                   , LaInt64
+                                   , LaSSize
                                    ) where
 
 import           Data.Bits          (Bits (..))
@@ -30,6 +33,11 @@ import           Foreign.C.String   (CString)
 import           Foreign.C.Types    (CInt, CSize)
 import           Foreign.Ptr        (Ptr)
 import           System.Posix.Types (CMode)
+
+#include <archive.h>
+
+type LaInt64 = {# type la_int64_t #}
+type LaSSize = {# type la_ssize_t #}
 
 -- | Abstract type
 data Archive
@@ -41,10 +49,10 @@ data Stat
 
 data LinkResolver
 
-type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO CSize
-type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO Int64
-type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> Int64 -> CInt -> IO Int64
-type ArchiveWriteCallback a b = Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO CSize
+type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO LaSSize
+type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO LaInt64
+type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> Int64 -> CInt -> IO LaInt64
+type ArchiveWriteCallback a b = Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO LaSSize
 type ArchiveOpenCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt

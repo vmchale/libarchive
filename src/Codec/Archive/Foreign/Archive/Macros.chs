@@ -91,7 +91,7 @@ resultToErr ArchiveWarn   = {# const ARCHIVE_WARN #}
 resultToErr ArchiveFailed = {# const ARCHIVE_FAILED #}
 resultToErr ArchiveFatal  = {# const ARCHIVE_FATAL #}
 
-errorRes :: CInt -> ArchiveResult
+errorRes :: Integral a => a -> ArchiveResult
 errorRes {# const ARCHIVE_OK #}       = ArchiveOk
 errorRes {# const ARCHIVE_EOF #}      = ArchiveEOF
 errorRes ({# const ARCHIVE_RETRY #})  = ArchiveRetry

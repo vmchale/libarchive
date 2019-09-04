@@ -56,8 +56,8 @@ setOwnership (Ownership uname gname uid gid) entry =
     traverse_ maybeDo
         [ archive_entry_set_uname entry <$> unameC
         , archive_entry_set_gname entry <$> gnameC
-        , Just (archive_entry_set_uid entry uid)
-        , Just (archive_entry_set_gid entry gid)
+        , Just (archive_entry_set_uid entry (fromIntegral uid))
+        , Just (archive_entry_set_gid entry (fromIntegral gid))
         ]
 
 setTime :: ModTime -> Ptr ArchiveEntry -> IO ()

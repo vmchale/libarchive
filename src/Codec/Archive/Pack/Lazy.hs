@@ -73,7 +73,7 @@ entriesToBSLGeneral modifier hsEntries' = do
     BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc)
 
     where writeBSL bsRef _ _ bufPtr sz = do
-            let bytesRead = min sz (32 * 1024)
+            let bytesRead = min (fromIntegral sz) (32 * 1024)
             bsl <- packCStringLen (bufPtr, fromIntegral bytesRead)
             modifyIORef' bsRef (`DL.snoc` bsl)
             pure bytesRead

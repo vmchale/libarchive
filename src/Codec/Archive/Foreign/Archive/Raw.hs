@@ -79,13 +79,13 @@ foreign import ccall archive_read_open_fd :: Ptr Archive -> Fd -> CSize -> IO CI
 -- foreign import ccall archive_read_open_FILE
 foreign import ccall archive_read_next_header :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO CInt
 foreign import ccall archive_read_next_header2 :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
-foreign import ccall archive_read_header_position :: Ptr Archive -> IO Int64
+foreign import ccall archive_read_header_position :: Ptr Archive -> IO LaInt64
 foreign import ccall archive_read_has_encrypted_entries :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_format_capabilities :: Ptr Archive -> IO ArchiveCapabilities
 
 foreign import ccall archive_read_data :: Ptr Archive -> Ptr a -> CSize -> IO CSize
-foreign import ccall archive_seek_data :: Ptr Archive -> Int64 -> CInt -> IO Int64
-foreign import ccall archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr Int64 -> IO CInt
+foreign import ccall archive_seek_data :: Ptr Archive -> LaInt64 -> CInt -> IO LaInt64
+foreign import ccall archive_read_data_block :: Ptr Archive -> Ptr (Ptr a) -> Ptr CSize -> Ptr LaInt64 -> IO CInt
 foreign import ccall archive_read_data_skip :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_data_into_fd :: Ptr Archive -> Fd -> IO CInt
 
@@ -100,7 +100,7 @@ foreign import ccall archive_read_set_passphrase_callback :: Ptr Archive -> Ptr 
 foreign import ccall archive_read_extract :: Ptr Archive -> Ptr ArchiveEntry -> Flags -> IO CInt
 foreign import ccall archive_read_extract2 :: Ptr Archive -> Ptr ArchiveEntry -> Ptr Archive -> IO CInt
 foreign import ccall archive_read_extract_set_progress_callback :: Ptr Archive -> FunPtr (Ptr a -> IO ()) -> Ptr a -> IO ()
-foreign import ccall archive_read_extract_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO ()
+foreign import ccall archive_read_extract_set_skip_file :: Ptr Archive -> LaInt64 -> LaInt64 -> IO ()
 
 foreign import ccall archive_read_close :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_free :: Ptr Archive -> IO CInt
@@ -111,7 +111,7 @@ foreign import ccall archive_write_set_bytes_per_block :: Ptr Archive -> CInt ->
 foreign import ccall archive_write_get_bytes_per_block :: Ptr Archive -> IO CInt
 foreign import ccall archive_write_set_bytes_in_last_block :: Ptr Archive -> CInt -> IO CInt
 foreign import ccall archive_write_get_bytes_in_last_block :: Ptr Archive -> IO CInt
-foreign import ccall archive_write_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO CInt
+foreign import ccall archive_write_set_skip_file :: Ptr Archive -> LaInt64 -> LaInt64 -> IO CInt
 foreign import ccall archive_write_add_filter :: Ptr Archive -> ArchiveFilter -> IO CInt
 foreign import ccall archive_write_add_filter_by_name :: Ptr Archive -> CString -> IO CInt
 foreign import ccall archive_write_add_filter_b64encode :: Ptr Archive -> IO CInt
@@ -165,7 +165,7 @@ foreign import ccall archive_write_open_memory :: Ptr Archive -> Ptr a -> CSize 
 foreign import ccall archive_write_header :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_write_data :: Ptr Archive -> Ptr a -> CSize -> IO CSize
 
-foreign import ccall archive_write_data_block :: Ptr Archive -> Ptr a -> CSize -> Int64 -> IO CInt
+foreign import ccall archive_write_data_block :: Ptr Archive -> Ptr a -> CSize -> LaInt64 -> IO CInt
 
 foreign import ccall archive_write_finish_entry :: Ptr Archive -> IO CInt
 foreign import ccall archive_write_close :: Ptr Archive -> IO CInt
@@ -181,25 +181,25 @@ foreign import ccall archive_write_set_passphrase :: Ptr Archive -> CString -> I
 foreign import ccall archive_write_set_passphrase_callback :: Ptr Archive -> Ptr a -> FunPtr (ArchivePassphraseCallback a) -> IO CInt
 
 foreign import ccall archive_write_disk_new :: IO (Ptr Archive)
-foreign import ccall archive_write_disk_set_skip_file :: Ptr Archive -> Int64 -> Int64 -> IO CInt
+foreign import ccall archive_write_disk_set_skip_file :: Ptr Archive -> LaInt64 -> LaInt64 -> IO CInt
 foreign import ccall archive_write_disk_set_options :: Ptr Archive -> Flags -> IO CInt
 
 foreign import ccall archive_write_disk_set_standard_lookup :: Ptr Archive -> IO CInt
-foreign import ccall archive_write_disk_set_group_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> Int64 -> IO Int64) -> FunPtr (Ptr a -> IO ()) -> IO CInt
-foreign import ccall archive_write_disk_set_user_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> Int64 -> IO Int64) -> FunPtr (Ptr a -> IO ()) -> IO CInt
-foreign import ccall archive_write_disk_gid :: Ptr Archive -> CString -> Int64 -> IO Int64
-foreign import ccall archive_write_disk_uid :: Ptr Archive -> CString -> Int64 -> IO Int64
+foreign import ccall archive_write_disk_set_group_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> LaInt64 -> IO LaInt64) -> FunPtr (Ptr a -> IO ()) -> IO CInt
+foreign import ccall archive_write_disk_set_user_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> CString -> LaInt64 -> IO LaInt64) -> FunPtr (Ptr a -> IO ()) -> IO CInt
+foreign import ccall archive_write_disk_gid :: Ptr Archive -> CString -> LaInt64 -> IO LaInt64
+foreign import ccall archive_write_disk_uid :: Ptr Archive -> CString -> LaInt64 -> IO LaInt64
 
 foreign import ccall archive_read_disk_new :: IO (Ptr Archive)
 foreign import ccall archive_read_disk_set_symlink_logical :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_disk_set_symlink_physical :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_disk_set_symlink_hybrid :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_disk_entry_from_file :: Ptr Archive -> Ptr ArchiveEntry -> Fd -> Ptr Stat -> IO CInt
-foreign import ccall archive_read_disk_gname :: Ptr Archive -> Int64 -> IO CString
-foreign import ccall archive_read_disk_uname :: Ptr Archive -> Int64 -> IO CString
+foreign import ccall archive_read_disk_gname :: Ptr Archive -> LaInt64 -> IO CString
+foreign import ccall archive_read_disk_uname :: Ptr Archive -> LaInt64 -> IO CString
 foreign import ccall archive_read_disk_set_standard_lookup :: Ptr Archive -> IO CInt
-foreign import ccall archive_read_disk_set_gname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO CInt
-foreign import ccall archive_read_disk_set_uname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> Int64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO CInt
+foreign import ccall archive_read_disk_set_gname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> LaInt64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO CInt
+foreign import ccall archive_read_disk_set_uname_lookup :: Ptr Archive -> Ptr a -> FunPtr (Ptr a -> LaInt64 -> IO CString) -> FunPtr (Ptr a -> IO ()) -> IO CInt
 foreign import ccall archive_read_disk_open :: Ptr Archive -> CString -> IO CInt
 foreign import ccall archive_read_disk_open_w :: Ptr Archive -> CWString -> IO CInt
 foreign import ccall archive_read_disk_descend :: Ptr Archive -> IO CInt
@@ -216,7 +216,7 @@ foreign import ccall archive_read_disk_set_metadata_filter_callback :: Ptr Archi
 foreign import ccall archive_free :: Ptr Archive -> IO CInt
 
 foreign import ccall archive_filter_count :: Ptr Archive -> IO CInt
-foreign import ccall archive_filter_bytes :: Ptr Archive -> CInt -> Int64
+foreign import ccall archive_filter_bytes :: Ptr Archive -> CInt -> LaInt64
 foreign import ccall archive_filter_code :: Ptr Archive -> CInt -> IO Int
 foreign import ccall archive_filter_name :: Ptr Archive -> CInt -> IO CString
 
@@ -252,8 +252,8 @@ foreign import ccall archive_match_include_file_time :: Ptr Archive -> TimeFlag 
 foreign import ccall archive_match_include_file_time_w :: Ptr Archive -> TimeFlag -> CWString -> IO CInt
 foreign import ccall archive_match_exclude_entry :: Ptr Archive -> TimeFlag -> Ptr ArchiveEntry -> IO CInt
 foreign import ccall archive_match_owner_excluded :: Ptr Archive -> Ptr ArchiveEntry -> IO CInt
-foreign import ccall archive_match_include_gid :: Ptr Archive -> Id -> IO CInt
-foreign import ccall archive_match_include_uid :: Ptr Archive -> Id -> IO CInt
+foreign import ccall archive_match_include_gid :: Ptr Archive -> Id -> IO LaInt64
+foreign import ccall archive_match_include_uid :: Ptr Archive -> Id -> IO LaInt64
 foreign import ccall archive_match_include_uname :: Ptr Archive -> CString -> IO CInt
 foreign import ccall archive_match_include_uname_w :: Ptr Archive -> CWString -> IO CInt
 foreign import ccall archive_match_include_gname :: Ptr Archive -> CString -> IO CInt
