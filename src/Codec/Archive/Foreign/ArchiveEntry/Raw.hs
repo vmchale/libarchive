@@ -140,16 +140,14 @@ foreign import ccall archive_entry_acl_add_entry :: Ptr ArchiveEntry -> EntryACL
 foreign import ccall archive_entry_acl_add_entry_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO CInt
 foreign import ccall archive_entry_acl_reset :: Ptr ArchiveEntry -> EntryACL -> IO CInt
 foreign import ccall archive_entry_acl_next :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO CInt
--- foreign import ccall archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO ArchiveError
+foreign import ccall archive_entry_acl_next_w :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CWString -> IO CInt
 
--- foreign import ccall archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> LaSSize -> EntryACL -> IO CWString
--- foreign import ccall archive_entry_acl_to_text :: Ptr ArchiveEntry -> LaSSize -> EntryACL -> IO CString
--- foreign import ccall archive_entry_acl_from_text :: Ptr ArchiveEntry -> CString -> EntryACL -> IO ArchiveError
--- foreign import ccall archive_entry_acl_from_text_w :: Ptr ArchiveEntry -> CWString -> EntryACL -> IO ArchiveError
--- foreign import ccall archive_entry_acl_types :: Ptr ArchiveEntry -> IO EntryACL
--- foreign import ccall archive_entry_count :: Ptr ArchiveEntry -> EntryACL -> IO CInt
-
--- don't bother with archive_entry_acl
+foreign import ccall archive_entry_acl_to_text_w :: Ptr ArchiveEntry -> LaSSize -> EntryACL -> IO CWString
+foreign import ccall archive_entry_acl_to_text :: Ptr ArchiveEntry -> LaSSize -> EntryACL -> IO CString
+foreign import ccall archive_entry_acl_from_text :: Ptr ArchiveEntry -> CString -> EntryACL -> IO CInt
+foreign import ccall archive_entry_acl_from_text_w :: Ptr ArchiveEntry -> CWString -> EntryACL -> IO CInt
+foreign import ccall archive_entry_acl_types :: Ptr ArchiveEntry -> IO EntryACL
+foreign import ccall archive_entry_count :: Ptr ArchiveEntry -> EntryACL -> IO CInt
 
 foreign import ccall archive_entry_xattr_clear :: Ptr ArchiveEntry -> IO ()
 foreign import ccall archive_entry_xattr_add_entry :: Ptr ArchiveEntry -> CString -> Ptr a -> CSize -> IO ()

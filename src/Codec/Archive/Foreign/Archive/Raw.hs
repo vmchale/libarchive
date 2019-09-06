@@ -31,7 +31,7 @@ foreign import ccall archive_read_support_filter_program_signature :: Ptr Archiv
 foreign import ccall archive_read_support_filter_rpm :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_support_filter_uu :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_support_filter_xz :: Ptr Archive -> IO CInt
--- foreign import ccall archive_read_support_filter_zstd :: Ptr Archive -> IO CInt
+foreign import ccall archive_read_support_filter_zstd :: Ptr Archive -> IO CInt
 
 foreign import ccall archive_read_support_format_7zip :: Ptr Archive -> IO CInt
 foreign import ccall archive_read_support_format_all :: Ptr Archive -> IO CInt
@@ -128,7 +128,7 @@ foreign import ccall archive_write_add_filter_none :: Ptr Archive -> IO CInt
 foreign import ccall archive_write_add_filter_program :: Ptr Archive -> CString -> IO CInt
 foreign import ccall archive_write_add_filter_uuencode :: Ptr Archive -> IO CInt
 foreign import ccall archive_write_add_filter_xz :: Ptr Archive -> IO CInt
--- foreign import ccall archive_write_add_filter_zstd :: Ptr Archive -> IO CInt
+foreign import ccall archive_write_add_filter_zstd :: Ptr Archive -> IO CInt
 
 foreign import ccall archive_write_set_format :: Ptr Archive -> ArchiveFormat -> IO CInt
 foreign import ccall archive_write_set_format_by_name :: Ptr Archive -> CString -> IO CInt
