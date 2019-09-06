@@ -1,6 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric  #-}
-
 module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                              Entry (..)
                            , EntryContent (..)
@@ -16,28 +13,27 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , ArchiveOpenCallback
                            , ArchiveCloseCallback
                            , ArchiveSwitchCallback
+                           -- * Marshalling functions
+                           , errorRes
+                           , resultToErr
                            ) where
 
 import           Codec.Archive.Types.Foreign
-import           Control.DeepSeq             (NFData)
 import qualified Data.ByteString             as BS
 import           Data.Int                    (Int64)
-import           Foreign.C.Types             (CLong, CTime)
+import           Foreign.C.Types             (CInt, CLong, CTime)
 import           Foreign.Ptr                 (Ptr)
-import           GHC.Generics                (Generic)
 import           System.Posix.Types          (CMode (..))
 
 type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
 type ArchiveCloseCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
 type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveResult
 
-data ArchiveResult = ArchiveOk
-                   | ArchiveEOF
-                   | ArchiveRetry
-                   | ArchiveWarn
-                   | ArchiveFailed
-                   | ArchiveFatal
-                   deriving (Eq, Show, Generic, NFData)
+resultToErr :: ArchiveResult -> CInt
+resultToErr = fromIntegral . fromEnum
+
+errorRes :: Integral a => a -> ArchiveResult
+errorRes = toEnum . fromIntegral
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption

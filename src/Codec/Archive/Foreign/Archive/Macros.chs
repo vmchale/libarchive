@@ -83,23 +83,6 @@ archiveVersionOnlyString = {# const ARCHIVE_VERSION_ONLY_STRING #}
 archiveVersionString :: String
 archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
 
-resultToErr :: ArchiveResult -> CInt
-resultToErr ArchiveOk     = {# const ARCHIVE_OK #}
-resultToErr ArchiveEOF    = {# const ARCHIVE_EOF #}
-resultToErr ArchiveRetry  = {# const ARCHIVE_RETRY #}
-resultToErr ArchiveWarn   = {# const ARCHIVE_WARN #}
-resultToErr ArchiveFailed = {# const ARCHIVE_FAILED #}
-resultToErr ArchiveFatal  = {# const ARCHIVE_FATAL #}
-
-errorRes :: Integral a => a -> ArchiveResult
-errorRes {# const ARCHIVE_OK #}       = ArchiveOk
-errorRes {# const ARCHIVE_EOF #}      = ArchiveEOF
-errorRes ({# const ARCHIVE_RETRY #})  = ArchiveRetry
-errorRes ({# const ARCHIVE_WARN #})   = ArchiveWarn
-errorRes ({# const ARCHIVE_FAILED #}) = ArchiveFailed
-errorRes ({# const ARCHIVE_FATAL #})  = ArchiveFatal
-errorRes _ = error "conversion failed"
-
 -- Archive filter
 archiveFilterNone :: ArchiveFilter
 archiveFilterNone = ArchiveFilter {# const ARCHIVE_FILTER_NONE #}

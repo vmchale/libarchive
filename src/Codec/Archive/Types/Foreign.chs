@@ -1,3 +1,6 @@
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric  #-}
+
 module Codec.Archive.Types.Foreign ( -- * Callbacks
                                      ArchiveReadCallback
                                    , ArchiveSkipCallback
@@ -12,6 +15,8 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , ArchiveEntry
                                    , Stat
                                    , LinkResolver
+                                   -- * Enum types
+                                   , ArchiveResult (..)
                                    -- * Macros
                                    , Flags (..)
                                    , ArchiveFilter (..)
@@ -26,18 +31,29 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , LaSSize
                                    ) where
 
+import           Control.DeepSeq    (NFData)
 import           Data.Bits          (Bits (..))
 import           Data.Int           (Int64)
 import           Data.Semigroup
 import           Foreign.C.String   (CString)
 import           Foreign.C.Types    (CInt, CSize)
 import           Foreign.Ptr        (Ptr)
+import           GHC.Generics       (Generic)
 import           System.Posix.Types (CMode)
 
 #include <archive.h>
 
 type LaInt64 = {# type la_int64_t #}
 type LaSSize = {# type la_ssize_t #}
+
+{# enum define ArchiveResult { ARCHIVE_OK as ArchiveOk
+                             , ARCHIVE_EOF as ArchiveEOF
+                             , ARCHIVE_RETRY as ArchiveRetry
+                             , ARCHIVE_WARN as ArchiveWarn
+                             , ARCHIVE_FAILED as ArchiveFailed
+                             , ARCHIVE_FATAL as ArchiveFatal
+                             } deriving (Eq, Show, Generic, NFData)
+    #}
 
 -- | Abstract type
 data Archive
