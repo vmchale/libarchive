@@ -31,6 +31,8 @@ hmemcpy = void .** memcpy
 
 -- | In general, this will be more efficient than 'unpackToDir'
 --
+-- The 'BSL.ByteString' chunks should be @32k@ bytes.
+--
 -- @since 1.0.4.0
 unpackToDirLazy :: FilePath -- ^ Directory to unpack in
                 -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
@@ -45,6 +47,8 @@ unpackToDirLazy fp bs = do
 -- detected.
 --
 -- In general, this will be more efficient than 'readArchiveBS'
+--
+-- The 'BSL.ByteString' chunks should be @32k@ bytes.
 --
 -- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry]
