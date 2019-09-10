@@ -240,7 +240,7 @@ foreign import ccall archive_match_exclude_pattern_from_file_w :: Ptr Archive ->
 foreign import ccall archive_match_include_pattern :: Ptr Archive -> CString -> IO CInt
 foreign import ccall archive_match_include_pattern_w :: Ptr Archive -> CWString -> IO CInt
 foreign import ccall archive_match_include_pattern_from_file :: Ptr Archive -> CString -> CInt -> IO CInt
-foreign import ccall archive_match_include_pattern_from_file_w :: Ptr Archive -> CString -> CInt -> IO CInt
+foreign import ccall archive_match_include_pattern_from_file_w :: Ptr Archive -> CWString -> CInt -> IO CInt
 foreign import ccall archive_match_path_unmatched_inclusions :: Ptr Archive -> IO CInt
 foreign import ccall archive_match_path_unmatched_inclusions_next :: Ptr Archive -> Ptr CString -> IO CInt
 foreign import ccall archive_match_path_unmatched_inclusions_next_w :: Ptr Archive -> Ptr CWString -> IO CInt

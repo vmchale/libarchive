@@ -206,7 +206,7 @@ import           Codec.Archive.Foreign.Archive.Raw
 import           Codec.Archive.Foreign.Common
 import           Codec.Archive.Types
 import           Control.Composition                  ((.*), (.**), (.***),
-                                                       (.****))
+                                                       (.****), (.@@))
 import           Data.Int                             (Int64)
 import           Foreign.C.String
 import           Foreign.C.Types
@@ -266,16 +266,16 @@ archiveMatchPathExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
 archiveMatchPathExcluded = fmap intToBool .* archive_match_path_excluded
 
 archiveMatchExcludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
-archiveMatchExcludePatternFromFile a str b = errorRes <$> archive_match_exclude_pattern_from_file a str (boolToInt b)
+archiveMatchExcludePatternFromFile = fmap errorRes .** (boolToInt .@@ archive_match_exclude_pattern_from_file)
 
 archiveMatchExcludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveResult
-archiveMatchExcludePatternFromFileW a str b = errorRes <$> archive_match_exclude_pattern_from_file_w a str (boolToInt b)
+archiveMatchExcludePatternFromFileW = fmap errorRes .** (boolToInt .@@ archive_match_exclude_pattern_from_file_w)
 
 archiveMatchIncludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
-archiveMatchIncludePatternFromFile a str b = errorRes <$> archive_match_include_pattern_from_file a str (boolToInt b)
+archiveMatchIncludePatternFromFile = fmap errorRes .** (boolToInt .@@ archive_match_include_pattern_from_file)
 
-archiveMatchIncludePatternFromFileW :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
-archiveMatchIncludePatternFromFileW a str b = errorRes <$> archive_match_include_pattern_from_file_w a str (boolToInt b)
+archiveMatchIncludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveResult
+archiveMatchIncludePatternFromFileW = fmap errorRes .** (boolToInt .@@ archive_match_include_pattern_from_file_w)
 
 archiveMatchTimeExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
 archiveMatchTimeExcluded = fmap intToBool .* archive_match_time_excluded
