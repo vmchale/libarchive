@@ -207,11 +207,11 @@ import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Foreign.Archive.Raw
 import Codec.Archive.Types
 import Control.Composition ((.*), (.**), (.****))
-import Data.Coerce (coerce)
+import Data.Coerce (Coercible, coerce)
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Storable (peek)
+import Foreign.Storable (Storable (peek))
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr
 
@@ -298,10 +298,13 @@ archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
 archiveReadSetCloseCallback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 
+coercePeek :: (Storable a, Coercible a b) => Ptr a -> IO b
+coercePeek = fmap coerce . peek
+
 {# fun archive_read_set_callback_data as ^ { `ArchivePtr', castPtr `Ptr a' } -> `ArchiveResult' #}
 {# fun archive_read_open1 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_open_filename as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
-{# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , `CULong', alloca- `CULong' peek* } -> `ArchiveResult' #}
+{# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , coerce `CSize', alloca- `CSize' coercePeek* } -> `ArchiveResult' #}
 {# fun archive_write_close as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_header as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
 {# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
