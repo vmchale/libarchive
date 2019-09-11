@@ -1,4 +1,4 @@
--- | Functions found in @archive_entry.h@
+
 --
 -- Functions in this module are stateful and hence take place in the 'IO'
 -- monad.
@@ -226,107 +226,115 @@ import System.PosixCompat.Types (CMode (..))
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 {#pointer *stat as StatPtr -> Stat #}
 
+{#typedef wchar_t CWchar#}
+{#typedef mode_t CMode#}
+{#typedef time_t CTime#}
+{#typedef dev_t Dev#}
+{#typedef la_int64_t LaInt64#}
+{#default in `CWString' [wchar_t*] castPtr#}
+{#default out `CWString' [wchar_t*] castPtr#}
+
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
 {# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
-{# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' fromIntegral #}
+{# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_atime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_birthtime as ^ { `ArchiveEntryPtr' } -> `CTime' fromIntegral #}
+{# fun archive_entry_birthtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_birthtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_ctime as ^ { `ArchiveEntryPtr' } -> `CTime' fromIntegral #}
+{# fun archive_entry_ctime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_ctime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_dev as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
-{# fun archive_entry_devminor as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
-{# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
+{# fun archive_entry_dev as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_devminor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
 {# fun archive_entry_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_fflags_text as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' coerce #}
-{# fun archive_entry_gid as ^ { `ArchiveEntryPtr' } -> `LaInt64' id #}
+{# fun archive_entry_gid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_gname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_gname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_gname_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
+{# fun archive_entry_gname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_hardlink as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_hardlink_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_hardlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
-{# fun archive_entry_ino as ^ { `ArchiveEntryPtr' } -> `LaInt64' id #}
-{# fun archive_entry_ino64 as ^ { `ArchiveEntryPtr' } -> `LaInt64' id #}
-{# fun archive_entry_mode as ^ { `ArchiveEntryPtr' } -> `CMode' coerce #}
-{# fun archive_entry_mtime as ^ { `ArchiveEntryPtr' } -> `CTime' fromIntegral #}
+{# fun archive_entry_hardlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
+{# fun archive_entry_ino as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
+{# fun archive_entry_ino64 as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
+{# fun archive_entry_mode as ^ { `ArchiveEntryPtr' } -> `CMode' #}
+{# fun archive_entry_mtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_mtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 {# fun archive_entry_nlink as ^ { `ArchiveEntryPtr' } -> `CUInt' #}
 {# fun archive_entry_pathname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
-{# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' coerce #}
-{# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
-{# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
-{# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `Dev' id #}
+{# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
+{# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
+{# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
 {# fun archive_entry_sourcepath as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_sourcepath_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
-{# fun archive_entry_size as ^ { `ArchiveEntryPtr' } -> `LaInt64' id #}
+{# fun archive_entry_sourcepath_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
+{# fun archive_entry_size as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_strmode as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_symlink as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_symlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
+{# fun archive_entry_symlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_symlink_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_uid as ^ { `ArchiveEntryPtr' } -> `LaInt64' id #}
+{# fun archive_entry_uid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_uname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_uname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_uname_w as ^ { `ArchiveEntryPtr' } -> `CWString' castPtr #}
-{# fun archive_entry_set_atime as ^ { `ArchiveEntryPtr', coerce `CTime', `CLong' } -> `()' #}
+{# fun archive_entry_uname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
+{# fun archive_entry_set_atime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_atime as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_set_birthtime as ^ { `ArchiveEntryPtr', coerce `CTime', `CLong' } -> `()' #}
+{# fun archive_entry_set_birthtime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_birthtime as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_set_ctime as ^ { `ArchiveEntryPtr', coerce `CTime', `CLong' } -> `()' #}
+{# fun archive_entry_set_ctime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_ctime as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_set_dev as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
-{# fun archive_entry_set_devmajor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
-{# fun archive_entry_set_devminor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
+{# fun archive_entry_set_dev as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_devmajor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_devminor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
 {# fun archive_entry_set_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_copy_fflags_text as ^ { `ArchiveEntryPtr', `CString' } -> `CString' #}
-{# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `CWString' castPtr #}
+{# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', `CWString' } -> `CWString' #}
 {# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', coerce `FileType' } -> `()' #}
-{# fun archive_entry_set_gid as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_set_gid as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_set_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_gname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_gname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_copy_gname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_set_hardlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_hardlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_hardlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_hardlink_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
-{# fun archive_entry_set_ino as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
-{# fun archive_entry_set_ino64 as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_copy_hardlink_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+{# fun archive_entry_set_ino as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
+{# fun archive_entry_set_ino64 as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_set_link as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_link_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_link as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_link_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
-{# fun archive_entry_set_mode as ^ { `ArchiveEntryPtr', coerce `CMode' } -> `()' #}
-{# fun archive_entry_set_mtime as ^ { `ArchiveEntryPtr', coerce `CTime', `CLong' } -> `()' #}
+{# fun archive_entry_copy_link_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+{# fun archive_entry_set_mode as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
+{# fun archive_entry_set_mtime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_mtime as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_set_nlink as ^ { `ArchiveEntryPtr', `CUInt' } -> `()' #}
 {# fun archive_entry_set_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
-{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', coerce `CMode' } -> `()' #}
-{# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
-{# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
-{# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
-{# fun archive_entry_set_size as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
+{# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_size as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_unset_size as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_copy_sourcepath as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_sourcepath_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_copy_sourcepath_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_set_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_symlink_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
-{# fun archive_entry_set_uid as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_copy_symlink_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+{# fun archive_entry_set_uid as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_set_uname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_uname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_uname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_copy_uname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_copy_uname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_stat as ^ { `ArchiveEntryPtr' } -> `StatPtr' #}
 {# fun archive_entry_copy_stat as ^ { `ArchiveEntryPtr', `StatPtr' } -> `()' #}
 {# fun archive_entry_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr CSize' } -> `Ptr a' castPtr #}
