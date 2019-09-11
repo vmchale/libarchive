@@ -59,7 +59,7 @@ readArchiveBSL = unsafePerformIO . runArchiveM . (actFreeCallback hsEntries <=< 
 bslToArchive :: BSL.ByteString
              -> ArchiveM (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
-    a <- liftIO archive_read_new
+    a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks; should really do something more rigorous
     bsChunksRef <- liftIO $ newIORef bsChunks

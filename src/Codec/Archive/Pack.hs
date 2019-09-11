@@ -34,7 +34,7 @@ contentAdd (NormalFile contents) a entry = do
     liftIO $ archive_entry_set_size entry (fromIntegral (BS.length contents))
     handle $ archiveWriteHeader a entry
     useAsCStringLenArchiveM contents $ \(buff, sz) ->
-        liftIO $ void $ archive_write_data a buff (fromIntegral sz)
+        liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
     liftIO $ archive_entry_set_filetype entry directory
     handle $ archiveWriteHeader a entry
@@ -106,7 +106,7 @@ noFail act = do
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
 entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
-    a <- liftIO archive_write_new
+    a <- liftIO archiveWriteNew
     ignore $ modifier a
     allocaBytesArchiveM bufSize $ \buffer -> do
         (err, usedSz) <- liftIO $ archiveWriteOpenMemory a buffer bufSize
@@ -170,7 +170,7 @@ entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7zip
 
 entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
-    a <- liftIO archive_write_new
+    a <- liftIO archiveWriteNew
     ignore $ modifier a
     withCStringArchiveM fp $ \fpc ->
         handle $ archiveWriteOpenFilename a fpc
@@ -179,9 +179,9 @@ entriesToFileGeneral modifier fp hsEntries' = do
 
 withArchiveEntry :: MonadIO m => (Ptr ArchiveEntry -> m a) -> m a
 withArchiveEntry fact = do
-    entry <- liftIO archive_entry_new
+    entry <- liftIO archiveEntryNew
     res <- fact entry
-    liftIO $ archive_entry_free entry
+    liftIO $ archiveEntryFree entry
     pure res
 
 archiveEntryAdd :: Ptr Archive -> Entry -> ArchiveM ()

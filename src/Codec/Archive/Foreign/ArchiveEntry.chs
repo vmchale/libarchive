@@ -3,11 +3,11 @@
 -- Functions in this module are stateful and hence take place in the 'IO'
 -- monad.
 module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
-                                            archive_entry_clear
-                                          , archive_entry_clone
-                                          , archive_entry_new
-                                          , archive_entry_free
-                                          , archive_entry_new2
+                                            archiveEntryClear
+                                          , archiveEntryClone
+                                          , archiveEntryNew
+                                          , archiveEntryFree
+                                          , archiveEntryNew2
                                           , archive_entry_atime
                                           , archive_entry_atime_nsec
                                           , archiveEntryAtimeIsSet
@@ -218,7 +218,14 @@ import           Foreign.C.String
 
 #include <archive_entry.h>
 
+{#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
+
+{# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
+{# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
+{# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
+{# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
 
 {# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_entry_birthtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}

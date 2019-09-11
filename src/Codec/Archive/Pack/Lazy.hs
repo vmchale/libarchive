@@ -59,7 +59,7 @@ entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFor
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
-    a <- liftIO archive_write_new
+    a <- liftIO archiveWriteNew
     bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
