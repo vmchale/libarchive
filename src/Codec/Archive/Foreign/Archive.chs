@@ -207,6 +207,7 @@ import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Foreign.Archive.Raw
 import Codec.Archive.Types
 import Control.Composition ((.*), (.**), (.****))
+import Data.Coerce (coerce)
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
@@ -266,7 +267,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_version_string as ^ {} -> `CString' #}
 {# fun archive_version_details as ^ {} -> `CString' #}
 {# fun archive_filter_count as ^ { `ArchivePtr' } -> `CInt' #}
-{# fun archive_filter_bytes as ^ { `ArchivePtr', `CInt' } -> `Int64' #}
+{# fun archive_filter_bytes as ^ { `ArchivePtr', `CInt' } -> `LaInt64' id #}
 {# fun archive_filter_code as ^ { `ArchivePtr', `CInt' } -> `Int' #}
 {# fun archive_filter_name as ^ { `ArchivePtr', `CInt' } -> `CString' #}
 {# fun archive_write_new as ^ {} -> `ArchivePtr' #}
@@ -349,10 +350,10 @@ archiveWriteOpen = fmap errorRes .**** archive_write_open
 {# fun archive_read_support_format_zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_zip_streamable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_zip_seekable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-{# fun archive_read_set_format as ^ { `ArchivePtr', unArchiveFormat `ArchiveFormat' } -> `ArchiveResult' #}
+{# fun archive_read_set_format as ^ { `ArchivePtr', coerce `ArchiveFormat' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_7zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_pax_restricted as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_data_skip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-{# fun archive_read_extract as ^ { `ArchivePtr', `ArchiveEntryPtr', unFlags `Flags' } -> `ArchiveResult' #}
+{# fun archive_read_extract as ^ { `ArchivePtr', `ArchiveEntryPtr', coerce `Flags' } -> `ArchiveResult' #}
 {# fun archive_errno as ^ { `ArchivePtr' } -> `ArchiveResult' #}

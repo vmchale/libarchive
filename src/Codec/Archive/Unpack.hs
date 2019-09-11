@@ -67,9 +67,9 @@ unpackArchive tarFp dirFp = do
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry =
     Entry
-        <$> (peekCString =<< archive_entry_pathname entry)
+        <$> (peekCString =<< archiveEntryPathname entry)
         <*> readContents a entry
-        <*> archive_entry_perm entry
+        <*> archiveEntryPerm entry
         <*> readOwnership entry
         <*> readTimes entry
 
@@ -96,7 +96,7 @@ unpackEntriesFp a fp = do
     case res of
         Nothing -> pure ()
         Just x  -> do
-            preFile <- liftIO $ archive_entry_pathname x
+            preFile <- liftIO $ archiveEntryPathname x
             file <- liftIO $ peekCString preFile
             let file' = fp </> file
             liftIO $ withCString file' $ \fileC ->
@@ -113,12 +113,12 @@ readBS a sz =
         BS.packCStringLen (buff, sz)
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
-readContents a entry = go =<< archive_entry_filetype entry
+readContents a entry = go =<< archiveEntryFiletype entry
     where go ft | ft == regular = NormalFile <$> (readBS a =<< sz)
-                | ft == symlink = Symlink <$> (peekCString =<< archive_entry_symlink entry)
+                | ft == symlink = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
                 | ft == directory = pure Directory
                 | otherwise = error "Unsupported filetype"
-          sz = fromIntegral <$> archive_entry_size entry
+          sz = fromIntegral <$> archiveEntrySize entry
 
 archiveGetterHelper :: (Ptr ArchiveEntry -> IO a) -> (Ptr ArchiveEntry -> IO Bool) -> Ptr ArchiveEntry -> IO (Maybe a)
 archiveGetterHelper get check entry = do
@@ -137,15 +137,15 @@ archiveGetterNull get entry = do
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry =
     Ownership
-        <$> archiveGetterNull archive_entry_uname entry
-        <*> archiveGetterNull archive_entry_gname entry
-        <*> (fromIntegral <$> archive_entry_uid entry)
-        <*> (fromIntegral <$> archive_entry_gid entry)
+        <$> archiveGetterNull archiveEntryUname entry
+        <*> archiveGetterNull archiveEntryGname entry
+        <*> (fromIntegral <$> archiveEntryUid entry)
+        <*> (fromIntegral <$> archiveEntryGid entry)
 
 readTimes :: Ptr ArchiveEntry -> IO (Maybe ModTime)
 readTimes = archiveGetterHelper go archiveEntryMtimeIsSet
     where go entry =
-            (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
+            (,) <$> archiveEntryMtime entry <*> archiveEntryMtimeNsec entry
 
 -- | Get the next 'ArchiveEntry' in an 'Archive'
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))

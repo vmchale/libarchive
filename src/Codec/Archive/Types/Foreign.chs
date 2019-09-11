@@ -29,6 +29,7 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    -- * libarchive types
                                    , LaInt64
                                    , LaSSize
+                                   , Dev
                                    ) where
 
 import           Control.DeepSeq    (NFData)
@@ -45,6 +46,8 @@ import           System.Posix.Types (CMode)
 
 type LaInt64 = {# type la_int64_t #}
 type LaSSize = {# type la_ssize_t #}
+type Dev = {# type dev_t #}
+
 
 {# enum define ArchiveResult { ARCHIVE_OK as ArchiveOk
                              , ARCHIVE_EOF as ArchiveEOF
@@ -74,19 +77,19 @@ type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
-newtype ArchiveFormat = ArchiveFormat { unArchiveFormat :: CInt }
+newtype ArchiveFormat = ArchiveFormat CInt
     deriving (Eq)
 
 newtype FileType = FileType CMode
     deriving (Eq)
 
-newtype Flags = Flags { unFlags :: CInt }
+newtype Flags = Flags CInt
 
 newtype ReadDiskFlags = ReadDiskFlags CInt
 
 newtype TimeFlag = TimeFlag CInt
 
-newtype EntryACL = EntryACL { unEntryACL :: CInt }
+newtype EntryACL = EntryACL CInt
 
 newtype ArchiveFilter = ArchiveFilter CInt
 
