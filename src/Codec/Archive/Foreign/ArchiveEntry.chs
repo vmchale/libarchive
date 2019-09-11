@@ -70,60 +70,60 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntrySetDev
                                           , archiveEntrySetDevminor
                                           , archiveEntrySetDevmajor
-                                          , archive_entry_set_fflags
-                                          , archive_entry_copy_fflags_text
-                                          , archive_entry_copy_fflags_text_w
-                                          , archive_entry_set_filetype
-                                          , archive_entry_set_gid
-                                          , archive_entry_set_gname
-                                          , archive_entry_set_gname_utf8
-                                          , archive_entry_copy_gname
-                                          , archive_entry_copy_gname_w
+                                          , archiveEntrySetFflags
+                                          , archiveEntryCopyFflagsText
+                                          , archiveEntryCopyFflagsTextW
+                                          , archiveEntrySetFiletype
+                                          , archiveEntrySetGid
+                                          , archiveEntrySetGname
+                                          , archiveEntrySetGnameUtf8
+                                          , archiveEntryCopyGname
+                                          , archiveEntryCopyGnameW
                                           , archiveEntryUpdateGnameUtf8
-                                          , archive_entry_set_hardlink
-                                          , archive_entry_set_hardlink_utf8
-                                          , archive_entry_copy_hardlink
-                                          , archive_entry_copy_hardlink_w
+                                          , archiveEntrySetHardlink
+                                          , archiveEntrySetHardlinkUtf8
+                                          , archiveEntryCopyHardlink
+                                          , archiveEntryCopyHardlinkW
                                           , archiveEntryUpdateHardlinkUtf8
-                                          , archive_entry_set_ino
-                                          , archive_entry_set_ino64
-                                          , archive_entry_set_link
-                                          , archive_entry_set_link_utf8
-                                          , archive_entry_copy_link
-                                          , archive_entry_copy_link_w
+                                          , archiveEntrySetIno
+                                          , archiveEntrySetIno64
+                                          , archiveEntrySetLink
+                                          , archiveEntrySetLinkUtf8
+                                          , archiveEntryCopyLink
+                                          , archiveEntryCopyLinkW
                                           , archiveEntryUpdateLinkUtf8
-                                          , archive_entry_set_mode
-                                          , archive_entry_set_mtime
-                                          , archive_entry_unset_mtime
-                                          , archive_entry_set_nlink
-                                          , archive_entry_set_pathname
-                                          , archive_entry_set_pathname_utf8
-                                          , archive_entry_copy_pathname
-                                          , archive_entry_copy_pathname_w
+                                          , archiveEntrySetMode
+                                          , archiveEntrySetMtime
+                                          , archiveEntryUnsetMtime
+                                          , archiveEntrySetNlink
+                                          , archiveEntrySetPathname
+                                          , archiveEntrySetPathnameUtf8
+                                          , archiveEntryCopyPathname
+                                          , archiveEntryCopyPathnameW
                                           , archiveEntryUpdatePathnameUtf8
-                                          , archive_entry_set_perm
-                                          , archive_entry_set_rdev
-                                          , archive_entry_set_rdevmajor
-                                          , archive_entry_set_rdevminor
-                                          , archive_entry_set_size
-                                          , archive_entry_unset_size
-                                          , archive_entry_copy_sourcepath
-                                          , archive_entry_copy_sourcepath_w
-                                          , archive_entry_set_symlink
-                                          , archive_entry_set_symlink_utf8
-                                          , archive_entry_copy_symlink
-                                          , archive_entry_copy_symlink_w
+                                          , archiveEntrySetPerm
+                                          , archiveEntrySetRdev
+                                          , archiveEntrySetRdevmajor
+                                          , archiveEntrySetRdevminor
+                                          , archiveEntrySetSize
+                                          , archiveEntryUnsetSize
+                                          , archiveEntryCopySourcepath
+                                          , archiveEntryCopySourcepathW
+                                          , archiveEntrySetSymlink
+                                          , archiveEntrySetSymlinkUtf8
+                                          , archiveEntryCopySymlink
+                                          , archiveEntryCopySymlinkW
                                           , archiveEntryUpdateSymlinkUtf8
-                                          , archive_entry_set_uid
-                                          , archive_entry_set_uname
-                                          , archive_entry_set_uname_utf8
-                                          , archive_entry_copy_uname
-                                          , archive_entry_copy_uname_w
+                                          , archiveEntrySetUid
+                                          , archiveEntrySetUname
+                                          , archiveEntrySetUnameUtf8
+                                          , archiveEntryCopyUname
+                                          , archiveEntryCopyUnameW
                                           , archiveEntryUpdateUnameUtf8
-                                          , archive_entry_stat
-                                          , archive_entry_copy_stat
-                                          , archive_entry_mac_metadata
-                                          , archive_entry_copy_mac_metadata
+                                          , archiveEntryStat
+                                          , archiveEntryCopyStat
+                                          , archiveEntryMacMetadata
+                                          , archiveEntryCopyMacMetadata
                                           , archive_entry_acl_next_w
                                           , archive_entry_acl_to_text
                                           , archive_entry_acl_to_text_w
@@ -215,7 +215,7 @@ import Codec.Archive.Types
 import Data.Coerce (coerce)
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Ptr (castPtr)
+import Foreign.Ptr (Ptr, castPtr)
 import System.PosixCompat.Types (CMode (..))
 
 -- TODO: higher level archiveEntryXattrList?
@@ -224,6 +224,7 @@ import System.PosixCompat.Types (CMode (..))
 
 {#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
+{#pointer *stat as StatPtr -> Stat #}
 
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
@@ -282,6 +283,54 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_set_dev as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
 {# fun archive_entry_set_devmajor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
 {# fun archive_entry_set_devminor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
+{# fun archive_entry_set_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
+{# fun archive_entry_copy_fflags_text as ^ { `ArchiveEntryPtr', `CString' } -> `CString' #}
+{# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `CWString' castPtr #}
+{# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', coerce `FileType' } -> `()' #}
+{# fun archive_entry_set_gid as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_set_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_gname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_gname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_hardlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_hardlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_hardlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_hardlink_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_ino as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_set_ino64 as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_set_link as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_link_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_link as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_link_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_mode as ^ { `ArchiveEntryPtr', coerce `CMode' } -> `()' #}
+{# fun archive_entry_set_mtime as ^ { `ArchiveEntryPtr', coerce `CTime', `CLong' } -> `()' #}
+{# fun archive_entry_unset_mtime as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_set_nlink as ^ { `ArchiveEntryPtr', `CUInt' } -> `()' #}
+{# fun archive_entry_set_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', coerce `CMode' } -> `()' #}
+{# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
+{# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
+{# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', id `Dev' } -> `()' #}
+{# fun archive_entry_set_size as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_unset_size as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_copy_sourcepath as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_sourcepath_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_symlink_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_set_uid as ^ { `ArchiveEntryPtr', id `LaInt64' } -> `()' #}
+{# fun archive_entry_set_uname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_uname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_uname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_copy_uname_w as ^ { `ArchiveEntryPtr', castPtr `CWString' } -> `()' #}
+{# fun archive_entry_stat as ^ { `ArchiveEntryPtr' } -> `StatPtr' #}
+{# fun archive_entry_copy_stat as ^ { `ArchiveEntryPtr', `StatPtr' } -> `()' #}
+{# fun archive_entry_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr CSize' } -> `Ptr a' castPtr #}
+{# fun archive_entry_copy_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr a', coerce `CSize' } -> `()' #}
 
 {# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_entry_birthtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}

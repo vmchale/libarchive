@@ -6,13 +6,13 @@ module Codec.Archive.Unpack ( hsEntries
                             , unpackToDir
                             ) where
 
-import Data.Bifunctor (first)
 import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
 import           Control.Monad          (void, (<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
+import           Data.Bifunctor         (first)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc  (allocaBytes)
@@ -100,9 +100,9 @@ unpackEntriesFp a fp = do
             file <- liftIO $ peekCString preFile
             let file' = fp </> file
             liftIO $ withCString file' $ \fileC ->
-                archive_entry_set_pathname x fileC
+                archiveEntrySetPathname x fileC
             ignore $ archiveReadExtract a x archiveExtractTime
-            liftIO $ archive_entry_set_pathname x preFile
+            liftIO $ archiveEntrySetPathname x preFile
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 

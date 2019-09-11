@@ -19,9 +19,11 @@ import           Control.Monad             (void)
 import           Control.Monad.IO.Class    (MonadIO (..))
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString           as BS
+import           Data.Coerce               (coerce)
 import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
+import           Foreign.C.Types           (CLong (..))
 import           Foreign.Ptr               (Ptr)
 import           System.IO.Unsafe          (unsafePerformIO)
 
@@ -30,18 +32,18 @@ maybeDo = sequenceA_
 
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
-    liftIO $ archive_entry_set_filetype entry regular
-    liftIO $ archive_entry_set_size entry (fromIntegral (BS.length contents))
+    liftIO $ archiveEntrySetFiletype entry regular
+    liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
     handle $ archiveWriteHeader a entry
     useAsCStringLenArchiveM contents $ \(buff, sz) ->
         liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
-    liftIO $ archive_entry_set_filetype entry directory
+    liftIO $ archiveEntrySetFiletype entry directory
     handle $ archiveWriteHeader a entry
 contentAdd (Symlink fp) a entry = do
-    liftIO $ archive_entry_set_filetype entry symlink
+    liftIO $ archiveEntrySetFiletype entry symlink
     liftIO $ withCString fp $ \fpc ->
-        archive_entry_set_symlink entry fpc
+        archiveEntrySetSymlink entry fpc
     handle $ archiveWriteHeader a entry
 
 withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
@@ -53,14 +55,14 @@ setOwnership (Ownership uname gname uid gid) entry =
     withMaybeCString uname $ \unameC ->
     withMaybeCString gname $ \gnameC ->
     traverse_ maybeDo
-        [ archive_entry_set_uname entry <$> unameC
-        , archive_entry_set_gname entry <$> gnameC
-        , Just (archive_entry_set_uid entry (fromIntegral uid))
-        , Just (archive_entry_set_gid entry (fromIntegral gid))
+        [ archiveEntrySetUname entry <$> unameC
+        , archiveEntrySetGname entry <$> gnameC
+        , Just (archiveEntrySetUid entry (coerce uid))
+        , Just (archiveEntrySetGid entry (coerce gid))
         ]
 
 setTime :: ModTime -> Ptr ArchiveEntry -> IO ()
-setTime (time', nsec) entry = archive_entry_set_mtime entry time' nsec
+setTime (time', nsec) entry = archiveEntrySetMtime entry time' nsec
 
 packEntries :: (Foldable t) => Ptr Archive -> t Entry -> ArchiveM ()
 packEntries a = traverse_ (archiveEntryAdd a)
@@ -188,8 +190,8 @@ archiveEntryAdd :: Ptr Archive -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
     withArchiveEntry $ \entry -> do
         liftIO $ withCString fp $ \fpc ->
-            archive_entry_set_pathname entry fpc
-        liftIO $ archive_entry_set_perm entry perms
+            archiveEntrySetPathname entry fpc
+        liftIO $ archiveEntrySetPerm entry perms
         liftIO $ setOwnership owner entry
         liftIO $ maybeDo (setTime <$> mtime <*> pure entry)
         contentAdd contents a entry
