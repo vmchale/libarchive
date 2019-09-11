@@ -201,16 +201,19 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , mkFilter
                                      ) where
 
-import           Codec.Archive.Foreign.Archive.Macros
-import           Codec.Archive.Foreign.Archive.Raw
-import           Codec.Archive.Foreign.Common
-import           Codec.Archive.Types
-import           Control.Composition                  ((.*), (.**), (.***),
-                                                       (.****), (.@@))
-import           Data.Int                             (Int64)
-import           Foreign.C.String
-import           Foreign.C.Types
-import           Foreign.Ptr
+{# import qualified Codec.Archive.Types.Foreign #}
+
+import Codec.Archive.Foreign.Archive.Macros
+import Codec.Archive.Foreign.Archive.Raw
+import Codec.Archive.Foreign.Common
+import Codec.Archive.Types
+import Control.Composition ((.*), (.**), (.***), (.****))
+import Data.Int (Int64)
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Storable (peek)
+import Foreign.Marshal.Alloc (alloca)
+import Foreign.Ptr
 
 -- destructors: use "dynamic" instead of "wrapper" (but we don't want that)
 -- callbacks
@@ -246,48 +249,28 @@ mkSwitchCallback f = let f' = fmap resultToErr .** f in mkSwitchCallbackRaw f'
 mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
 mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 
+#include <archive.h>
+
+{#pointer *archive as ArchivePtr -> Archive #}
+{#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
+
 boolToInt :: Integral a => Bool -> a
 boolToInt False = 0
 boolToInt True  = 1
 
-archiveReadDiskCanDescend :: Ptr Archive -> IO Bool
-archiveReadDiskCanDescend = fmap intToBool . archive_read_disk_can_descend
-
-archiveReadDiskCurrentFilesystemIsSynthetic :: Ptr Archive -> IO Bool
-archiveReadDiskCurrentFilesystemIsSynthetic = fmap intToBool . archive_read_disk_current_filesystem_is_synthetic
-
-archiveReadDiskCurrentFilesystemIsRemote :: Ptr Archive -> IO Bool
-archiveReadDiskCurrentFilesystemIsRemote = fmap intToBool . archive_read_disk_current_filesystem_is_remote
-
-archiveMatchExcluded :: Ptr Archive -> IO Bool
-archiveMatchExcluded = fmap intToBool . archive_match_excluded
-
-archiveMatchPathExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
-archiveMatchPathExcluded = fmap intToBool .* archive_match_path_excluded
-
-archiveMatchExcludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
-archiveMatchExcludePatternFromFile = fmap errorRes .** (boolToInt .@@ archive_match_exclude_pattern_from_file)
-
-archiveMatchExcludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveResult
-archiveMatchExcludePatternFromFileW = fmap errorRes .** (boolToInt .@@ archive_match_exclude_pattern_from_file_w)
-
-archiveMatchIncludePatternFromFile :: Ptr Archive -> CString -> Bool -> IO ArchiveResult
-archiveMatchIncludePatternFromFile = fmap errorRes .** (boolToInt .@@ archive_match_include_pattern_from_file)
-
-archiveMatchIncludePatternFromFileW :: Ptr Archive -> CWString -> Bool -> IO ArchiveResult
-archiveMatchIncludePatternFromFileW = fmap errorRes .** (boolToInt .@@ archive_match_include_pattern_from_file_w)
-
-archiveMatchTimeExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
-archiveMatchTimeExcluded = fmap intToBool .* archive_match_time_excluded
-
-archiveReadHasEncryptedEntries :: Ptr Archive -> IO ArchiveEncryption
-archiveReadHasEncryptedEntries = fmap encryptionResult . archive_read_has_encrypted_entries
-
-archiveMatchOwnerExcluded :: Ptr Archive -> Ptr ArchiveEntry -> IO Bool
-archiveMatchOwnerExcluded = fmap intToBool .* archive_match_owner_excluded
-
-archiveReadNextHeader :: Ptr Archive -> Ptr (Ptr ArchiveEntry) -> IO ArchiveResult
-archiveReadNextHeader = fmap errorRes .* archive_read_next_header
+{# fun archive_read_disk_can_descend as ^ { `ArchivePtr' } -> `Bool' #}
+{# fun archive_read_disk_current_filesystem_is_synthetic as ^ { `ArchivePtr' } -> `Bool' #}
+{# fun archive_read_disk_current_filesystem_is_remote as ^ { `ArchivePtr' } -> `Bool' #}
+{# fun archive_match_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_match_exclude_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_exclude_pattern_from_file_w as ^ { `ArchivePtr', castPtr `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_include_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_include_pattern_from_file_w as ^ { `ArchivePtr', castPtr `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_time_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_read_has_encrypted_entries as ^ { `ArchivePtr' } -> `ArchiveEncryption' encryptionResult #}
+{# fun archive_match_owner_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_read_next_header as ^ { `ArchivePtr', alloca- `ArchiveEntryPtr' peek* } -> `ArchiveResult' #}
 
 archiveReadOpenFilename :: Ptr Archive -> CString -> CSize -> IO ArchiveResult
 archiveReadOpenFilename = fmap errorRes .** archive_read_open_filename
@@ -310,17 +293,10 @@ archiveReadOpen1 = fmap errorRes . archive_read_open1
 archiveWriteOpenFilename :: Ptr Archive -> CString -> IO ArchiveResult
 archiveWriteOpenFilename = fmap errorRes .* archive_write_open_filename
 
-archiveWriteOpenMemory :: Ptr Archive -> Ptr a -> CSize -> Ptr CSize -> IO ArchiveResult
-archiveWriteOpenMemory = fmap errorRes .*** archive_write_open_memory
-
-archiveWriteClose :: Ptr Archive -> IO ArchiveResult
-archiveWriteClose = fmap errorRes . archive_write_close
-
-archiveWriteHeader :: Ptr Archive -> Ptr ArchiveEntry -> IO ArchiveResult
-archiveWriteHeader = fmap errorRes .* archive_write_header
-
-archiveFree :: Ptr Archive -> IO ArchiveResult
-archiveFree = fmap errorRes . archive_free
+{# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , `CULong', alloca- `CULong' peek* } -> `ArchiveResult' #}
+{# fun archive_write_close as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_header as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
+{# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
 archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveWriteOpen = fmap errorRes .**** archive_write_open

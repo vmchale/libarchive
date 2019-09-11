@@ -6,6 +6,7 @@ module Codec.Archive.Unpack ( hsEntries
                             , unpackToDir
                             ) where
 
+import Data.Bifunctor (first)
 import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
@@ -14,9 +15,8 @@ import           Control.Monad          (void, (<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc  (alloca, allocaBytes)
+import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr, nullPtr)
-import           Foreign.Storable       (Storable (..))
 import           System.FilePath        ((</>))
 import           System.IO.Unsafe       (unsafePerformIO)
 
@@ -149,14 +149,14 @@ readTimes = archiveGetterHelper go archiveEntryMTimeIsSet
 
 -- | Get the next 'ArchiveEntry' in an 'Archive'
 getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
-getEntry a = alloca $ \ptr -> do
+getEntry a = do
     let done ArchiveOk    = False
         done ArchiveRetry = False
         done _            = True
-    stop <- done <$> archiveReadNextHeader a ptr
-    if stop
-        then pure Nothing
-        else Just <$> peek ptr
+    (stop, res) <- first done <$> archiveReadNextHeader a
+    pure $ if stop
+        then Nothing
+        else Just res
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive

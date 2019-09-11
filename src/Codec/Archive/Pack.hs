@@ -23,7 +23,6 @@ import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
 import           Foreign.Ptr               (Ptr)
-import           Foreign.Storable          (peek)
 import           System.IO.Unsafe          (unsafePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
@@ -109,15 +108,14 @@ entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveResult) -> t Ent
 entriesToBSGeneral modifier hsEntries' = do
     a <- liftIO archive_write_new
     ignore $ modifier a
-    allocaArchiveM $ \used ->
-        allocaBytesArchiveM bufSize $ \buffer -> do
-            handle $ archiveWriteOpenMemory a buffer bufSize used
-            packEntries a hsEntries'
-            handle $ archiveWriteClose a
-            usedSz <- liftIO $ peek used
-            res <- liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
-            ignore $ archiveFree a
-            pure res
+    allocaBytesArchiveM bufSize $ \buffer -> do
+        (err, usedSz) <- liftIO $ archiveWriteOpenMemory a buffer bufSize
+        handle (pure err)
+        packEntries a hsEntries'
+        handle $ archiveWriteClose a
+        res <- liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
+        ignore $ archiveFree a
+        pure res
 
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
