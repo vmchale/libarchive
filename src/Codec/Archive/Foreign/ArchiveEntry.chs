@@ -8,8 +8,8 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryNew
                                           , archiveEntryFree
                                           , archiveEntryNew2
-                                          , archive_entry_atime
-                                          , archive_entry_atime_nsec
+                                          , archiveEntryAtime
+                                          , archiveEntryAtimeNsec
                                           , archiveEntryAtimeIsSet
                                           , archive_entry_birthtime
                                           , archive_entry_birthtime_nsec
@@ -213,6 +213,7 @@ import           Codec.Archive.Foreign.ArchiveEntry.Macros
 import           Codec.Archive.Foreign.ArchiveEntry.Raw
 import           Codec.Archive.Types
 import           Foreign.C.String
+import           Foreign.C.Types
 
 -- TODO: higher level archiveEntryXattrList?
 
@@ -226,6 +227,8 @@ import           Foreign.C.String
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
 {# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
+{# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' fromIntegral #}
+{# fun archive_entry_atime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 
 {# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_entry_birthtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
