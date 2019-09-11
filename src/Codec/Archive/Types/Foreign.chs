@@ -86,7 +86,7 @@ newtype ReadDiskFlags = ReadDiskFlags CInt
 
 newtype TimeFlag = TimeFlag CInt
 
-newtype EntryACL = EntryACL CInt
+newtype EntryACL = EntryACL { unEntryACL :: CInt }
 
 newtype ArchiveFilter = ArchiveFilter CInt
 

@@ -47,7 +47,6 @@ library
         Codec.Archive.Pack.Common
         Codec.Archive.Unpack.Lazy
         Codec.Archive.Unpack
-        Codec.Archive.Foreign.Common
         Codec.Archive.Types
         Codec.Archive.Types.Foreign
         Codec.Archive.Permissions

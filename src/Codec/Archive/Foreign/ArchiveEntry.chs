@@ -10,13 +10,13 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_new2
                                           , archive_entry_atime
                                           , archive_entry_atime_nsec
-                                          , archiveEntryATimeIsSet
+                                          , archiveEntryAtimeIsSet
                                           , archive_entry_birthtime
                                           , archive_entry_birthtime_nsec
                                           , archiveEntryBirthtimeIsSet
                                           , archive_entry_ctime
                                           , archive_entry_ctime_nsec
-                                          , archiveEntryCTimeIsSet
+                                          , archiveEntryCtimeIsSet
                                           , archive_entry_dev
                                           , archiveEntryDevIsSet
                                           , archive_entry_devminor
@@ -37,7 +37,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_mode
                                           , archive_entry_mtime
                                           , archive_entry_mtime_nsec
-                                          , archiveEntryMTimeIsSet
+                                          , archiveEntryMtimeIsSet
                                           , archive_entry_nlink
                                           , archive_entry_pathname
                                           , archive_entry_pathname_utf8
@@ -79,7 +79,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_set_gname_utf8
                                           , archive_entry_copy_gname
                                           , archive_entry_copy_gname_w
-                                          , archiveEntryUpdateGNameUtf8
+                                          , archiveEntryUpdateGnameUtf8
                                           , archive_entry_set_hardlink
                                           , archive_entry_set_hardlink_utf8
                                           , archive_entry_copy_hardlink
@@ -119,18 +119,18 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archive_entry_set_uname_utf8
                                           , archive_entry_copy_uname
                                           , archive_entry_copy_uname_w
-                                          , archiveEntryUpdateUNameUtf8
+                                          , archiveEntryUpdateUnameUtf8
                                           , archive_entry_stat
                                           , archive_entry_copy_stat
                                           , archive_entry_mac_metadata
                                           , archive_entry_copy_mac_metadata
-                                          -- , archive_entry_acl_next_w
-                                          -- , archive_entry_acl_to_text
-                                          -- , archive_entry_acl_to_text_w
-                                          -- , archive_entry_acl_from_text
-                                          -- , archive_entry_acl_from_text_w
-                                          -- , archive_entry_acl_types
-                                          -- , archive_entry_count
+                                          , archive_entry_acl_next_w
+                                          , archive_entry_acl_to_text
+                                          , archive_entry_acl_to_text_w
+                                          , archive_entry_acl_from_text
+                                          , archive_entry_acl_from_text_w
+                                          , archive_entry_acl_types
+                                          , archive_entry_count
                                           -- * Xattr functions
                                           , archive_entry_xattr_clear
                                           , archive_entry_xattr_add_entry
@@ -157,12 +157,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , blockDevice
                                           , directory
                                           , fifo
-                                          -- * Haskell-ized functions
-                                          , archiveEntryAclAddEntry
-                                          , archiveEntryAclAddEntryW
-                                          , archiveEntryAclNext
-                                          , archiveEntrySparseNext
-                                          , archiveEntryXattrNext
                                           -- * ACL macros
                                           , archiveEntryACLExecute
                                           , archiveEntryACLWrite
@@ -213,78 +207,32 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , EntryACL
                                           ) where
 
-import           Codec.Archive.Foreign.Archive.Macros
+{# import qualified Codec.Archive.Types.Foreign #}
+
 import           Codec.Archive.Foreign.ArchiveEntry.Macros
 import           Codec.Archive.Foreign.ArchiveEntry.Raw
-import           Codec.Archive.Foreign.Common
 import           Codec.Archive.Types
-import           Control.Composition                       ((.*), (.**), (.***),
-                                                            (.*****), (.******))
 import           Foreign.C.String
-import           Foreign.C.Types
-import           Foreign.Ptr                               (Ptr)
 
 -- TODO: higher level archiveEntryXattrList?
 
-archiveEntryATimeIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryATimeIsSet = fmap intToBool . archive_entry_atime_is_set
+#include <archive_entry.h>
 
-archiveEntryBirthtimeIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryBirthtimeIsSet = fmap intToBool . archive_entry_birthtime_is_set
+{#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 
-archiveEntryCTimeIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryCTimeIsSet = fmap intToBool . archive_entry_ctime_is_set
-
-archiveEntryDevIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryDevIsSet = fmap intToBool . archive_entry_dev_is_set
-
-archiveEntryInoIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryInoIsSet = fmap intToBool . archive_entry_ino_is_set
-
-archiveEntryMTimeIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntryMTimeIsSet = fmap intToBool . archive_entry_mtime_is_set
-
-archiveEntrySizeIsSet :: Ptr ArchiveEntry -> IO Bool
-archiveEntrySizeIsSet = fmap intToBool . archive_entry_size_is_set
-
-archiveEntryIsDataEncrypted :: Ptr ArchiveEntry -> IO Bool
-archiveEntryIsDataEncrypted = fmap intToBool . archive_entry_is_data_encrypted
-
-archiveEntryIsMetadataEncrypted :: Ptr ArchiveEntry -> IO Bool
-archiveEntryIsMetadataEncrypted = fmap intToBool . archive_entry_is_metadata_encrypted
-
-archiveEntryIsEncrypted :: Ptr ArchiveEntry -> IO Bool
-archiveEntryIsEncrypted = fmap intToBool . archive_entry_is_encrypted
-
-archiveEntryUpdateGNameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdateGNameUtf8 = fmap intToBool .* archive_entry_update_gname_utf8
-
-archiveEntryUpdateHardlinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdateHardlinkUtf8 = fmap intToBool .* archive_entry_update_hardlink_utf8
-
-archiveEntryUpdateLinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdateLinkUtf8 = fmap intToBool .* archive_entry_update_link_utf8
-
-archiveEntryUpdatePathnameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdatePathnameUtf8 = fmap intToBool .* archive_entry_update_pathname_utf8
-
-archiveEntryUpdateSymlinkUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdateSymlinkUtf8 = fmap intToBool .* archive_entry_update_symlink_utf8
-
-archiveEntryUpdateUNameUtf8 :: Ptr ArchiveEntry -> CString -> IO Bool
-archiveEntryUpdateUNameUtf8 = fmap intToBool .* archive_entry_update_uname_utf8
-
-archiveEntryAclAddEntry :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CString -> IO ArchiveResult
-archiveEntryAclAddEntry = fmap errorRes .***** archive_entry_acl_add_entry
-
-archiveEntryAclAddEntryW :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> CInt -> CWString -> IO ArchiveResult
-archiveEntryAclAddEntryW = fmap errorRes .***** archive_entry_acl_add_entry_w
-
-archiveEntryAclNext :: Ptr ArchiveEntry -> EntryACL -> EntryACL -> EntryACL -> EntryACL -> CInt -> Ptr CString -> IO ArchiveResult
-archiveEntryAclNext = fmap errorRes .****** archive_entry_acl_next
-
-archiveEntrySparseNext :: Ptr ArchiveEntry -> Ptr LaInt64 -> Ptr LaInt64 -> IO ArchiveResult
-archiveEntrySparseNext = fmap errorRes .** archive_entry_sparse_next
-
-archiveEntryXattrNext :: Ptr ArchiveEntry -> Ptr CString -> Ptr (Ptr a) -> Ptr CSize -> IO ArchiveResult
-archiveEntryXattrNext = fmap errorRes .*** archive_entry_xattr_next
+{# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_birthtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_ctime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_dev_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_ino_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_mtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_size_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_is_data_encrypted as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_is_metadata_encrypted as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_is_encrypted as ^ { `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_entry_update_gname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_update_hardlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_update_link_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_update_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_update_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_update_uname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}

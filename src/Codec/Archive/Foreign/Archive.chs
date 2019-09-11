@@ -205,7 +205,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
 
 import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Foreign.Archive.Raw
-import Codec.Archive.Foreign.Common
 import Codec.Archive.Types
 import Control.Composition ((.*), (.**), (.***), (.****))
 import Data.Int (Int64)
@@ -287,8 +286,7 @@ archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 archiveReadSetCallbackData :: Ptr Archive -> Ptr a -> IO ArchiveResult
 archiveReadSetCallbackData = fmap errorRes .* archive_read_set_callback_data
 
-archiveReadOpen1 :: Ptr Archive -> IO ArchiveResult
-archiveReadOpen1 = fmap errorRes . archive_read_open1
+{# fun archive_read_open1 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
 archiveWriteOpenFilename :: Ptr Archive -> CString -> IO ArchiveResult
 archiveWriteOpenFilename = fmap errorRes .* archive_write_open_filename

@@ -143,7 +143,7 @@ readOwnership entry =
         <*> (fromIntegral <$> archive_entry_gid entry)
 
 readTimes :: Ptr ArchiveEntry -> IO (Maybe ModTime)
-readTimes = archiveGetterHelper go archiveEntryMTimeIsSet
+readTimes = archiveGetterHelper go archiveEntryMtimeIsSet
     where go entry =
             (,) <$> archive_entry_mtime entry <*> archive_entry_mtime_nsec entry
 
