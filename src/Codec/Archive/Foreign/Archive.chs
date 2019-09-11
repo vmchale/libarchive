@@ -6,29 +6,29 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskCanDescend
                                      , archiveReadDiskCurrentFilesystemIsSynthetic
                                      , archiveReadDiskCurrentFilesystemIsRemote
-                                     -- * Direct bindings
-                                     , archive_error_string
-                                     , archive_format_name
-                                     , archive_format
-                                     , archive_clear_error
-                                     , archive_set_error
-                                     , archive_copy_error
-                                     , archive_file_count
-                                     , archive_version_number
-                                     , archive_version_string
-                                     , archive_version_details
-                                     , archive_filter_count
-                                     , archive_filter_bytes
-                                     , archive_filter_code
-                                     , archive_filter_name
-                                     , archive_write_new
-                                     , archive_write_data
-                                     , archive_read_data
-                                     , archive_read_new
-                                     -- * Version macros
+                                     -- * Miscellany
+                                     , archiveErrorString
+                                     , archiveFormatName
+                                     , archiveFormat
+                                     , archiveClearError
+                                     , archiveSetError
+                                     , archiveCopyError
+                                     , archiveFileCount
                                      , archiveVersionNumber
-                                     , archiveVersionOnlyString
                                      , archiveVersionString
+                                     , archiveVersionDetails
+                                     , archiveFilterCount
+                                     , archiveFilterBytes
+                                     , archiveFilterCode
+                                     , archiveFilterName
+                                     , archiveWriteNew
+                                     , archiveWriteData
+                                     , archiveReadData
+                                     , archiveReadNew
+                                     -- * Version macros
+                                     , archiveVersionNumberMacro
+                                     , archiveVersionOnlyString
+                                     , archiveVersionStringMacro
                                      -- * Capability macros
                                      , archiveReadFormatCapsNone
                                      , archiveReadFormatCapsEncryptData
@@ -122,10 +122,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDataSkip
                                      , archiveReadSupportFormatAll
                                      , archiveReadExtract
-                                     , archiveMatchIncludeGName
-                                     , archiveMatchIncludeGNameW
-                                     , archiveMatchIncludeUName
-                                     , archiveMatchIncludeUNameW
+                                     , archiveMatchIncludeGname
+                                     , archiveMatchIncludeGnameW
+                                     , archiveMatchIncludeUname
+                                     , archiveMatchIncludeUnameW
                                      , archiveMatchIncludeUid
                                      , archiveMatchIncludeGid
                                      , archiveReadSupportFilterAll
@@ -206,7 +206,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
 import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Foreign.Archive.Raw
 import Codec.Archive.Types
-import Control.Composition ((.*), (.**), (.***), (.****))
+import Control.Composition ((.*), (.**), (.****))
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
@@ -247,15 +247,33 @@ mkSwitchCallback f = let f' = fmap resultToErr .** f in mkSwitchCallbackRaw f'
 
 mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
 mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
+    where boolToInt False = 0
+          boolToInt True  = 1
 
 #include <archive.h>
 
 {#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 
-boolToInt :: Integral a => Bool -> a
-boolToInt False = 0
-boolToInt True  = 1
+{# fun archive_error_string as ^ { `ArchivePtr' } -> `CString' #}
+{# fun archive_format_name as ^ { `ArchivePtr' } -> `CString' #}
+{# fun archive_format as ^ { `ArchivePtr' } -> `ArchiveFormat' ArchiveFormat #}
+{# fun archive_clear_error as ^ { `ArchivePtr' } -> `()' #}
+{# fun archive_set_error as ^ { `ArchivePtr', `CInt', `CString' } -> `()' #}
+{# fun archive_copy_error as ^ { `ArchivePtr', `ArchivePtr' } -> `()' #}
+{# fun archive_file_count as ^ { `ArchivePtr' } -> `CInt' #}
+{# fun archive_version_number as ^ {} -> `CInt' #}
+{# fun archive_version_string as ^ {} -> `CString' #}
+{# fun archive_version_details as ^ {} -> `CString' #}
+{# fun archive_filter_count as ^ { `ArchivePtr' } -> `CInt' #}
+{# fun archive_filter_bytes as ^ { `ArchivePtr', `CInt' } -> `Int64' #}
+{# fun archive_filter_code as ^ { `ArchivePtr', `CInt' } -> `Int' #}
+{# fun archive_filter_name as ^ { `ArchivePtr', `CInt' } -> `CString' #}
+{# fun archive_write_new as ^ {} -> `ArchivePtr' #}
+{# fun archive_write_data as ^ { `ArchivePtr', castPtr `Ptr a', fromIntegral `CSize' } -> `CSize' fromIntegral #}
+{# fun archive_read_new as ^ {} -> `ArchivePtr' #}
+-- TODO: fix?
+{# fun archive_read_data as ^ { `ArchivePtr', castPtr `Ptr a', fromIntegral `CSize' } -> `CSize' fromIntegral #}
 
 {# fun archive_read_disk_can_descend as ^ { `ArchivePtr' } -> `Bool' #}
 {# fun archive_read_disk_current_filesystem_is_synthetic as ^ { `ArchivePtr' } -> `Bool' #}
@@ -290,24 +308,12 @@ archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveWriteOpen = fmap errorRes .**** archive_write_open
 
-archiveMatchIncludeGNameW :: Ptr Archive -> CWString -> IO ArchiveResult
-archiveMatchIncludeGNameW = fmap errorRes .* archive_match_include_gname_w
-
-archiveMatchIncludeGName :: Ptr Archive -> CString -> IO ArchiveResult
-archiveMatchIncludeGName = fmap errorRes .* archive_match_include_gname
-
-archiveMatchIncludeUNameW :: Ptr Archive -> CWString -> IO ArchiveResult
-archiveMatchIncludeUNameW = fmap errorRes .* archive_match_include_uname_w
-
-archiveMatchIncludeUName :: Ptr Archive -> CString -> IO ArchiveResult
-archiveMatchIncludeUName = fmap errorRes .* archive_match_include_uname
-
-archiveMatchIncludeGid :: Ptr Archive -> Id -> IO ArchiveResult
-archiveMatchIncludeGid = fmap errorRes .* archive_match_include_gid
-
-archiveMatchIncludeUid :: Ptr Archive -> Id -> IO ArchiveResult
-archiveMatchIncludeUid = fmap errorRes .* archive_match_include_uid
-
+{# fun archive_match_include_gname_w as ^ { `ArchivePtr', castPtr `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_include_gname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_include_uname_w as ^ { `ArchivePtr', castPtr `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_include_uname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_include_gid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
+{# fun archive_match_include_uid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_all as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_compress as ^ { `ArchivePtr' } -> `ArchiveResult' #}

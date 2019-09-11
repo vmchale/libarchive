@@ -1,6 +1,6 @@
-module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumber
+module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , archiveVersionOnlyString
-                                            , archiveVersionString
+                                            , archiveVersionStringMacro
                                             , archiveReadFormatCapsNone
                                             , archiveReadFormatCapsEncryptData
                                             , archiveReadFormatCapsEncryptMetadata
@@ -74,14 +74,14 @@ import Foreign.C.Types
 
 #include <archive.h>
 
-archiveVersionNumber :: Int
-archiveVersionNumber = {# const ARCHIVE_VERSION_NUMBER #}
+archiveVersionNumberMacro :: Int
+archiveVersionNumberMacro = {# const ARCHIVE_VERSION_NUMBER #}
 
 archiveVersionOnlyString :: String
 archiveVersionOnlyString = {# const ARCHIVE_VERSION_ONLY_STRING #}
 
-archiveVersionString :: String
-archiveVersionString = {# const ARCHIVE_VERSION_STRING #}
+archiveVersionStringMacro :: String
+archiveVersionStringMacro = {# const ARCHIVE_VERSION_STRING #}
 
 -- Archive filter
 archiveFilterNone :: ArchiveFilter
