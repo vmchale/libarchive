@@ -47,7 +47,7 @@ entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSet
 
 -- | @since 1.0.5.0
 entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7Zip
+entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBSL7zip #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
