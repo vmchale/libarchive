@@ -270,12 +270,8 @@ boolToInt True  = 1
 {# fun archive_read_has_encrypted_entries as ^ { `ArchivePtr' } -> `ArchiveEncryption' encryptionResult #}
 {# fun archive_match_owner_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_read_next_header as ^ { `ArchivePtr', alloca- `ArchiveEntryPtr' peek* } -> `ArchiveResult' #}
-
-archiveReadOpenFilename :: Ptr Archive -> CString -> CSize -> IO ArchiveResult
-archiveReadOpenFilename = fmap errorRes .** archive_read_open_filename
-
-archiveReadOpenMemory :: Ptr Archive -> Ptr a -> CSize -> IO ArchiveResult
-archiveReadOpenMemory = fmap errorRes .** archive_read_open_memory
+{# fun archive_read_open_filename as ^ { `ArchivePtr', `CString', fromIntegral `CSize' } -> `ArchiveResult' #}
+{# fun archive_read_open_memory as ^ { `ArchivePtr', castPtr `Ptr a', fromIntegral `CSize' } -> `ArchiveResult' #}
 
 archiveReadSetReadCallback :: Ptr Archive -> FunPtr (ArchiveReadCallback a b) -> IO ArchiveResult
 archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
@@ -283,14 +279,9 @@ archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
 archiveReadSetCloseCallback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 
-archiveReadSetCallbackData :: Ptr Archive -> Ptr a -> IO ArchiveResult
-archiveReadSetCallbackData = fmap errorRes .* archive_read_set_callback_data
-
+{# fun archive_read_set_callback_data as ^ { `ArchivePtr', castPtr `Ptr a' } -> `ArchiveResult' #}
 {# fun archive_read_open1 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-
-archiveWriteOpenFilename :: Ptr Archive -> CString -> IO ArchiveResult
-archiveWriteOpenFilename = fmap errorRes .* archive_write_open_filename
-
+{# fun archive_write_open_filename as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , `CULong', alloca- `CULong' peek* } -> `ArchiveResult' #}
 {# fun archive_write_close as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_header as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
