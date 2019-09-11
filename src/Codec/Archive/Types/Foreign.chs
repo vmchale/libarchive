@@ -74,13 +74,13 @@ type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
-newtype ArchiveFormat = ArchiveFormat CInt
+newtype ArchiveFormat = ArchiveFormat { unArchiveFormat :: CInt }
     deriving (Eq)
 
 newtype FileType = FileType CMode
     deriving (Eq)
 
-newtype Flags = Flags CInt
+newtype Flags = Flags { unFlags :: CInt }
 
 newtype ReadDiskFlags = ReadDiskFlags CInt
 

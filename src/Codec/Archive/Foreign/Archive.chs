@@ -110,7 +110,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveWriteOpen
                                      , archiveWriteSetFormatPaxRestricted
                                      , archiveWriteSetFormatZip
-                                     , archiveWriteSetFormat7Zip
+                                     , archiveWriteSetFormat7zip
                                      , archiveMatchExcluded
                                      , archiveMatchPathExcluded
                                      , archiveMatchExcludePatternFromFile
@@ -308,128 +308,45 @@ archiveMatchIncludeGid = fmap errorRes .* archive_match_include_gid
 archiveMatchIncludeUid :: Ptr Archive -> Id -> IO ArchiveResult
 archiveMatchIncludeUid = fmap errorRes .* archive_match_include_uid
 
-archiveReadSupportFilterAll :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterAll = fmap errorRes . archive_read_support_filter_all
-
-archiveReadSupportFilterBzip2 :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterBzip2 = fmap errorRes . archive_read_support_filter_bzip2
-
-archiveReadSupportFilterCompress :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterCompress = fmap errorRes . archive_read_support_filter_compress
-
-archiveReadSupportFilterGzip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterGzip = fmap errorRes . archive_read_support_filter_gzip
-
-archiveReadSupportFilterGrzip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterGrzip = fmap errorRes . archive_read_support_filter_grzip
-
-archiveReadSupportFilterLrzip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterLrzip = fmap errorRes . archive_read_support_filter_lrzip
-
-archiveReadSupportFilterLz4 :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterLz4 = fmap errorRes . archive_read_support_filter_lz4
-
-archiveReadSupportFilterLzip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterLzip = fmap errorRes . archive_read_support_filter_lzip
-
-archiveReadSupportFilterLzma :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterLzma = fmap errorRes . archive_read_support_filter_lzma
-
-archiveReadSupportFilterLzop :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterLzop = fmap errorRes . archive_read_support_filter_lzop
-
-archiveReadSupportFilterNone :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterNone = fmap errorRes . archive_read_support_filter_none
-
-archiveReadSupportFilterProgram :: Ptr Archive -> CString -> IO ArchiveResult
-archiveReadSupportFilterProgram = fmap errorRes .* archive_read_support_filter_program
-
-archiveReadSupportFilterProgramSignature :: Ptr Archive -> CString -> CString -> CSize -> IO ArchiveResult
-archiveReadSupportFilterProgramSignature = fmap errorRes .*** archive_read_support_filter_program_signature
-
-archiveReadSupportFilterRpm :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterRpm = fmap errorRes . archive_read_support_filter_rpm
-
-archiveReadSupportFilterUu :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterUu = fmap errorRes . archive_read_support_filter_uu
-
-archiveReadSupportFilterXz :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFilterXz = fmap errorRes . archive_read_support_filter_xz
-
-archiveReadSupportFormat7zip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormat7zip = fmap errorRes . archive_read_support_format_7zip
-
-archiveReadSupportFormatAll :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatAll = fmap errorRes . archive_read_support_format_all
-
-archiveReadSupportFormatAr :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatAr = fmap errorRes . archive_read_support_format_ar
-
-archiveReadSupportFormatByCode :: Ptr Archive -> CInt -> IO ArchiveResult
-archiveReadSupportFormatByCode = fmap errorRes .* archive_read_support_format_by_code
-
-archiveReadSupportFormatCab :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatCab = fmap errorRes . archive_read_support_format_cab
-
-archiveReadSupportFormatCpio :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatCpio = fmap errorRes . archive_read_support_format_cpio
-
-archiveReadSupportFormatEmpty :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatEmpty = fmap errorRes . archive_read_support_format_empty
-
-archiveReadSupportFormatGnutar :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatGnutar = fmap errorRes . archive_read_support_format_gnutar
-
-archiveReadSupportFormatIso9660 :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatIso9660 = fmap errorRes . archive_read_support_format_iso9660
-
-archiveReadSupportFormatLha :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatLha = fmap errorRes . archive_read_support_format_lha
-
-archiveReadSupportFormatMtree :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatMtree = fmap errorRes . archive_read_support_format_mtree
-
-archiveReadSupportFormatRar :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatRar = fmap errorRes . archive_read_support_format_rar
-
-archiveReadSupportFormatRaw :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatRaw = fmap errorRes . archive_read_support_format_raw
-
-archiveReadSupportFormatTar :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatTar = fmap errorRes . archive_read_support_format_tar
-
-archiveReadSupportFormatWarc :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatWarc = fmap errorRes . archive_read_support_format_warc
-
-archiveReadSupportFormatXar :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatXar = fmap errorRes . archive_read_support_format_xar
-
-archiveReadSupportFormatZip :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatZip = fmap errorRes . archive_read_support_format_zip
-
-archiveReadSupportFormatZipStreamable :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatZipStreamable = fmap errorRes . archive_read_support_format_zip_streamable
-
-archiveReadSupportFormatZipSeekable :: Ptr Archive -> IO ArchiveResult
-archiveReadSupportFormatZipSeekable = fmap errorRes . archive_read_support_format_zip_seekable
-
-archiveReadSetFormat :: Ptr Archive -> ArchiveFormat -> IO ArchiveResult
-archiveReadSetFormat = fmap errorRes .* archive_read_set_format
-
-archiveWriteSetFormatZip :: Ptr Archive -> IO ArchiveResult
-archiveWriteSetFormatZip = fmap errorRes . archive_write_set_format_zip
-
-archiveWriteSetFormat7Zip :: Ptr Archive -> IO ArchiveResult
-archiveWriteSetFormat7Zip = fmap errorRes . archive_write_set_format_7zip
-
-archiveWriteSetFormatPaxRestricted :: Ptr Archive -> IO ArchiveResult
-archiveWriteSetFormatPaxRestricted = fmap errorRes . archive_write_set_format_pax_restricted
-
-archiveReadDataSkip :: Ptr Archive -> IO ArchiveResult
-archiveReadDataSkip = fmap errorRes . archive_read_data_skip
-
-archiveReadExtract :: Ptr Archive -> Ptr ArchiveEntry -> Flags -> IO ArchiveResult
-archiveReadExtract = fmap errorRes .** archive_read_extract
-
-archiveErrno :: Ptr Archive -> IO ArchiveResult
-archiveErrno = fmap errorRes . archive_errno
+{# fun archive_read_support_filter_all as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_compress as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_gzip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_grzip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_lrzip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_lz4 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_lzip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_lzma as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_lzop as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_none as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_program as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_program_signature as ^ { `ArchivePtr', `CString', castPtr `Ptr a', fromIntegral `CSize' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_rpm as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_uu as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_xz as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_7zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_all as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_ar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_by_code as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_cab as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_cpio as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_empty as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_gnutar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_iso9660 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_lha as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_mtree as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_rar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_raw as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_tar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_warc as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_xar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_zip_streamable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_format_zip_seekable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_set_format as ^ { `ArchivePtr', unArchiveFormat `ArchiveFormat' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_7zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_pax_restricted as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_data_skip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_extract as ^ { `ArchivePtr', `ArchiveEntryPtr', unFlags `Flags' } -> `ArchiveResult' #}
+{# fun archive_errno as ^ { `ArchivePtr' } -> `ArchiveResult' #}

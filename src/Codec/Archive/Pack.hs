@@ -84,7 +84,7 @@ entriesToBS = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetForma
 --
 -- @since 1.0.0.0
 entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
-entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7Zip
+entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBS7zip #-}
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
@@ -166,7 +166,7 @@ entriesToFileZip = entriesToFileGeneral archiveWriteSetFormatZip
 --
 -- @since 1.0.0.0
 entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
-entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7Zip
+entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7zip
 
 entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
