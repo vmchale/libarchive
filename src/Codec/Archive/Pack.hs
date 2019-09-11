@@ -23,7 +23,7 @@ import           Data.Coerce               (coerce)
 import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
-import           Foreign.C.Types           (CLong (..))
+import           Foreign.C.Types           (CLLong (..), CLong (..))
 import           Foreign.Ptr               (Ptr)
 import           System.IO.Unsafe          (unsafePerformIO)
 

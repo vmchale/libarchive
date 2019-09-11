@@ -211,7 +211,7 @@ import Data.Coerce (coerce)
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Storable (peek)
+import Foreign.Storable (Storable (peek))
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr
 
