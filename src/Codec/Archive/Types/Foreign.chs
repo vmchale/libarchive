@@ -48,7 +48,6 @@ type LaInt64 = {# type la_int64_t #}
 type LaSSize = {# type la_ssize_t #}
 type Dev = {# type dev_t #}
 
-
 {# enum define ArchiveResult { ARCHIVE_OK as ArchiveOk
                              , ARCHIVE_EOF as ArchiveEOF
                              , ARCHIVE_RETRY as ArchiveRetry
@@ -56,7 +55,7 @@ type Dev = {# type dev_t #}
                              , ARCHIVE_FAILED as ArchiveFailed
                              , ARCHIVE_FATAL as ArchiveFatal
                              } deriving (Eq, Show, Generic, NFData)
-    #}
+  #}
 
 -- | Abstract type
 data Archive
