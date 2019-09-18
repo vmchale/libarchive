@@ -205,6 +205,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      -- * Type synonyms
                                      , ArchiveEntryPtr
                                      , ArchivePtr
+                                     -- * libarchive types
+                                     , LaInt64
+                                     , LaSSize
+                                     , Dev
                                      ) where
 
 {# import qualified Codec.Archive.Types.Foreign #}
