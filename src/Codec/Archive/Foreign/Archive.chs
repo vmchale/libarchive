@@ -207,7 +207,7 @@ import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Foreign.Archive.Raw
 import Codec.Archive.Types
 import Control.Composition ((.*), (.**), (.****))
-import Data.Coerce (Coercible, coerce)
+import Data.Coerce (coerce)
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
@@ -256,6 +256,10 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 
+{#typedef size_t CSize#}
+{#typedef wchar_t CWchar#}
+{#default in `CWString' [wchar_t*] castPtr#}
+
 {# fun archive_error_string as ^ { `ArchivePtr' } -> `CString' #}
 {# fun archive_format_name as ^ { `ArchivePtr' } -> `CString' #}
 {# fun archive_format as ^ { `ArchivePtr' } -> `ArchiveFormat' ArchiveFormat #}
@@ -282,9 +286,9 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_match_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_exclude_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
-{# fun archive_match_exclude_pattern_from_file_w as ^ { `ArchivePtr', castPtr `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_exclude_pattern_from_file_w as ^ { `ArchivePtr', `CWString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_include_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
-{# fun archive_match_include_pattern_from_file_w as ^ { `ArchivePtr', castPtr `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_include_pattern_from_file_w as ^ { `ArchivePtr', `CWString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_time_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_read_has_encrypted_entries as ^ { `ArchivePtr' } -> `ArchiveEncryption' encryptionResult #}
 {# fun archive_match_owner_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
@@ -298,13 +302,10 @@ archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
 archiveReadSetCloseCallback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 
-coercePeek :: (Storable a, Coercible a b) => Ptr a -> IO b
-coercePeek = fmap coerce . peek
-
 {# fun archive_read_set_callback_data as ^ { `ArchivePtr', castPtr `Ptr a' } -> `ArchiveResult' #}
 {# fun archive_read_open1 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_open_filename as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
-{# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , coerce `CSize', alloca- `CSize' coercePeek* } -> `ArchiveResult' #}
+{# fun archive_write_open_memory as ^ { `ArchivePtr', castPtr `Ptr a' , `CSize', alloca- `CSize' peek* } -> `ArchiveResult' #}
 {# fun archive_write_close as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_header as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
 {# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -312,9 +313,9 @@ coercePeek = fmap coerce . peek
 archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
 archiveWriteOpen = fmap errorRes .**** archive_write_open
 
-{# fun archive_match_include_gname_w as ^ { `ArchivePtr', castPtr `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_include_gname_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_gname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
-{# fun archive_match_include_uname_w as ^ { `ArchivePtr', castPtr `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_include_uname_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_uname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_match_include_gid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
 {# fun archive_match_include_uid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
@@ -330,7 +331,7 @@ archiveWriteOpen = fmap errorRes .**** archive_write_open
 {# fun archive_read_support_filter_lzop as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_none as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_program as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
-{# fun archive_read_support_filter_program_signature as ^ { `ArchivePtr', `CString', castPtr `Ptr a', fromIntegral `CSize' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_program_signature as ^ { `ArchivePtr', `CString', castPtr `Ptr a', coerce `CSize' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_rpm as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_uu as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_xz as ^ { `ArchivePtr' } -> `ArchiveResult' #}
