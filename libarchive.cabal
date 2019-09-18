@@ -34,9 +34,6 @@ library
         Codec.Archive.Foreign
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
-        Codec.Archive.Foreign.Raw
-        Codec.Archive.Foreign.Archive.Raw
-        Codec.Archive.Foreign.ArchiveEntry.Raw
 
     pkgconfig-depends: libarchive >=3.3.3
     hs-source-dirs:    src

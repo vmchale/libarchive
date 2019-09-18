@@ -124,31 +124,36 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryCopyStat
                                           , archiveEntryMacMetadata
                                           , archiveEntryCopyMacMetadata
-                                          , archive_entry_acl_next_w
-                                          , archive_entry_acl_to_text
-                                          , archive_entry_acl_to_text_w
-                                          , archive_entry_acl_from_text
-                                          , archive_entry_acl_from_text_w
-                                          , archive_entry_acl_types
-                                          , archive_entry_count
+                                          , archiveEntryAclClear
+                                          , archiveEntryAclNext
+                                          , archiveEntryAclNextW
+                                          , archiveEntryAclReset
+                                          , archiveEntryAclToText
+                                          , archiveEntryAclToTextW
+                                          , archiveEntryAclFromText
+                                          , archiveEntryAclFromTextW
+                                          , archiveEntryAclTypes
+                                          , archiveEntryAclCount
+                                          , archiveEntryAclAddEntry
+                                          , archiveEntryAclAddEntryW
                                           -- * Xattr functions
-                                          , archive_entry_xattr_clear
-                                          , archive_entry_xattr_add_entry
-                                          , archive_entry_xattr_count
-                                          , archive_entry_xattr_reset
+                                          , archiveEntryXattrClear
+                                          , archiveEntryXattrAddEntry
+                                          , archiveEntryXattrCount
+                                          , archiveEntryXattrReset
+                                          , archiveEntryXattrNext
                                           -- * For sparse archives
-                                          , archive_entry_sparse_clear
-                                          , archive_entry_sparse_add_entry
-                                          , archive_entry_sparse_count
-                                          , archive_entry_sparse_reset
+                                          , archiveEntrySparseClear
+                                          , archiveEntrySparseAddEntry
+                                          , archiveEntrySparseCount
+                                          , archiveEntrySparseReset
+                                          , archiveEntrySparseNext
                                           -- * Link resolver
-                                          , archive_entry_linkresolver_new
-                                          , archive_entry_linkresolver_set_strategy
-                                          , archive_entry_linkresolver_free
-                                          , archive_entry_linkify
-                                          , archive_entry_partial_links
-                                          -- * ACL
-                                          , archive_entry_acl_clear
+                                          , archiveEntryLinkresolverNew
+                                          , archiveEntryLinkresolverSetStrategy
+                                          , archiveEntryLinkresolverFree
+                                          , archiveEntryLinkify
+                                          , archiveEntryPartialLinks
                                           -- * File types
                                           , regular
                                           , symlink
@@ -210,7 +215,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
 {# import qualified Codec.Archive.Types.Foreign #}
 
 import Codec.Archive.Foreign.ArchiveEntry.Macros
-import Codec.Archive.Foreign.ArchiveEntry.Raw
 import Codec.Archive.Types
 import Data.Coerce (coerce)
 import Foreign.C.String
@@ -224,8 +228,10 @@ import System.PosixCompat.Types (CMode (..))
 
 {#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
+{#pointer *archive_entry_linkresolver as LinkResolverPtr -> LinkResolver #}
 {#pointer *stat as StatPtr -> Stat #}
 
+{#typedef size_t CSize#}
 {#typedef wchar_t CWchar#}
 {#typedef mode_t CMode#}
 {#typedef time_t CTime#}
@@ -339,6 +345,35 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_copy_stat as ^ { `ArchiveEntryPtr', `StatPtr' } -> `()' #}
 {# fun archive_entry_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr CSize' } -> `Ptr a' castPtr #}
 {# fun archive_entry_copy_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr a', coerce `CSize' } -> `()' #}
+
+{# fun archive_entry_acl_clear as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_acl_add_entry as ^ { `ArchiveEntryPtr', coerce `EntryACL', coerce `EntryACL', coerce `EntryACL', `CInt', `CString' } -> `CInt' #}
+{# fun archive_entry_acl_add_entry_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', coerce `EntryACL', coerce `EntryACL', `CInt', `CWString' } -> `CInt' #}
+{# fun archive_entry_acl_reset as ^ { `ArchiveEntryPtr', coerce `EntryACL' } -> `CInt' #}
+{# fun archive_entry_acl_next as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CString' } -> `CInt' #}
+{# fun archive_entry_acl_next_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CWString' } -> `CInt' #}
+{# fun archive_entry_acl_to_text_w as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CWString' #}
+{# fun archive_entry_acl_to_text as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CString' #}
+{# fun archive_entry_acl_from_text as ^ { `ArchiveEntryPtr', `CString', coerce `EntryACL' } -> `CInt' #}
+{# fun archive_entry_acl_from_text_w as ^ { `ArchiveEntryPtr', `CWString', coerce `EntryACL' } -> `CInt' #}
+{# fun archive_entry_acl_types as ^ { `ArchiveEntryPtr' } -> `EntryACL' coerce #}
+{# fun archive_entry_acl_count as ^ { `ArchiveEntryPtr', coerce `EntryACL' } -> `CInt' #}
+
+{# fun archive_entry_xattr_clear as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_xattr_add_entry as ^ { `ArchiveEntryPtr', `CString', castPtr `Ptr a', `CSize' } -> `()' #}
+{# fun archive_entry_xattr_count as ^ { `ArchiveEntryPtr' } -> `CInt' #}
+{# fun archive_entry_xattr_reset as ^ { `ArchiveEntryPtr' } -> `CInt' #}
+{# fun archive_entry_xattr_next as ^ { `ArchiveEntryPtr', id `Ptr CString', castPtr `Ptr (Ptr a)', id `Ptr CSize' } -> `CInt' #}
+{# fun archive_entry_sparse_clear as ^ { `ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_sparse_add_entry as ^ { `ArchiveEntryPtr', `LaInt64', `LaInt64' } -> `()' #}
+{# fun archive_entry_sparse_count as ^ { `ArchiveEntryPtr' } -> `CInt' #}
+{# fun archive_entry_sparse_reset as ^ { `ArchiveEntryPtr' } -> `CInt' #}
+{# fun archive_entry_sparse_next as ^ { `ArchiveEntryPtr', id `Ptr LaInt64', id `Ptr LaInt64' } -> `CInt' #}
+{# fun archive_entry_linkresolver_new as ^ {} -> `LinkResolverPtr' #}
+{# fun archive_entry_linkresolver_set_strategy as ^ { `LinkResolverPtr', coerce `ArchiveFormat' } -> `()' #}
+{# fun archive_entry_linkresolver_free as ^ { `LinkResolverPtr' } -> `()' #}
+{# fun archive_entry_linkify as ^ { `LinkResolverPtr', id `Ptr ArchiveEntryPtr', id `Ptr ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_partial_links as ^ { `LinkResolverPtr', id `Ptr CUInt' } -> `Ptr ArchiveEntry' id #}
 
 {# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_entry_birthtime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}

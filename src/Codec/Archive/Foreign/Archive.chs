@@ -204,16 +204,15 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
 {# import qualified Codec.Archive.Types.Foreign #}
 
 import Codec.Archive.Foreign.Archive.Macros
-import Codec.Archive.Foreign.Archive.Raw
 import Codec.Archive.Types
-import Control.Composition ((.*), (.**), (.****))
+import Control.Composition ((.*), (.**))
 import Data.Coerce (coerce)
 import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
-import Foreign.Storable (Storable (peek))
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Ptr
+import Foreign.Storable (Storable (peek))
 
 -- destructors: use "dynamic" instead of "wrapper" (but we don't want that)
 -- callbacks
@@ -296,11 +295,8 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_open_filename as ^ { `ArchivePtr', `CString', fromIntegral `CSize' } -> `ArchiveResult' #}
 {# fun archive_read_open_memory as ^ { `ArchivePtr', castPtr `Ptr a', fromIntegral `CSize' } -> `ArchiveResult' #}
 
-archiveReadSetReadCallback :: Ptr Archive -> FunPtr (ArchiveReadCallback a b) -> IO ArchiveResult
-archiveReadSetReadCallback = fmap errorRes .* archive_read_set_read_callback
-
-archiveReadSetCloseCallback :: Ptr Archive -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
-archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
+{# fun archive_read_set_read_callback as ^ { `ArchivePtr', coerce `FunPtr (ArchiveReadCallback a b)' } -> `ArchiveResult' #}
+{# fun archive_read_set_close_callback as ^ { `ArchivePtr', coerce `FunPtr (ArchiveCloseCallbackRaw a)' } -> `ArchiveResult' #}
 
 {# fun archive_read_set_callback_data as ^ { `ArchivePtr', castPtr `Ptr a' } -> `ArchiveResult' #}
 {# fun archive_read_open1 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -310,8 +306,12 @@ archiveReadSetCloseCallback = fmap errorRes .* archive_read_set_close_callback
 {# fun archive_write_header as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
 {# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
-archiveWriteOpen :: Ptr Archive -> Ptr a -> FunPtr (ArchiveOpenCallbackRaw a) -> FunPtr (ArchiveWriteCallback a b) -> FunPtr (ArchiveCloseCallbackRaw a) -> IO ArchiveResult
-archiveWriteOpen = fmap errorRes .**** archive_write_open
+{# fun archive_write_open as ^ { `ArchivePtr'
+                               , castPtr `Ptr a'
+                               , coerce `FunPtr (ArchiveOpenCallbackRaw a)'
+                               , coerce `FunPtr (ArchiveWriteCallback a b)'
+                               , coerce `FunPtr (ArchiveCloseCallbackRaw a)'
+                               } -> `ArchiveResult' #}
 
 {# fun archive_match_include_gname_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_gname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
