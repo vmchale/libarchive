@@ -210,11 +210,16 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           -- * Lower-level API types
                                           , FileType
                                           , EntryACL
+                                          -- * Type synonyms
+                                          , ArchiveEntryPtr
+                                          , ArchivePtr
                                           ) where
 
-{# import qualified Codec.Archive.Types.Foreign #}
+{# import Codec.Archive.Types.Foreign #}
+{# import qualified Codec.Archive.Foreign.Archive #}
 
 import Codec.Archive.Foreign.ArchiveEntry.Macros
+import Codec.Archive.Foreign.Archive
 import Codec.Archive.Types
 import Data.Coerce (coerce)
 import Foreign.C.String
@@ -226,8 +231,6 @@ import System.PosixCompat.Types (CMode (..))
 
 #include <archive_entry.h>
 
-{#pointer *archive as ArchivePtr -> Archive #}
-{#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 {#pointer *archive_entry_linkresolver as LinkResolverPtr -> LinkResolver #}
 {#pointer *stat as StatPtr -> Stat #}
 

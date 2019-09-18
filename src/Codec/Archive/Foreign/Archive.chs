@@ -199,6 +199,9 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , mkCleanup
                                      , mkMatch
                                      , mkFilter
+                                     -- * Type synonyms
+                                     , ArchiveEntryPtr
+                                     , ArchivePtr
                                      ) where
 
 {# import qualified Codec.Archive.Types.Foreign #}
