@@ -26,17 +26,17 @@ import           System.IO.Unsafe          (unsafePerformIO)
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
 
--- | @since 1.1.0.0
+-- | @since 2.0.0.0
 packFiles :: Traversable t
           => t FilePath -- ^ Filepaths relative to the current directory
           -> IO BSL.ByteString
 packFiles = packer entriesToBSL
 
--- | @since 1.1.0.0
+-- | @since 2.0.0.0
 packFilesZip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFilesZip = packer entriesToBSLzip
 
--- | @since 1.1.0.0
+-- | @since 2.0.0.0
 packFiles7zip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFiles7zip = packer entriesToBSL7zip
 

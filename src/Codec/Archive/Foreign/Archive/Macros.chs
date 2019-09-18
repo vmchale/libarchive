@@ -259,11 +259,11 @@ archiveReadDiskNoTraverseMounts = ReadDiskFlags {# const ARCHIVE_READDISK_NO_TRA
 archiveReadDiskNoXattr :: ReadDiskFlags
 archiveReadDiskNoXattr = ReadDiskFlags {# const ARCHIVE_READDISK_NO_XATTR #}
 
--- | @since 1.1.0.0
+-- | @since 2.0.0.0
 archiveReadDiskNoAcl :: ReadDiskFlags
 archiveReadDiskNoAcl = ReadDiskFlags {# const ARCHIVE_READDISK_NO_ACL #}
 
--- | @since 1.1.0.0
+-- | @since 2.0.0.0
 archiveReadDiskNoFFlags :: ReadDiskFlags
 archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
 
