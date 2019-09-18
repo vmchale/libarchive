@@ -213,6 +213,8 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
                                           , ArchivePtr
+                                          , LinkResolverPtr
+                                          , StatPtr
                                           ) where
 
 {# import Codec.Archive.Types.Foreign #}

@@ -32,6 +32,10 @@ module Codec.Archive
     , Permissions
     , ModTime
     , Id
+    -- * libarchive types
+    , LaInt64
+    , LaSSize
+    , Dev
     -- * Archive monad
     , ArchiveM
     , runArchiveM

@@ -180,6 +180,9 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , ArchiveSkipCallback
                                      , ArchiveSeekCallback
                                      , ArchiveWriteCallback
+                                     , ArchiveOpenCallback
+                                     , ArchiveCloseCallback
+                                     , ArchiveSwitchCallback
                                      , ArchiveOpenCallbackRaw
                                      , ArchiveCloseCallbackRaw
                                      , ArchiveSwitchCallbackRaw
