@@ -1,11 +1,9 @@
--- | Import this module to get access to the entire C API.
+-- | Import this module to get access to the C API.
 --
 -- Functions that
--- are deprecated in the C API are not exposed at all.
+-- are deprecated in the C API are not exposed.
 module Codec.Archive.Foreign ( module Codec.Archive.Foreign.ArchiveEntry
                              , module Codec.Archive.Foreign.Archive
-                             -- * Helper functions
-                             , resultToErr
                              ) where
 
 import           Codec.Archive.Foreign.Archive
