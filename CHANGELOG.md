@@ -1,10 +1,10 @@
 # libarchive
 
-## 1.1.0.0
+## 2.0.0.0
 
   * Fix typo in documentation
   * Improve docs
-  * `archive_read_open_memory` now accepts an argument of type `Ptr a` rather
+  * `archiveReadOpenMemory` now accepts an argument of type `Ptr a` rather
     than `Ptr CChar`
   * `unpackToDirLazy`, `unpackArchive`, and `archiveUnpackToDir` now occur in the `ArchiveM` monad
   * `readArchiveBSL` and `readArchiveBS` now return `Either ArchiveResult [Entry]` rather than
@@ -15,8 +15,7 @@
     `ArchiveM` monad
   * Make various parts of an `Entry` optional
   * Add `packToFile` functions and `packFiles` functions
-  * Remove `ArchiveError` newtype, replace it with `CInt` in raw bindings and
-    add `errorRes` to convert a `CInt` to the Haskell `ArchiveResult` sum type.
+  * Remove `ArchiveError` newtype, replace it with `ArchiveResult`
   * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
     rather than `Codec.Archive.Foreign`
   * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
@@ -24,6 +23,8 @@
     `archiveEntryACLStyleSeparatorComma`, `archiveEntryACLStyleCompact`
   * Add `archiveReadDiskNoAcl`, `archiveReadDiskNoFFlags`
   * Depend on `libarchive` >= 3.3.3
+  * Remove `Codec.Archive.Foreign` modules. All exposed modules are now imported
+    via c2hs.
 
 ## 1.0.5.1
 
