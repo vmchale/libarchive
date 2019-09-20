@@ -68,8 +68,8 @@ data Stat
 data LinkResolver
 
 type ArchiveReadCallback a b = Ptr Archive -> Ptr a -> Ptr (Ptr b) -> IO LaSSize
-type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> Int64 -> IO LaInt64
-type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> Int64 -> CInt -> IO LaInt64
+type ArchiveSkipCallback a = Ptr Archive -> Ptr a -> LaInt64 -> IO LaInt64
+type ArchiveSeekCallback a = Ptr Archive -> Ptr a -> LaInt64 -> CInt -> IO LaInt64
 type ArchiveWriteCallback a b = Ptr Archive -> Ptr a -> Ptr b -> CSize -> IO LaSSize
 type ArchiveOpenCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
