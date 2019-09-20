@@ -29,7 +29,6 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    -- * libarchive types
                                    , LaInt64
                                    , LaSSize
-                                   , Dev
                                    ) where
 
 import           Control.DeepSeq    (NFData)
@@ -46,7 +45,6 @@ import           System.Posix.Types (CMode)
 
 type LaInt64 = {# type la_int64_t #}
 type LaSSize = {# type la_ssize_t #}
-type Dev = {# type dev_t #}
 
 {# enum define ArchiveResult { ARCHIVE_OK as ArchiveOk
                              , ARCHIVE_EOF as ArchiveEOF

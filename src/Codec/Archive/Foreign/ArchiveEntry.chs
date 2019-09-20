@@ -226,7 +226,7 @@ import Data.Coerce (coerce)
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr (Ptr, castPtr)
-import System.PosixCompat.Types (CMode (..))
+import System.PosixCompat.Types (CMode (..), CDev (..))
 
 -- TODO: higher level archiveEntryXattrList?
 
@@ -239,7 +239,7 @@ import System.PosixCompat.Types (CMode (..))
 {#typedef wchar_t CWchar#}
 {#typedef mode_t CMode#}
 {#typedef time_t CTime#}
-{#typedef dev_t Dev#}
+{#typedef dev_t CDev#}
 {#typedef la_int64_t LaInt64#}
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
@@ -255,9 +255,9 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_birthtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 {# fun archive_entry_ctime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_ctime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_dev as ^ { `ArchiveEntryPtr' } -> `Dev' #}
-{# fun archive_entry_devminor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
-{# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_dev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
+{# fun archive_entry_devminor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
+{# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_fflags_text as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' coerce #}
@@ -278,9 +278,9 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_pathname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
-{# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `Dev' #}
-{# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
-{# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `Dev' #}
+{# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
+{# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
+{# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_sourcepath as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_sourcepath_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_size as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
@@ -298,9 +298,9 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_unset_birthtime as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_set_ctime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_ctime as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_set_dev as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
-{# fun archive_entry_set_devmajor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
-{# fun archive_entry_set_devminor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_dev as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
+{# fun archive_entry_set_devmajor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
+{# fun archive_entry_set_devminor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
 {# fun archive_entry_set_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_copy_fflags_text as ^ { `ArchiveEntryPtr', `CString' } -> `CString' #}
 {# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', `CWString' } -> `CWString' #}
@@ -329,9 +329,9 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_copy_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
-{# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
-{# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
-{# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', `Dev' } -> `()' #}
+{# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
+{# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
+{# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
 {# fun archive_entry_set_size as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_unset_size as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_copy_sourcepath as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
