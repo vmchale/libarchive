@@ -348,7 +348,7 @@ import System.PosixCompat.Types (CMode (..))
 {# fun archive_entry_stat as ^ { `ArchiveEntryPtr' } -> `StatPtr' #}
 {# fun archive_entry_copy_stat as ^ { `ArchiveEntryPtr', `StatPtr' } -> `()' #}
 {# fun archive_entry_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr CSize' } -> `Ptr a' castPtr #}
-{# fun archive_entry_copy_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr a', coerce `CSize' } -> `()' #}
+{# fun archive_entry_copy_mac_metadata as ^ { `ArchiveEntryPtr', castPtr `Ptr a', `CSize' } -> `()' #}
 
 {# fun archive_entry_acl_clear as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_acl_add_entry as ^ { `ArchiveEntryPtr', coerce `EntryACL', coerce `EntryACL', coerce `EntryACL', `CInt', `CString' } -> `CInt' #}
