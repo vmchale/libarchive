@@ -212,7 +212,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , EntryACL
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
-                                          , ArchivePtr
                                           , LinkResolverPtr
                                           , StatPtr
                                           ) where
