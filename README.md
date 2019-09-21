@@ -11,3 +11,13 @@ formats.
 
 It has a high-level Haskell API for creating and unpacking archives in addition
 to the C API. Like the `tar` package, it can stream from lazy `ByteString`s.
+
+## Hacking
+
+To run the test suite, first run
+
+```
+./bash/setup
+```
+
+so that you have appropriate test data downloaded.
