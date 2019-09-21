@@ -26,7 +26,9 @@ import           System.IO.Unsafe          (unsafePerformIO)
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
 
--- | @since 2.0.0.0
+-- | Pack files into a tar archive
+--
+-- @since 2.0.0.0
 packFiles :: Traversable t
           => t FilePath -- ^ Filepaths relative to the current directory
           -> IO BSL.ByteString
@@ -63,7 +65,6 @@ entriesToBSLGeneral modifier hsEntries' = do
     bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
-    -- FIXME: cc should be freed... fixIO seems clever?
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     nothingPtr <- liftIO $ mallocBytes 0
     ignore $ modifier a
