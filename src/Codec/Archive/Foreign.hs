@@ -7,5 +7,4 @@ module Codec.Archive.Foreign ( module Codec.Archive.Foreign.ArchiveEntry
                              ) where
 
 import           Codec.Archive.Foreign.Archive
-import           Codec.Archive.Foreign.Archive.Macros
 import           Codec.Archive.Foreign.ArchiveEntry
