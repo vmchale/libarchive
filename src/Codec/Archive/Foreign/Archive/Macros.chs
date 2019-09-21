@@ -26,35 +26,6 @@ module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , archiveExtractHfsCompressionForced
                                             , archiveExtractSecureNoAbsolutePaths
                                             , archiveExtractClearNoChangeFFlags
-                                            , archiveFilterNone
-                                            , archiveFilterGzip
-                                            , archiveFilterBzip2
-                                            , archiveFilterCompress
-                                            , archiveFilterProgram
-                                            , archiveFilterLzma
-                                            , archiveFilterXz
-                                            , archiveFilterUu
-                                            , archiveFilterRpm
-                                            , archiveFilterLzip
-                                            , archiveFilterLrzip
-                                            , archiveFilterLzop
-                                            , archiveFilterGrzip
-                                            , archiveFilterLz4
-                                            , archiveFormatCpio
-                                            , archiveFormatShar
-                                            , archiveFormatTar
-                                            , archiveFormatIso9660
-                                            , archiveFormatZip
-                                            , archiveFormatEmpty
-                                            , archiveFormatAr
-                                            , archiveFormatMtree
-                                            , archiveFormatRaw
-                                            , archiveFormatXar
-                                            , archiveFormatLha
-                                            , archiveFormatCab
-                                            , archiveFormatRar
-                                            , archiveFormat7zip
-                                            , archiveFormatWarc
                                             , archiveReadDiskRestoreATime
                                             , archiveReadDiskHonorNoDump
                                             , archiveReadDiskMacCopyFile
@@ -81,49 +52,6 @@ archiveVersionOnlyString = {# const ARCHIVE_VERSION_ONLY_STRING #}
 
 archiveVersionStringMacro :: String
 archiveVersionStringMacro = {# const ARCHIVE_VERSION_STRING #}
-
--- Archive filter
-archiveFilterNone :: ArchiveFilter
-archiveFilterNone = ArchiveFilter {# const ARCHIVE_FILTER_NONE #}
-
-archiveFilterGzip :: ArchiveFilter
-archiveFilterGzip = ArchiveFilter {# const ARCHIVE_FILTER_GZIP #}
-
-archiveFilterBzip2 :: ArchiveFilter
-archiveFilterBzip2 = ArchiveFilter {# const ARCHIVE_FILTER_BZIP2 #}
-
-archiveFilterCompress :: ArchiveFilter
-archiveFilterCompress = ArchiveFilter {# const ARCHIVE_FILTER_COMPRESS #}
-
-archiveFilterProgram :: ArchiveFilter
-archiveFilterProgram = ArchiveFilter {# const ARCHIVE_FILTER_PROGRAM #}
-
-archiveFilterLzma :: ArchiveFilter
-archiveFilterLzma = ArchiveFilter {# const ARCHIVE_FILTER_LZMA #}
-
-archiveFilterXz :: ArchiveFilter
-archiveFilterXz = ArchiveFilter {# const ARCHIVE_FILTER_XZ #}
-
-archiveFilterUu :: ArchiveFilter
-archiveFilterUu = ArchiveFilter {# const ARCHIVE_FILTER_UU #}
-
-archiveFilterRpm :: ArchiveFilter
-archiveFilterRpm = ArchiveFilter {# const ARCHIVE_FILTER_RPM #}
-
-archiveFilterLzip :: ArchiveFilter
-archiveFilterLzip = ArchiveFilter {# const ARCHIVE_FILTER_LZIP #}
-
-archiveFilterLrzip :: ArchiveFilter
-archiveFilterLrzip = ArchiveFilter {# const ARCHIVE_FILTER_LRZIP #}
-
-archiveFilterLzop :: ArchiveFilter
-archiveFilterLzop = ArchiveFilter {# const ARCHIVE_FILTER_LZOP #}
-
-archiveFilterGrzip :: ArchiveFilter
-archiveFilterGrzip = ArchiveFilter {# const ARCHIVE_FILTER_GRZIP #}
-
-archiveFilterLz4 :: ArchiveFilter
-archiveFilterLz4 = ArchiveFilter {# const ARCHIVE_FILTER_LZ4 #}
 
 -- Extraction flags
 archiveExtractOwner :: Flags
@@ -179,51 +107,6 @@ archiveExtractSecureNoAbsolutePaths = Flags {# const ARCHIVE_EXTRACT_SECURE_NOAB
 
 archiveExtractClearNoChangeFFlags :: Flags
 archiveExtractClearNoChangeFFlags = Flags {# const ARCHIVE_EXTRACT_CLEAR_NOCHANGE_FFLAGS #}
-
-archiveFormatCpio :: ArchiveFormat
-archiveFormatCpio = ArchiveFormat {# const ARCHIVE_FORMAT_CPIO #}
-
-archiveFormatShar :: ArchiveFormat
-archiveFormatShar = ArchiveFormat {# const ARCHIVE_FORMAT_SHAR #}
-
-archiveFormatTar :: ArchiveFormat
-archiveFormatTar = ArchiveFormat {# const ARCHIVE_FORMAT_TAR #}
-
-archiveFormatIso9660 :: ArchiveFormat
-archiveFormatIso9660 = ArchiveFormat {# const ARCHIVE_FORMAT_ISO9660 #}
-
-archiveFormatZip :: ArchiveFormat
-archiveFormatZip = ArchiveFormat {# const ARCHIVE_FORMAT_ZIP #}
-
-archiveFormatEmpty :: ArchiveFormat
-archiveFormatEmpty = ArchiveFormat {# const ARCHIVE_FORMAT_EMPTY #}
-
-archiveFormatAr :: ArchiveFormat
-archiveFormatAr = ArchiveFormat {# const ARCHIVE_FORMAT_AR #}
-
-archiveFormatMtree :: ArchiveFormat
-archiveFormatMtree = ArchiveFormat {# const ARCHIVE_FORMAT_MTREE #}
-
-archiveFormatRaw :: ArchiveFormat
-archiveFormatRaw = ArchiveFormat {# const ARCHIVE_FORMAT_RAW #}
-
-archiveFormatXar :: ArchiveFormat
-archiveFormatXar = ArchiveFormat {# const ARCHIVE_FORMAT_XAR #}
-
-archiveFormatLha :: ArchiveFormat
-archiveFormatLha = ArchiveFormat {# const ARCHIVE_FORMAT_LHA #}
-
-archiveFormatCab :: ArchiveFormat
-archiveFormatCab = ArchiveFormat {# const ARCHIVE_FORMAT_CAB #}
-
-archiveFormatRar :: ArchiveFormat
-archiveFormatRar = ArchiveFormat {# const ARCHIVE_FORMAT_RAR #}
-
-archiveFormat7zip :: ArchiveFormat
-archiveFormat7zip = ArchiveFormat {# const ARCHIVE_FORMAT_7ZIP #}
-
-archiveFormatWarc :: ArchiveFormat
-archiveFormatWarc = ArchiveFormat {# const ARCHIVE_FORMAT_WARC #}
 
 encryptionResult :: CInt -> ArchiveEncryption
 encryptionResult 0                                                        = NoEncryption

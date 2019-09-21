@@ -235,37 +235,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveExtractHfsCompressionForced
                                      , archiveExtractSecureNoAbsolutePaths
                                      , archiveExtractClearNoChangeFFlags
-                                     -- * Filters
-                                     , archiveFilterNone
-                                     , archiveFilterGzip
-                                     , archiveFilterBzip2
-                                     , archiveFilterCompress
-                                     , archiveFilterProgram
-                                     , archiveFilterLzma
-                                     , archiveFilterXz
-                                     , archiveFilterUu
-                                     , archiveFilterRpm
-                                     , archiveFilterLzip
-                                     , archiveFilterLrzip
-                                     , archiveFilterLzop
-                                     , archiveFilterGrzip
-                                     , archiveFilterLz4
-                                     -- * Formats
-                                     , archiveFormatCpio
-                                     , archiveFormatShar
-                                     , archiveFormatTar
-                                     , archiveFormatIso9660
-                                     , archiveFormatZip
-                                     , archiveFormatEmpty
-                                     , archiveFormatAr
-                                     , archiveFormatMtree
-                                     , archiveFormatRaw
-                                     , archiveFormatXar
-                                     , archiveFormatLha
-                                     , archiveFormatCab
-                                     , archiveFormatRar
-                                     , archiveFormat7zip
-                                     , archiveFormatWarc
                                      -- * Read disk flags
                                      , archiveReadDiskRestoreATime
                                      , archiveReadDiskHonorNoDump
@@ -307,10 +276,11 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , Archive
                                      -- * Haskell types
                                      , ArchiveEncryption (..)
+                                     -- * Enum types
+                                     , ArchiveFilter (..)
+                                     , ArchiveFormat (..)
                                      -- * Lower-level API types
                                      , Flags
-                                     , ArchiveFilter
-                                     , ArchiveFormat
                                      , ArchiveCapabilities
                                      , ReadDiskFlags
                                      , TimeFlag
@@ -428,7 +398,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 
 {# fun archive_error_string as ^ { `ArchivePtr' } -> `CString' #}
 {# fun archive_format_name as ^ { `ArchivePtr' } -> `CString' #}
-{# fun archive_format as ^ { `ArchivePtr' } -> `ArchiveFormat' ArchiveFormat #}
+{# fun archive_format as ^ { `ArchivePtr' } -> `ArchiveFormat' #}
 {# fun archive_clear_error as ^ { `ArchivePtr' } -> `()' #}
 {# fun archive_set_error as ^ { `ArchivePtr', `CInt', `CString' } -> `()' #}
 {# fun archive_copy_error as ^ { `ArchivePtr', `ArchivePtr' } -> `()' #}
@@ -532,7 +502,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_set_bytes_in_last_block as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
 {# fun archive_write_get_bytes_in_last_block as ^ { `ArchivePtr' } -> `CInt' #}
 {# fun archive_write_set_skip_file as ^ { `ArchivePtr', `LaInt64', `LaInt64' } -> `ArchiveResult' #}
-{# fun archive_write_add_filter as ^ { `ArchivePtr', coerce `ArchiveFilter' } -> `ArchiveResult' #}
+{# fun archive_write_add_filter as ^ { `ArchivePtr', `ArchiveFilter' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_by_name as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_b64encode as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -549,7 +519,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_add_filter_xz as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_zstd as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
-{# fun archive_write_set_format as ^ { `ArchivePtr', coerce `ArchiveFormat' } -> `ArchiveResult' #}
+{# fun archive_write_set_format as ^ { `ArchivePtr', `ArchiveFormat' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_by_name as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_7zip as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_ar_bsd as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -703,7 +673,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_support_format_zip_streamable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_zip_seekable as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
-{# fun archive_read_set_format as ^ { `ArchivePtr', coerce `ArchiveFormat' } -> `ArchiveResult' #}
+{# fun archive_read_set_format as ^ { `ArchivePtr', `ArchiveFormat' } -> `ArchiveResult' #}
 {# fun archive_read_append_filter as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
 {# fun archive_read_append_filter_program as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_read_append_filter_program_signature as ^ { `ArchivePtr', `CString', castPtr `Ptr a', `CSize' } -> `ArchiveResult' #}
