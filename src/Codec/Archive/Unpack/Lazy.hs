@@ -14,9 +14,10 @@ import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString.Lazy   as BSL
 import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
-import           Data.IORef             (modifyIORef, newIORef, readIORef)
+import           Data.IORef             (modifyIORef, newIORef, readIORef,
+                                         writeIORef)
 import           Foreign.C.Types
-import           Foreign.Marshal.Alloc  (free, mallocBytes)
+import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
 import           Foreign.Ptr
 import           Foreign.Storable       (poke)
 import           System.IO.Unsafe       (unsafePerformIO)
@@ -61,9 +62,10 @@ bslToArchive :: BSL.ByteString
 bslToArchive bs = do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
-    bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks; should really do something more rigorous
+    bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
     bsChunksRef <- liftIO $ newIORef bsChunks
-    rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufPtr)
+    bufSzRef <- liftIO $ newIORef (32 * 1024)
+    rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtr)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     nothingPtr <- liftIO $ mallocBytes 0
     let seqErr = traverse_ handle
@@ -74,13 +76,17 @@ bslToArchive bs = do
            ]
     pure (a, freeHaskellFunPtr cc *> free bufPtr)
 
-    where readBSL bsRef bufPtr _ _ dataPtr = do
+    where readBSL bsRef bufSzRef bufPtr _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of
                     [] -> pure 0
                     (x:_) -> do
                         modifyIORef bsRef tail
                         useAsCStringLen x $ \(charPtr, sz) -> do
-                            hmemcpy bufPtr charPtr (fromIntegral sz)
-                            poke dataPtr bufPtr $> fromIntegral sz
+                            bufSz <- readIORef bufSzRef
+                            bufPtr' <- if sz > bufSz
+                                then writeIORef bufSzRef sz *> reallocBytes bufPtr sz
+                                else pure bufPtr
+                            hmemcpy bufPtr' charPtr (fromIntegral sz)
+                            poke dataPtr bufPtr' $> fromIntegral sz
           bsChunks = BSL.toChunks bs
