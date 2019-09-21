@@ -1,212 +1,4 @@
-
---
--- Functions in this module are stateful and hence take place in the 'IO'
--- monad.
-module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
-                                            archiveEntryClear
-                                          , archiveEntryClone
-                                          , archiveEntryNew
-                                          , archiveEntryFree
-                                          , archiveEntryNew2
-                                          , archiveEntryAtime
-                                          , archiveEntryAtimeNsec
-                                          , archiveEntryAtimeIsSet
-                                          , archiveEntryBirthtime
-                                          , archiveEntryBirthtimeNsec
-                                          , archiveEntryBirthtimeIsSet
-                                          , archiveEntryCtime
-                                          , archiveEntryCtimeNsec
-                                          , archiveEntryCtimeIsSet
-                                          , archiveEntryDev
-                                          , archiveEntryDevIsSet
-                                          , archiveEntryDevminor
-                                          , archiveEntryDevmajor
-                                          , archiveEntryFflags
-                                          , archiveEntryFflagsText
-                                          , archiveEntryFiletype
-                                          , archiveEntryGid
-                                          , archiveEntryGname
-                                          , archiveEntryGnameUtf8
-                                          , archiveEntryGnameW
-                                          , archiveEntryHardlink
-                                          , archiveEntryHardlinkUtf8
-                                          , archiveEntryHardlinkW
-                                          , archiveEntryIno
-                                          , archiveEntryIno64
-                                          , archiveEntryInoIsSet
-                                          , archiveEntryMode
-                                          , archiveEntryMtime
-                                          , archiveEntryMtimeNsec
-                                          , archiveEntryMtimeIsSet
-                                          , archiveEntryNlink
-                                          , archiveEntryPathname
-                                          , archiveEntryPathnameUtf8
-                                          , archiveEntryPathnameW
-                                          , archiveEntryPerm
-                                          , archiveEntryRdev
-                                          , archiveEntryRdevmajor
-                                          , archiveEntryRdevminor
-                                          , archiveEntrySourcepath
-                                          , archiveEntrySourcepathW
-                                          , archiveEntrySize
-                                          , archiveEntrySizeIsSet
-                                          , archiveEntryStrmode
-                                          , archiveEntrySymlink
-                                          , archiveEntrySymlinkW
-                                          , archiveEntrySymlinkUtf8
-                                          , archiveEntryUid
-                                          , archiveEntryUname
-                                          , archiveEntryUnameUtf8
-                                          , archiveEntryUnameW
-                                          , archiveEntryIsDataEncrypted
-                                          , archiveEntryIsMetadataEncrypted
-                                          , archiveEntryIsEncrypted
-                                          , archiveEntrySetAtime
-                                          , archiveEntryUnsetAtime
-                                          , archiveEntrySetBirthtime
-                                          , archiveEntryUnsetBirthtime
-                                          , archiveEntrySetCtime
-                                          , archiveEntryUnsetCtime
-                                          , archiveEntrySetDev
-                                          , archiveEntrySetDevminor
-                                          , archiveEntrySetDevmajor
-                                          , archiveEntrySetFflags
-                                          , archiveEntryCopyFflagsText
-                                          , archiveEntryCopyFflagsTextW
-                                          , archiveEntrySetFiletype
-                                          , archiveEntrySetGid
-                                          , archiveEntrySetGname
-                                          , archiveEntrySetGnameUtf8
-                                          , archiveEntryCopyGname
-                                          , archiveEntryCopyGnameW
-                                          , archiveEntryUpdateGnameUtf8
-                                          , archiveEntrySetHardlink
-                                          , archiveEntrySetHardlinkUtf8
-                                          , archiveEntryCopyHardlink
-                                          , archiveEntryCopyHardlinkW
-                                          , archiveEntryUpdateHardlinkUtf8
-                                          , archiveEntrySetIno
-                                          , archiveEntrySetIno64
-                                          , archiveEntrySetLink
-                                          , archiveEntrySetLinkUtf8
-                                          , archiveEntryCopyLink
-                                          , archiveEntryCopyLinkW
-                                          , archiveEntryUpdateLinkUtf8
-                                          , archiveEntrySetMode
-                                          , archiveEntrySetMtime
-                                          , archiveEntryUnsetMtime
-                                          , archiveEntrySetNlink
-                                          , archiveEntrySetPathname
-                                          , archiveEntrySetPathnameUtf8
-                                          , archiveEntryCopyPathname
-                                          , archiveEntryCopyPathnameW
-                                          , archiveEntryUpdatePathnameUtf8
-                                          , archiveEntrySetPerm
-                                          , archiveEntrySetRdev
-                                          , archiveEntrySetRdevmajor
-                                          , archiveEntrySetRdevminor
-                                          , archiveEntrySetSize
-                                          , archiveEntryUnsetSize
-                                          , archiveEntryCopySourcepath
-                                          , archiveEntryCopySourcepathW
-                                          , archiveEntrySetSymlink
-                                          , archiveEntrySetSymlinkType
-                                          , archiveEntrySetSymlinkUtf8
-                                          , archiveEntryCopySymlink
-                                          , archiveEntryCopySymlinkW
-                                          , archiveEntryUpdateSymlinkUtf8
-                                          , archiveEntrySetUid
-                                          , archiveEntrySetUname
-                                          , archiveEntrySetUnameUtf8
-                                          , archiveEntryCopyUname
-                                          , archiveEntryCopyUnameW
-                                          , archiveEntryUpdateUnameUtf8
-                                          , archiveEntryStat
-                                          , archiveEntryCopyStat
-                                          , archiveEntryMacMetadata
-                                          , archiveEntryCopyMacMetadata
-                                          , archiveEntryAclClear
-                                          , archiveEntryAclNext
-                                          , archiveEntryAclNextW
-                                          , archiveEntryAclReset
-                                          , archiveEntryAclToText
-                                          , archiveEntryAclToTextW
-                                          , archiveEntryAclFromText
-                                          , archiveEntryAclFromTextW
-                                          , archiveEntryAclTypes
-                                          , archiveEntryAclCount
-                                          , archiveEntryAclAddEntry
-                                          , archiveEntryAclAddEntryW
-                                          -- * Xattr functions
-                                          , archiveEntryXattrClear
-                                          , archiveEntryXattrAddEntry
-                                          , archiveEntryXattrCount
-                                          , archiveEntryXattrReset
-                                          , archiveEntryXattrNext
-                                          -- * For sparse archives
-                                          , archiveEntrySparseClear
-                                          , archiveEntrySparseAddEntry
-                                          , archiveEntrySparseCount
-                                          , archiveEntrySparseReset
-                                          , archiveEntrySparseNext
-                                          -- * Link resolver
-                                          , archiveEntryLinkresolverNew
-                                          , archiveEntryLinkresolverSetStrategy
-                                          , archiveEntryLinkresolverFree
-                                          , archiveEntryLinkify
-                                          , archiveEntryPartialLinks
-                                          -- * ACL macros
-                                          , archiveEntryACLExecute
-                                          , archiveEntryACLWrite
-                                          , archiveEntryACLRead
-                                          , archiveEntryACLReadData
-                                          , archiveEntryACLListData
-                                          , archiveEntryACLWriteData
-                                          , archiveEntryACLAddFile
-                                          , archiveEntryACLAppendData
-                                          , archiveEntryACLAddSubdirectory
-                                          , archiveEntryACLReadNamedAttrs
-                                          , archiveEntryACLWriteNamedAttrs
-                                          , archiveEntryACLDeleteChild
-                                          , archiveEntryACLReadAttributes
-                                          , archiveEntryACLWriteAttributes
-                                          , archiveEntryACLDelete
-                                          , archiveEntryACLReadACL
-                                          , archiveEntryACLWriteACL
-                                          , archiveEntryACLWriteOwner
-                                          , archiveEntryACLSynchronize
-                                          , archiveEntryACLEntryFileInherit
-                                          , archiveEntryACLEntryDirectoryInherit
-                                          , archiveEntryACLEntryNoPropagateInherit
-                                          , archiveEntryACLEntryInheritOnly
-                                          , archiveEntryACLEntrySuccessfulAccess
-                                          , archiveEntryACLEntryFailedAccess
-                                          , archiveEntryACLTypeAccess
-                                          , archiveEntryACLTypeDefault
-                                          , archiveEntryACLTypeAllow
-                                          , archiveEntryACLTypeDeny
-                                          , archiveEntryACLTypeAudit
-                                          , archiveEntryACLTypeAlarm
-                                          , archiveEntryACLUser
-                                          , archiveEntryACLUserObj
-                                          , archiveEntryACLGroup
-                                          , archiveEntryACLGroupObj
-                                          , archiveEntryACLMask
-                                          , archiveEntryACLOther
-                                          , archiveEntryACLEveryone
-                                          , archiveEntryACLStyleExtraID
-                                          , archiveEntryACLStyleMarkDefault
-                                          -- * Abstract types
-                                          , ArchiveEntry
-                                          , Stat
-                                          , LinkResolver
-                                          -- * Lower-level API types
-                                          , FileType (..)
-                                          , EntryACL
-                                          -- * Type synonyms
-                                          , ArchiveEntryPtr
-                                          , LinkResolverPtr
-                                          ) where
+module Codec.Archive.Foreign.ArchiveEntry where 
 
 {# import qualified Codec.Archive.Foreign.Archive #}
 
@@ -214,13 +6,10 @@ import Codec.Archive.Foreign.ArchiveEntry.Macros
 import Codec.Archive.Foreign.Archive
 import Codec.Archive.Types
 import Data.Coerce (coerce)
-import Data.Functor ((<&>))
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr (Ptr, castPtr)
 import System.PosixCompat.Types (CMode (..), CDev (..))
-
--- TODO: higher level archiveEntryXattrList?
 
 #include <archive_entry.h>
 
@@ -237,45 +26,26 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 
 ft :: CMode -> FileType
 ft 0 = error "hier"
-ft i = (fromIntegral <&> toEnum) i
+ft i = toEnum (fromIntegral i)
 
-{# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
-{# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
+ft' :: CMode -> FileType
+ft' i = toEnum (fromIntegral i)
+
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
 {# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_atime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_birthtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
-{# fun archive_entry_birthtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_ctime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
-{# fun archive_entry_ctime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
-{# fun archive_entry_dev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
-{# fun archive_entry_devminor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
-{# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
-{# fun archive_entry_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
-{# fun archive_entry_fflags_text as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' ft #}
 {# fun archive_entry_gid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_gname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_gname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_gname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
-{# fun archive_entry_hardlink as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_hardlink_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_hardlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
-{# fun archive_entry_ino as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
-{# fun archive_entry_ino64 as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_mode as ^ { `ArchiveEntryPtr' } -> `CMode' #}
 {# fun archive_entry_mtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_mtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 {# fun archive_entry_nlink as ^ { `ArchiveEntryPtr' } -> `CUInt' #}
 {# fun archive_entry_pathname as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_pathname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
-{# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
-{# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
-{# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_sourcepath as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_sourcepath_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_size as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
