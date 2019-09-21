@@ -1,5 +1,6 @@
 #!/usr/bin/env bash 
 
+mkdir -p test/data
 wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz -O test/data/libarchive-1.0.5.1.tar.gz
 gunzip -f test/data/libarchive-1.0.5.1.tar.gz
 wget http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.3.13.tgz -O test/data/ATS2-Postiats-0.3.13.tgz
