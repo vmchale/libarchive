@@ -154,14 +154,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryLinkresolverFree
                                           , archiveEntryLinkify
                                           , archiveEntryPartialLinks
-                                          -- * File types
-                                          , regular
-                                          , symlink
-                                          , socket
-                                          , characterDevice
-                                          , blockDevice
-                                          , directory
-                                          , fifo
                                           -- * ACL macros
                                           , archiveEntryACLExecute
                                           , archiveEntryACLWrite
@@ -208,7 +200,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , Stat
                                           , LinkResolver
                                           -- * Lower-level API types
-                                          , FileType
+                                          , FileType (..)
                                           , EntryACL
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
@@ -222,6 +214,7 @@ import Codec.Archive.Foreign.ArchiveEntry.Macros
 import Codec.Archive.Foreign.Archive
 import Codec.Archive.Types
 import Data.Coerce (coerce)
+import Data.Functor ((<&>))
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr (Ptr, castPtr)
@@ -242,6 +235,9 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
 
+ft :: Integral a => a -> FileType
+ft = fromIntegral <&> toEnum
+
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
@@ -258,7 +254,7 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_fflags_text as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' coerce #}
+{# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' ft #}
 {# fun archive_entry_gid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_gname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_gname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
@@ -302,7 +298,7 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {# fun archive_entry_set_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_copy_fflags_text as ^ { `ArchiveEntryPtr', `CString' } -> `CString' #}
 {# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', `CWString' } -> `CWString' #}
-{# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', coerce `FileType' } -> `()' #}
+{# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', `FileType' } -> `()' #}
 {# fun archive_entry_set_gid as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_set_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_gname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}

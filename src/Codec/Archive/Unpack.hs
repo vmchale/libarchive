@@ -114,10 +114,10 @@ readBS a sz =
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
-    where go ft | ft == regular = NormalFile <$> (readBS a =<< sz)
-                | ft == symlink = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
-                | ft == directory = pure Directory
-                | otherwise = error "Unsupported filetype"
+    where go FtRegular = NormalFile <$> (readBS a =<< sz)
+          go FtLink = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
+          go FtDirectory = pure Directory
+          go _ = error "Unsupported filetype"
           sz = fromIntegral <$> archiveEntrySize entry
 
 archiveGetterHelper :: (Ptr ArchiveEntry -> IO a) -> (Ptr ArchiveEntry -> IO Bool) -> Ptr ArchiveEntry -> IO (Maybe a)

@@ -32,16 +32,16 @@ maybeDo = sequenceA_
 
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
-    liftIO $ archiveEntrySetFiletype entry regular
+    liftIO $ archiveEntrySetFiletype entry FtRegular
     liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
     handle $ archiveWriteHeader a entry
     useAsCStringLenArchiveM contents $ \(buff, sz) ->
         liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
-    liftIO $ archiveEntrySetFiletype entry directory
+    liftIO $ archiveEntrySetFiletype entry FtDirectory
     handle $ archiveWriteHeader a entry
 contentAdd (Symlink fp) a entry = do
-    liftIO $ archiveEntrySetFiletype entry symlink
+    liftIO $ archiveEntrySetFiletype entry FtLink
     liftIO $ withCString fp $ \fpc ->
         archiveEntrySetSymlink entry fpc
     handle $ archiveWriteHeader a entry

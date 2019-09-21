@@ -17,11 +17,12 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , LinkResolver
                                    -- * Enum types
                                    , ArchiveResult (..)
+                                   , FileType (..)
+                                   , Symlink (..)
                                    -- * Macros
                                    , Flags (..)
                                    , ArchiveFilter (..)
                                    , ArchiveFormat (..)
-                                   , FileType (..)
                                    , ArchiveCapabilities (..)
                                    , ReadDiskFlags (..)
                                    , TimeFlag (..)
@@ -39,9 +40,9 @@ import           Foreign.C.String   (CString)
 import           Foreign.C.Types    (CInt, CSize)
 import           Foreign.Ptr        (Ptr)
 import           GHC.Generics       (Generic)
-import           System.Posix.Types (CMode)
 
 #include <archive.h>
+#include <archive_entry.h>
 
 type LaInt64 = {# type la_int64_t #}
 type LaSSize = {# type la_ssize_t #}
@@ -53,6 +54,22 @@ type LaSSize = {# type la_ssize_t #}
                              , ARCHIVE_FAILED as ArchiveFailed
                              , ARCHIVE_FATAL as ArchiveFatal
                              } deriving (Eq, Show, Generic, NFData)
+  #}
+
+{# enum define FileType { AE_IFREG as FtRegular
+                        , AE_IFLNK as FtLink
+                        , AE_IFSOCK as FtSocket
+                        , AE_IFCHR as FtCharacter
+                        , AE_IFBLK as FtBlock
+                        , AE_IFDIR as FtDirectory
+                        , AE_IFIFO as FtFifo
+                        } deriving (Eq)
+  #}
+
+{# enum define Symlink { AE_SYMLINK_TYPE_UNDEFINED as SymlinkUndefined
+                       , AE_SYMLINK_TYPE_FILE as SymlinkFile
+                       , AE_SYMLINK_TYPE_DIRECTORY as SymlinkDirectory
+                       } deriving (Eq)
   #}
 
 -- | Abstract type
@@ -75,9 +92,6 @@ type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
 newtype ArchiveFormat = ArchiveFormat CInt -- TODO: enum define here?
-    deriving (Eq)
-
-newtype FileType = FileType CMode
     deriving (Eq)
 
 newtype Flags = Flags CInt

@@ -1,11 +1,4 @@
-module Codec.Archive.Foreign.ArchiveEntry.Macros ( regular
-                                                 , symlink
-                                                 , socket
-                                                 , characterDevice
-                                                 , blockDevice
-                                                 , directory
-                                                 , fifo
-                                                 , archiveEntryACLExecute
+module Codec.Archive.Foreign.ArchiveEntry.Macros ( archiveEntryACLExecute
                                                  , archiveEntryACLWrite
                                                  , archiveEntryACLRead
                                                  , archiveEntryACLReadData
@@ -54,37 +47,6 @@ module Codec.Archive.Foreign.ArchiveEntry.Macros ( regular
 import Codec.Archive.Types
 
 #include <archive_entry.h>
-
--- stupid function to work around some annoying C quirk
-mode_t :: Integer -> FileType
-mode_t = FileType . fromIntegral . asOctal
-
--- converts 0020000 to 16384 etc.
-asOctal :: Integral a => a -> a
-asOctal n | n < 10 = n
-          | otherwise = 8 * asOctal (n `div` 10) + n `mod` 10
-
--- filetype
-regular :: FileType
-regular = {# const AE_IFREG #}
-
-symlink :: FileType
-symlink = {# const AE_IFLNK #}
-
-socket :: FileType
-socket = {# const AE_IFSOCK #}
-
-characterDevice :: FileType
-characterDevice = {# const AE_IFCHR #}
-
-blockDevice :: FileType
-blockDevice = {# const AE_IFBLK #}
-
-directory :: FileType
-directory = {# const AE_IFDIR #}
-
-fifo :: FileType
-fifo = {# const AE_IFIFO #}
 
 archiveEntryACLExecute :: EntryACL
 archiveEntryACLExecute = EntryACL {# const ARCHIVE_ENTRY_ACL_EXECUTE #}
