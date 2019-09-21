@@ -26,6 +26,7 @@ module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , archiveExtractHfsCompressionForced
                                             , archiveExtractSecureNoAbsolutePaths
                                             , archiveExtractClearNoChangeFFlags
+                                            , archiveExtractNoOverwriteNewer
                                             , archiveReadDiskRestoreATime
                                             , archiveReadDiskHonorNoDump
                                             , archiveReadDiskMacCopyFile

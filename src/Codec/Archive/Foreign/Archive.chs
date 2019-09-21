@@ -235,6 +235,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveExtractHfsCompressionForced
                                      , archiveExtractSecureNoAbsolutePaths
                                      , archiveExtractClearNoChangeFFlags
+                                     , archiveExtractNoOverwriteNewer
                                      -- * Read disk flags
                                      , archiveReadDiskRestoreATime
                                      , archiveReadDiskHonorNoDump
