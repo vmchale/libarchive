@@ -25,10 +25,10 @@ import           System.IO.Unsafe       (unsafePerformIO)
 --
 -- @since 1.0.0.0
 readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
-readArchiveBS = unsafePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchive)
+readArchiveBS = unsafePerformIO . runArchiveM . (hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
-bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive)
+bsToArchive :: BS.ByteString -> ArchiveM ArchivePtr
 bsToArchive bs = do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
@@ -42,9 +42,9 @@ bsToArchive bs = do
 --
 -- @since 1.0.0.0
 readArchiveFile :: FilePath -> ArchiveM [Entry]
-readArchiveFile = actFree hsEntries <=< archiveFile
+readArchiveFile = hsEntries <=< archiveFile
 
-archiveFile :: FilePath -> ArchiveM (Ptr Archive)
+archiveFile :: FilePath -> ArchiveM ArchivePtr
 archiveFile fp = withCStringArchiveM fp $ \cpath -> do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
@@ -64,7 +64,7 @@ unpackArchive tarFp dirFp = do
     unpackEntriesFp a dirFp
     ignore $ archiveFree a
 
-readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
+readEntry :: ArchivePtr -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry =
     Entry
         <$> (peekCString =<< archiveEntryPathname entry)
@@ -74,7 +74,7 @@ readEntry a entry =
         <*> readTimes entry
 
 -- | Yield the next entry in an archive
-getHsEntry :: MonadIO m => Ptr Archive -> m (Maybe Entry)
+getHsEntry :: MonadIO m => ArchivePtr -> m (Maybe Entry)
 getHsEntry a = do
     entry <- liftIO $ getEntry a
     case entry of
@@ -82,7 +82,7 @@ getHsEntry a = do
         Just x  -> Just <$> liftIO (readEntry a x)
 
 -- | Return a list of 'Entry's.
-hsEntries :: MonadIO m => Ptr Archive -> m [Entry]
+hsEntries :: MonadIO m => ArchivePtr -> m [Entry]
 hsEntries a = do
     next <- getHsEntry a
     case next of
@@ -90,7 +90,7 @@ hsEntries a = do
         Just x  -> (x:) <$> hsEntries a
 
 -- | Unpack an archive in a given directory
-unpackEntriesFp :: Ptr Archive -> FilePath -> ArchiveM ()
+unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
 unpackEntriesFp a fp = do
     res <- liftIO $ getEntry a
     case res of
@@ -106,13 +106,13 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
-readBS :: Ptr Archive -> Int -> IO BS.ByteString
+readBS :: ArchivePtr -> Int -> IO BS.ByteString
 readBS a sz =
     allocaBytes sz $ \buff ->
         archiveReadData a buff (fromIntegral sz) *>
         BS.packCStringLen (buff, sz)
 
-readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
+readContents :: ArchivePtr -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
     where go FtRegular = NormalFile <$> (readBS a =<< sz)
           go FtLink = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
@@ -148,7 +148,7 @@ readTimes = archiveGetterHelper go archiveEntryMtimeIsSet
             (,) <$> archiveEntryMtime entry <*> archiveEntryMtimeNsec entry
 
 -- | Get the next 'ArchiveEntry' in an 'Archive'
-getEntry :: Ptr Archive -> IO (Maybe (Ptr ArchiveEntry))
+getEntry :: ArchivePtr -> IO (Maybe (Ptr ArchiveEntry))
 getEntry a = do
     let done ArchiveOk    = False
         done ArchiveRetry = False

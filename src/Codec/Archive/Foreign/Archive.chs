@@ -312,7 +312,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , mkCleanup
                                      , mkMatch
                                      , mkFilter
-                                     , mkExcludedCallback
+                                     -- , mkExcludedCallback
                                      -- * Type synonyms
                                      , ArchiveEntryPtr
                                      , ArchivePtr
@@ -346,7 +346,7 @@ foreign import ccall "wrapper" mkOpenCallbackRaw :: ArchiveOpenCallbackRaw a -> 
 foreign import ccall "wrapper" mkCloseCallbackRaw :: ArchiveCloseCallbackRaw a -> IO (FunPtr (ArchiveCloseCallbackRaw a))
 foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
-foreign import ccall "wrapper" mkExcludedCallback :: (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()) -> IO (FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()))
+-- foreign import ccall "wrapper" mkExcludedCallback :: (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()) -> IO (FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()))
 
 -- | Don't use an open callback. This is the recommended argument to 'archiveReadOpen'
 noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
@@ -378,7 +378,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 
 #include <archive.h>
 
-{#pointer *archive as ArchivePtr -> Archive #}
+{#pointer *archive as ArchivePtr foreign finalizer archive_free #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 {#pointer *stat as StatPtr -> Stat #}
 {#pointer *FILE as FilePtr newtype#}

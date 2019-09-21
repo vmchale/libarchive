@@ -40,7 +40,6 @@ unpackToDirLazy :: FilePath -- ^ Directory to unpack in
 unpackToDirLazy fp bs = do
     (a, act) <- bslToArchive bs
     unpackEntriesFp a fp
-    ignore $ archiveFree a
     liftIO act
 
 -- | Read an archive lazily. The format of the archive is automatically
@@ -57,7 +56,7 @@ readArchiveBSL = unsafePerformIO . runArchiveM . (actFreeCallback hsEntries <=< 
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString
-             -> ArchiveM (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
+             -> ArchiveM (ArchivePtr, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a

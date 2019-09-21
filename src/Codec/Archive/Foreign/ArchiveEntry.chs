@@ -7,7 +7,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryClone
                                           , archiveEntryNew
                                           , archiveEntryFree
-                                          , archiveEntryNew2
+                                          -- , archiveEntryNew2
                                           , archiveEntryAtime
                                           , archiveEntryAtimeNsec
                                           , archiveEntryAtimeIsSet
@@ -243,7 +243,7 @@ ft = fromIntegral <&> toEnum
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
 {# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
-{# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
+-- {# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_atime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 {# fun archive_entry_birthtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}

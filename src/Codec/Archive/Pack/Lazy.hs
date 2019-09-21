@@ -59,7 +59,7 @@ entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
-entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
     a <- liftIO archiveWriteNew
     bsRef <- liftIO $ newIORef mempty
