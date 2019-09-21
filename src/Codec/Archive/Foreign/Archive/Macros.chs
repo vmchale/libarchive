@@ -87,8 +87,8 @@ archiveExtractSecureNoDotDot = Flags {# const ARCHIVE_EXTRACT_SECURE_NODOTDOT #}
 archiveExtractNoAutodir :: Flags
 archiveExtractNoAutodir = Flags {# const ARCHIVE_EXTRACT_NO_AUTODIR #}
 
--- archiveExtractNoOverwriteNewer :: Flags
--- archiveExtractNoOverwriteNewer = Flags {# const ARCHIVE_NO_OVERWRITE_NEWER #}
+archiveExtractNoOverwriteNewer :: Flags
+archiveExtractNoOverwriteNewer = Flags {# const ARCHIVE_EXTRACT_NO_OVERWRITE_NEWER #}
 
 archiveExtractSparse :: Flags
 archiveExtractSparse = Flags {# const ARCHIVE_EXTRACT_SPARSE #}
