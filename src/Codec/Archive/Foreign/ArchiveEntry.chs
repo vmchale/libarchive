@@ -235,8 +235,9 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
 
-ft :: Integral a => a -> FileType
-ft = fromIntegral <&> toEnum
+ft :: CMode -> FileType
+ft 0 = error "hier"
+ft i = (fromIntegral <&> toEnum) i
 
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
