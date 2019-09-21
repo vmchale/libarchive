@@ -132,7 +132,7 @@ archiveGetterNull get entry = do
     res <- get entry
     if res == nullPtr
         then pure Nothing
-        else fmap Just (peekCString =<< get entry)
+        else fmap Just (peekCString res)
 
 readOwnership :: Ptr ArchiveEntry -> IO Ownership
 readOwnership entry =
