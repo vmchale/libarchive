@@ -6,3 +6,5 @@ tags
 *.eventlog
 dist-newstyle
 *.tar
+*.chi
+*.chs.h
