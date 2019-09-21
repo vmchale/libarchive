@@ -213,7 +213,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
                                           , LinkResolverPtr
-                                          , StatPtr
                                           ) where
 
 {# import Codec.Archive.Types.Foreign #}
@@ -233,7 +232,6 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 #include <archive_entry.h>
 
 {#pointer *archive_entry_linkresolver as LinkResolverPtr -> LinkResolver #}
-{#pointer *stat as StatPtr -> Stat #}
 
 {#typedef size_t CSize#}
 {#typedef wchar_t CWchar#}
