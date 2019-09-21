@@ -110,6 +110,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryCopySourcepath
                                           , archiveEntryCopySourcepathW
                                           , archiveEntrySetSymlink
+                                          , archiveEntrySetSymlinkType
                                           , archiveEntrySetSymlinkUtf8
                                           , archiveEntryCopySymlink
                                           , archiveEntryCopySymlinkW
@@ -331,6 +332,7 @@ ft = fromIntegral <&> toEnum
 {# fun archive_entry_copy_sourcepath as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_sourcepath_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_set_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
+{# fun archive_entry_set_symlink_type as ^ { `ArchiveEntryPtr', `Symlink' } -> `()' #}
 {# fun archive_entry_set_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_symlink_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
