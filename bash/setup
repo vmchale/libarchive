@@ -1,10 +1,12 @@
 #!/usr/bin/env bash 
 
+wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz -O test/data/libarchive-1.0.5.1.tar.gz
+gunzip -f test/data/libarchive-1.0.5.1.tar.gz
 wget http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.3.13.tgz -O test/data/ATS2-Postiats-0.3.13.tgz
 gunzip -f test/data/ATS2-Postiats-0.3.13.tgz
 wget http://releases.llvm.org/9.0.0/llvm-9.0.0.src.tar.xz -O test/data/llvm-9.0.0.src.tar.xz
-xz -d test/data/llvm-9.0.0.src.tar.xz
+xz -d -f test/data/llvm-9.0.0.src.tar.xz
 wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.9.tar.bz2 -O test/data/alsa-lib-1.1.9.tar.bz2
 bzip2 -d -f test/data/alsa-lib-1.1.9.tar.bz2
 wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz -O test/data/ghc-8.8.1-src.tar.xz
-xz -d test/data/ghc-8.8.1-src.tar.xz
+xz -d -f test/data/ghc-8.8.1-src.tar.xz
