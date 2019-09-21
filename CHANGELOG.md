@@ -22,6 +22,7 @@
   * Add `archiveReadDiskNoAcl`, `archiveReadDiskNoFFlags`
   * Depend on `libarchive` >= 3.4.0
   * Remove `Raw` modules, use c2hs throughout.
+  * Fix potential bug with lazy bytestrings of nonstandard size
 
 ## 1.0.5.1
 
