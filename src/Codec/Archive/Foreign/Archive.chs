@@ -328,7 +328,6 @@ import Codec.Archive.Foreign.Archive.Macros
 import Codec.Archive.Types
 import Control.Composition ((.*), (.**))
 import Data.Coerce (coerce)
-import Data.Int (Int64)
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Marshal.Alloc (alloca)
