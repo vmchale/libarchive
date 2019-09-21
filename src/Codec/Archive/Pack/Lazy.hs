@@ -11,7 +11,6 @@ import           Codec.Archive.Monad
 import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Composition       ((.@))
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
@@ -24,7 +23,7 @@ import           Foreign.Ptr
 import           System.IO.Unsafe          (unsafePerformIO)
 
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
-packer = traverse mkEntry .@ fmap
+packer f es = fmap f (traverse mkEntry es) -- (fmap f es) -- -- traverse mkEntry .@ fmap
 
 -- | Pack files into a tar archive
 --
