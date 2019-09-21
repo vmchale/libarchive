@@ -370,7 +370,7 @@ ft = fromIntegral <&> toEnum
 {# fun archive_entry_sparse_reset as ^ { `ArchiveEntryPtr' } -> `CInt' #}
 {# fun archive_entry_sparse_next as ^ { `ArchiveEntryPtr', id `Ptr LaInt64', id `Ptr LaInt64' } -> `CInt' #}
 {# fun archive_entry_linkresolver_new as ^ {} -> `LinkResolverPtr' #}
-{# fun archive_entry_linkresolver_set_strategy as ^ { `LinkResolverPtr', coerce `ArchiveFormat' } -> `()' #}
+{# fun archive_entry_linkresolver_set_strategy as ^ { `LinkResolverPtr', `ArchiveFormat' } -> `()' #}
 {# fun archive_entry_linkresolver_free as ^ { `LinkResolverPtr' } -> `()' #}
 {# fun archive_entry_linkify as ^ { `LinkResolverPtr', id `Ptr ArchiveEntryPtr', id `Ptr ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_partial_links as ^ { `LinkResolverPtr', id `Ptr CUInt' } -> `Ptr ArchiveEntry' id #}

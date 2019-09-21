@@ -22,9 +22,7 @@ import           Foreign.Storable       (Storable)
 
 type ArchiveM = ExceptT ArchiveResult IO
 
--- TODO: ArchiveM a -> IO a where we throw exceptions using the error string?
-
--- for stuff we think isn't going to fail
+-- for things we don't think is going to fail
 ignore :: IO ArchiveResult -> ArchiveM ()
 ignore = void . liftIO
 

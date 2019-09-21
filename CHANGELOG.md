@@ -16,15 +16,12 @@
   * Make various parts of an `Entry` optional
   * Add `packToFile` functions and `packFiles` functions
   * Remove `ArchiveError` newtype, replace it with `ArchiveResult`
-  * Functions returning a `CInt` as an error indicator are now exported in `Codec.Archive.Foreign.Raw`
-    rather than `Codec.Archive.Foreign`
-  * Fix bug in `archiveEntryMTimeIsSet` and `intToBool`
+  * Fix bug in `archiveEntryMTimeIsSet`
   * Add `archiveEntryACLEntryInherited`, `archiveEntryACLStyleSolaris`,
     `archiveEntryACLStyleSeparatorComma`, `archiveEntryACLStyleCompact`
   * Add `archiveReadDiskNoAcl`, `archiveReadDiskNoFFlags`
-  * Depend on `libarchive` >= 3.3.3
-  * Remove `Codec.Archive.Foreign` modules. All exposed modules are now imported
-    via c2hs.
+  * Depend on `libarchive` >= 3.4.0
+  * Remove `Raw` modules, use c2hs throughout.
 
 ## 1.0.5.1
 

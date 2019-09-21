@@ -72,6 +72,58 @@ type LaSSize = {# type la_ssize_t #}
                        } deriving (Eq)
   #}
 
+{# enum define ArchiveFilter { ARCHIVE_FILTER_NONE as ArchiveFilterNone
+                             , ARCHIVE_FILTER_GZIP as ArchiveFilterGzip
+                             , ARCHIVE_FILTER_BZIP2 as ArchiveFilterBzip2
+                             , ARCHIVE_FILTER_COMPRESS as ArchiveFilterCompress
+                             , ARCHIVE_FILTER_PROGRAM as ArchiveFilterProgram
+                             , ARCHIVE_FILTER_LZMA as ArchiveFilterLzma
+                             , ARCHIVE_FILTER_XZ as ArchiveFilterXz
+                             , ARCHIVE_FILTER_UU as ArchiveFilterUu
+                             , ARCHIVE_FILTER_RPM as ArchiveFilterRpm
+                             , ARCHIVE_FILTER_LZIP as ArchiveFilterLzip
+                             , ARCHIVE_FILTER_LRZIP as ArchiveFilterLrzip
+                             , ARCHIVE_FILTER_LZOP as ArchiveFilterLzop
+                             , ARCHIVE_FILTER_GRZIP as ArchiveFilterGrzip
+                             , ARCHIVE_FILTER_LZ4 as ArchiveFilterLz4
+                             , ARCHIVE_FILTER_ZSTD as ArchiveFilterZstd
+                             }
+  #}
+
+{# enum define ArchiveFormat { ARCHIVE_FORMAT_CPIO as ArchiveFormatCpio
+                             , ARCHIVE_FORMAT_CPIO_POSIX as ArchiveFormatCpioPosix
+                             , ARCHIVE_FORMAT_CPIO_BIN_LE as ArchiveFormatCpioBinLe
+                             , ARCHIVE_FORMAT_CPIO_BIN_BE as ArchiveFormatCpioBinBe
+                             , ARCHIVE_FORMAT_CPIO_SVR4_NOCRC as ArchiveFormatCpioSvr4Nocrc
+                             , ARCHIVE_FORMAT_CPIO_SVR4_CRC as ArchiveFormatCpioSvr4Crc
+                             , ARCHIVE_FORMAT_CPIO_AFIO_LARGE as ArchiveFormatCpioAfioLarge
+                             , ARCHIVE_FORMAT_SHAR as ArchiveFormatShar
+                             , ARCHIVE_FORMAT_SHAR_BASE as ArchiveFormatSharBase
+                             , ARCHIVE_FORMAT_SHAR_DUMP as ArchiveFormatSharDump
+                             , ARCHIVE_FORMAT_TAR as ArchiveFormatTar
+                             , ARCHIVE_FORMAT_TAR_USTAR as ArchiveFormatTarUstar
+                             , ARCHIVE_FORMAT_TAR_PAX_INTERCHANGE as ArchiveFormatTarPaxInterchange
+                             , ARCHIVE_FORMAT_TAR_PAX_RESTRICTED as ArchiveFormatTarPaxRestricted
+                             , ARCHIVE_FORMAT_TAR_GNUTAR as ArchiveFormatTarGnutar
+                             , ARCHIVE_FORMAT_ISO9660 as ArchiveFormatIso9660
+                             , ARCHIVE_FORMAT_ISO9660_ROCKRIDGE as ArchiveFormatIso9660Rockridge
+                             , ARCHIVE_FORMAT_ZIP as ArchiveFormatZip
+                             , ARCHIVE_FORMAT_EMPTY as ArchiveFormatEmpty
+                             , ARCHIVE_FORMAT_AR as ArchiveFormatAr
+                             , ARCHIVE_FORMAT_AR_GNU as ArchiveFormatArGnu
+                             , ARCHIVE_FORMAT_AR_BSD as ArchiveFormatArBsd
+                             , ARCHIVE_FORMAT_MTREE as ArchiveFormatMtree
+                             , ARCHIVE_FORMAT_RAW as ArchiveFormatRaw
+                             , ARCHIVE_FORMAT_XAR as ArchiveFormatXar
+                             , ARCHIVE_FORMAT_LHA as ArchiveFormatLha
+                             , ARCHIVE_FORMAT_CAB as ArchiveFormatCab
+                             , ARCHIVE_FORMAT_RAR as ArchiveFormatRar
+                             , ARCHIVE_FORMAT_7ZIP as ArchiveFormat7zip
+                             , ARCHIVE_FORMAT_WARC as ArchiveFormatWarc
+                             , ARCHIVE_FORMAT_RAR_V5 as ArchiveFormatRarV5
+                             } deriving (Eq)
+  #}
+
 -- | Abstract type
 data Archive
 
@@ -91,9 +143,6 @@ type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
 
-newtype ArchiveFormat = ArchiveFormat CInt -- TODO: enum define here?
-    deriving (Eq)
-
 newtype Flags = Flags CInt
 
 newtype ReadDiskFlags = ReadDiskFlags CInt
@@ -101,8 +150,6 @@ newtype ReadDiskFlags = ReadDiskFlags CInt
 newtype TimeFlag = TimeFlag CInt
 
 newtype EntryACL = EntryACL CInt
-
-newtype ArchiveFilter = ArchiveFilter CInt
 
 newtype ArchiveCapabilities = ArchiveCapabilities CInt
     deriving (Eq)
