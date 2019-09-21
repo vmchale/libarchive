@@ -377,15 +377,15 @@ foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
 foreign import ccall "wrapper" mkExcludedCallback :: (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()) -> IO (FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()))
 
--- | Don't use an open callback. This is the recommended argument to 'archive_open_read'
+-- | Don't use an open callback. This is the recommended argument to 'archiveReadOpen'
 noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
 noOpenCallback = castPtrToFunPtr nullPtr
 
 foreign import ccall "wrapper" mkWriteLookup :: (Ptr a -> CString -> LaInt64 -> IO LaInt64) -> IO (FunPtr (Ptr a -> CString -> LaInt64 -> IO LaInt64))
--- | Also for 'archiveReadDiskGnameLookup'
+-- | Also for 'archiveReadDiskSetGnameLookup' and 'archiveReadDiskSetUnameLookup'
 foreign import ccall "wrapper" mkReadLookup :: (Ptr a -> LaInt64 -> IO CString) -> IO (FunPtr (Ptr a -> LaInt64 -> IO CString))
 
--- | Can also be used to make a progress callback.
+-- | Can also be used with 'archiveReadExtractSetProgressCallback'
 foreign import ccall "wrapper" mkCleanup :: (Ptr a -> IO ()) -> IO (FunPtr (Ptr a -> IO ()))
 
 foreign import ccall "wrapper" mkMatch :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()))
