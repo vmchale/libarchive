@@ -14,7 +14,6 @@ description:
 
 category:        Codec
 build-type:      Simple
-data-files:      test/data/libarchive-0.2.1.2.tar
 extra-doc-files:
     README.md
     CHANGELOG.md
@@ -35,7 +34,7 @@ library
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
 
-    pkgconfig-depends: libarchive >=3.4.0
+    pkgconfig-depends: libarchive >=3.4.0 && <4.0
     hs-source-dirs:    src
     other-modules:
         Codec.Archive.Foreign.Archive.Macros
@@ -88,7 +87,7 @@ test-suite libarchive-test
         hspec -any,
         bytestring -any,
         directory >=1.2.5.0,
-        filepath
+        filepath -any
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
