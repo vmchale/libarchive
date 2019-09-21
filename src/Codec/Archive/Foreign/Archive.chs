@@ -199,6 +199,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskCurrentFilesystem
                                      , archiveReadDiskCurrentFilesystemIsSynthetic
                                      , archiveReadDiskCurrentFilesystemIsRemote
+                                     , archiveReadDiskSetAtimeRestored
+                                     , archiveReadDiskSetBehavior
+                                     , archiveReadDiskSetMatching
+                                     , archiveReadDiskSetMetadataFilterCallback
                                      -- * Version macros
                                      , archiveVersionNumberMacro
                                      , archiveVersionOnlyString
@@ -268,16 +272,29 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskMacCopyFile
                                      , archiveReadDiskNoTraverseMounts
                                      , archiveReadDiskNoXattr
-                                     -- * Haskell-ized function equivalents
                                      , archiveFree
                                      , archiveMatchExcluded
                                      , archiveMatchPathExcluded
+                                     , archiveMatchSetInclusionRecursion
+                                     , archiveMatchExcludePattern
+                                     , archiveMatchExcludePatternW
+                                     , archiveMatchIncludePattern
+                                     , archiveMatchIncludePatternW
                                      , archiveMatchExcludePatternFromFile
                                      , archiveMatchExcludePatternFromFileW
                                      , archiveMatchIncludePatternFromFile
                                      , archiveMatchIncludePatternFromFileW
+                                     , archiveMatchPathUnmatchedInclusions
+                                     , archiveMatchPathUnmatchedInclusionsNext
+                                     , archiveMatchPathUnmatchedInclusionsNextW
+                                     , archiveMatchIncludeTime
+                                     , archiveMatchIncludeDate
+                                     , archiveMatchIncludeDateW
+                                     , archiveMatchIncludeFileTime
+                                     , archiveMatchIncludeFileTimeW
                                      , archiveMatchTimeExcluded
                                      , archiveMatchOwnerExcluded
+                                     , archiveMatchExcludeEntry
                                      , archiveReadDataSkip
                                      , archiveMatchIncludeGname
                                      , archiveMatchIncludeGnameW
@@ -324,6 +341,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , mkCleanup
                                      , mkMatch
                                      , mkFilter
+                                     , mkExcludedCallback
                                      -- * Type synonyms
                                      , ArchiveEntryPtr
                                      , ArchivePtr
@@ -357,6 +375,7 @@ foreign import ccall "wrapper" mkOpenCallbackRaw :: ArchiveOpenCallbackRaw a -> 
 foreign import ccall "wrapper" mkCloseCallbackRaw :: ArchiveCloseCallbackRaw a -> IO (FunPtr (ArchiveCloseCallbackRaw a))
 foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
+foreign import ccall "wrapper" mkExcludedCallback :: (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()) -> IO (FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()))
 
 -- | Don't use an open callback. This is the recommended argument to 'archive_open_read'
 noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
@@ -397,6 +416,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {#typedef wchar_t CWchar#}
 {#typedef la_ssize_t LaSSize#}
 {#typedef la_int64_t LaInt64#}
+{#typedef time_t CTime#}
 
 {#default in `CWString' [wchar_t*] castPtr#}
 
@@ -425,11 +445,26 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 
 {# fun archive_match_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_match_exclude_pattern as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_exclude_pattern_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_set_inclusion_recursion as ^ { `ArchivePtr', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_exclude_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_exclude_pattern_from_file_w as ^ { `ArchivePtr', `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_include_pattern as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_include_pattern_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_include_pattern_from_file_w as ^ { `ArchivePtr', `CWString', `Bool' } -> `ArchiveResult' #}
+{# fun archive_match_path_unmatched_inclusions as ^ { `ArchivePtr' } -> `CInt' #}
+{# fun archive_match_path_unmatched_inclusions_next as ^ { `ArchivePtr', alloca- `CString' peek* } -> `ArchiveResult' #}
+{# fun archive_match_path_unmatched_inclusions_next_w as ^ { `ArchivePtr', alloca- `CWString' peek* } -> `ArchiveResult' #}
 {# fun archive_match_time_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
+{# fun archive_match_include_time as ^ { `ArchivePtr', coerce `TimeFlag', `CTime', `CLong' } -> `ArchiveResult' #}
+{# fun archive_match_include_date as ^ { `ArchivePtr', coerce `TimeFlag', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_include_date_w as ^ { `ArchivePtr', coerce `TimeFlag', `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_include_file_time as ^ { `ArchivePtr', coerce `TimeFlag', `CString' } -> `ArchiveResult' #}
+{# fun archive_match_include_file_time_w as ^ { `ArchivePtr', coerce `TimeFlag', `CWString' } -> `ArchiveResult' #}
+{# fun archive_match_exclude_entry as ^ { `ArchivePtr', coerce `TimeFlag', `ArchiveEntryPtr' } -> `ArchiveResult' #}
+
 {# fun archive_match_owner_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 
 {# fun archive_read_set_open_callback as ^ { `ArchivePtr', castFunPtr `FunPtr (ArchiveOpenCallbackRaw a)' } -> `ArchiveResult' #}
@@ -593,12 +628,12 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_disk_gname as ^ { `ArchivePtr', `LaInt64' } -> `CString' #}
 {# fun archive_read_disk_uname as ^ { `ArchivePtr', `LaInt64' } -> `CString' #}
 {# fun archive_read_disk_set_standard_lookup as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-{# fun archive_read_disk_set_gname_lookup as ^ { `ArchivePtr' 
+{# fun archive_read_disk_set_gname_lookup as ^ { `ArchivePtr'
                                                , castPtr `Ptr a'
                                                , castFunPtr `FunPtr (Ptr a -> LaInt64 -> IO CString )'
                                                , castFunPtr `FunPtr (Ptr a -> IO ())'
                                                } -> `ArchiveResult' #}
-{# fun archive_read_disk_set_uname_lookup as ^ { `ArchivePtr' 
+{# fun archive_read_disk_set_uname_lookup as ^ { `ArchivePtr'
                                                , castPtr `Ptr a'
                                                , castFunPtr `FunPtr (Ptr a -> LaInt64 -> IO CString )'
                                                , castFunPtr `FunPtr (Ptr a -> IO ())'
@@ -610,6 +645,18 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_disk_current_filesystem as ^ { `ArchivePtr' } -> `CInt' #}
 {# fun archive_read_disk_current_filesystem_is_synthetic as ^ { `ArchivePtr' } -> `Bool' #}
 {# fun archive_read_disk_current_filesystem_is_remote as ^ { `ArchivePtr' } -> `Bool' #}
+{# fun archive_read_disk_set_atime_restored as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_disk_set_behavior as ^ { `ArchivePtr', coerce `Flags' } -> `ArchiveResult' #}
+
+{# fun archive_read_disk_set_matching as ^ { `ArchivePtr'
+                                           , `ArchivePtr'
+                                           , castFunPtr `FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ())'
+                                           , castPtr `Ptr a'
+                                           } -> `ArchiveResult' #}
+{# fun archive_read_disk_set_metadata_filter_callback as ^ { `ArchivePtr'
+                                                           , castFunPtr `FunPtr (ArchivePtr -> Ptr a -> ArchiveEntry -> IO CInt)'
+                                                           , castPtr `Ptr a'
+                                                           } -> `ArchiveResult' #}
 
 {# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
@@ -617,8 +664,8 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_match_include_gname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_match_include_uname_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_uname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
-{# fun archive_match_include_gid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
-{# fun archive_match_include_uid as ^ { `ArchivePtr', fromIntegral `Id' } -> `ArchiveResult' #}
+{# fun archive_match_include_gid as ^ { `ArchivePtr', coerce `Id' } -> `ArchiveResult' #}
+{# fun archive_match_include_uid as ^ { `ArchivePtr', coerce `Id' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_all as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_compress as ^ { `ArchivePtr' } -> `ArchiveResult' #}
