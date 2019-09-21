@@ -208,10 +208,9 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , LinkResolverPtr
                                           ) where
 
-{# import qualified Codec.Archive.Foreign.Archive #}
+{# import Codec.Archive.Foreign.Archive #}
 
 import Codec.Archive.Foreign.ArchiveEntry.Macros
-import Codec.Archive.Foreign.Archive
 import Codec.Archive.Types
 import Data.Coerce (coerce)
 import Data.Functor ((<&>))
