@@ -4,7 +4,7 @@ import           Codec.Archive
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
 import           Data.Foldable        (traverse_)
-import           System.Directory     (listDirectory)
+import           System.Directory     (doesDirectoryExist, listDirectory)
 import           System.FilePath      ((</>))
 import           Test.Hspec
 
@@ -17,7 +17,8 @@ testFp fp = parallel $ it ("sucessfully packs/unpacks itself (" ++ fp ++ ")") $
 
 main :: IO ()
 main = do
-    tarballs <- listDirectory "test/data"
+    dir <- doesDirectoryExist "test/data"
+    tarballs <- if dir then listDirectory "test/data" else pure []
     hspec $
         describe "roundtrip" $ traverse_ testFp
             (("test/data" </>) <$> tarballs)
