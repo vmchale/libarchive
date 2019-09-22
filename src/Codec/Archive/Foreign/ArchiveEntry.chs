@@ -213,7 +213,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
 import Codec.Archive.Foreign.ArchiveEntry.Macros
 import Codec.Archive.Types
 import Data.Coerce (coerce)
-import Data.Functor ((<&>))
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr (Ptr, castPtr)
@@ -234,8 +233,11 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
 
+-- work around a libarchive bug
+-- TODO: figure this out + report
 ft :: Integral a => a -> FileType
-ft = fromIntegral <&> toEnum
+ft 0 = FtRegular
+ft i = toEnum $ fromIntegral i
 
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
