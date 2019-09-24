@@ -20,7 +20,7 @@ import           Foreign.C.Types
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
 import           Foreign.Ptr
 import           Foreign.Storable       (poke)
-import           System.IO.Unsafe       (unsafePerformIO)
+import           System.IO.Unsafe       (unsafeDupablePerformIO)
 
 foreign import ccall memcpy :: Ptr a -- ^ Destination
                             -> Ptr b -- ^ Source
@@ -53,7 +53,7 @@ unpackToDirLazy fp bs = do
 --
 -- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry]
-readArchiveBSL = unsafePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bslToArchive)
+readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bslToArchive)
 {-# NOINLINE readArchiveBSL #-}
 
 -- | Lazily stream a 'BSL.ByteString'

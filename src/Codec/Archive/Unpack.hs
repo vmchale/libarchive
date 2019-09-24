@@ -18,14 +18,14 @@ import           Foreign.C.String
 import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr, nullPtr)
 import           System.FilePath        ((</>))
-import           System.IO.Unsafe       (unsafePerformIO)
+import           System.IO.Unsafe       (unsafeDupablePerformIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
 --
 -- @since 1.0.0.0
 readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
-readArchiveBS = unsafePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchive)
+readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
 bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive)

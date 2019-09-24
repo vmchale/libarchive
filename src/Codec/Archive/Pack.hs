@@ -25,7 +25,7 @@ import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
 import           Foreign.C.Types           (CLLong (..), CLong (..))
 import           Foreign.Ptr               (Ptr)
-import           System.IO.Unsafe          (unsafePerformIO)
+import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
@@ -79,21 +79,21 @@ entriesSz = getSum . foldMap (Sum . entrySz)
 --
 -- @since 1.0.0.0
 entriesToBS :: Foldable t => t Entry -> BS.ByteString
-entriesToBS = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
+entriesToBS = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBS #-}
 
 -- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
 --
 -- @since 1.0.0.0
 entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
-entriesToBS7zip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7zip
+entriesToBS7zip = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBS7zip #-}
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
 --
 -- @since 1.0.0.0
 entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
-entriesToBSzip = unsafePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatZip
+entriesToBSzip = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSzip #-}
 
 -- This is for things we don't think will fail. When making a 'BS.ByteString'

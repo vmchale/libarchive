@@ -21,7 +21,7 @@ import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr
-import           System.IO.Unsafe          (unsafePerformIO)
+import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
@@ -44,19 +44,19 @@ packFiles7zip = packer entriesToBSL7zip
 
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLzip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
+entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSLzip #-}
 
 -- | @since 1.0.5.0
 entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL7zip = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
+entriesToBSL7zip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBSL7zip #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
 entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL = unsafePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
+entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
