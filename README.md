@@ -6,8 +6,9 @@
 
 This contains Haskell bindings to
 [libarchive](http://libarchive.org/). It was created as an alternative to
-[tar](http://hackage.haskell.org/package/tar), but it supports more archive
-formats.
+[tar](http://hackage.haskell.org/package/tar) and
+[tar-archive](http://hackage.haskell.org/package/tar-conduit), but it supports
+more archive formats.
 
 It has a high-level Haskell API for creating and unpacking archives in addition
 to the C API. Like the `tar` package, it can stream from lazy `ByteString`s.
