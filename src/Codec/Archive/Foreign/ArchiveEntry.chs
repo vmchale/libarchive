@@ -233,11 +233,13 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
 
--- work around a libarchive bug
--- TODO: figure this out + report
-ft :: Integral a => a -> FileType
-ft 0 = FtRegular
-ft i = toEnum $ fromIntegral i
+ft :: CMode -> Maybe FileType
+ft 0 = Nothing
+ft i = Just $ toEnum (fromIntegral i)
+
+uft :: Maybe FileType -> CUInt
+uft Nothing    = 0
+uft (Just ft') = fromIntegral (fromEnum ft')
 
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
@@ -255,7 +257,8 @@ ft i = toEnum $ fromIntegral i
 {# fun archive_entry_devmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_fflags_text as ^ { `ArchiveEntryPtr' } -> `CString' #}
-{# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `FileType' ft #}
+-- | Here a 'Nothing' means a hardlink
+{# fun archive_entry_filetype as ^ { `ArchiveEntryPtr' } -> `Maybe FileType' ft #}
 {# fun archive_entry_gid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_gname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_gname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
@@ -299,7 +302,8 @@ ft i = toEnum $ fromIntegral i
 {# fun archive_entry_set_fflags as ^ { `ArchiveEntryPtr', `CULong', `CULong' } -> `()' #}
 {# fun archive_entry_copy_fflags_text as ^ { `ArchiveEntryPtr', `CString' } -> `CString' #}
 {# fun archive_entry_copy_fflags_text_w as ^ { `ArchiveEntryPtr', `CWString' } -> `CWString' #}
-{# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', `FileType' } -> `()' #}
+-- | Here a 'Nothing' means a hardlink
+{# fun archive_entry_set_filetype as ^ { `ArchiveEntryPtr', uft `Maybe FileType' } -> `()' #}
 {# fun archive_entry_set_gid as ^ { `ArchiveEntryPtr', `LaInt64' } -> `()' #}
 {# fun archive_entry_set_gname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_set_gname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}

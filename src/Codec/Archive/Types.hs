@@ -44,6 +44,7 @@ data ArchiveEncryption = HasEncryption
 data EntryContent = NormalFile !BS.ByteString
                   | Directory
                   | Symlink !FilePath
+                  | Hardlink !FilePath
 
 data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent

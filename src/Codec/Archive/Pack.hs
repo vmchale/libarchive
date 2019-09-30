@@ -32,18 +32,23 @@ maybeDo = sequenceA_
 
 contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
-    liftIO $ archiveEntrySetFiletype entry FtRegular
+    liftIO $ archiveEntrySetFiletype entry (Just FtRegular)
     liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
     handle $ archiveWriteHeader a entry
     useAsCStringLenArchiveM contents $ \(buff, sz) ->
         liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
-    liftIO $ archiveEntrySetFiletype entry FtDirectory
+    liftIO $ archiveEntrySetFiletype entry (Just FtDirectory)
     handle $ archiveWriteHeader a entry
 contentAdd (Symlink fp) a entry = do
-    liftIO $ archiveEntrySetFiletype entry FtLink
+    liftIO $ archiveEntrySetFiletype entry (Just FtLink)
     liftIO $ withCString fp $ \fpc ->
         archiveEntrySetSymlink entry fpc
+    handle $ archiveWriteHeader a entry
+contentAdd (Hardlink fp) a entry = do
+    liftIO $ archiveEntrySetFiletype entry Nothing
+    liftIO $ withCString fp $ \fpc ->
+        archiveEntrySetHardlink entry fpc
     handle $ archiveWriteHeader a entry
 
 withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
@@ -74,6 +79,7 @@ entriesSz = getSum . foldMap (Sum . entrySz)
           contentSz (NormalFile str) = fromIntegral $ BS.length str
           contentSz Directory        = 0
           contentSz (Symlink fp)     = fromIntegral $ length fp
+          contentSz (Hardlink fp)    = fromIntegral $ length fp --idk if this is right
 
 -- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's
 --
