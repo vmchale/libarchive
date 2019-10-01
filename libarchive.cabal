@@ -6,7 +6,7 @@ license-file:    LICENSE
 copyright:       Copyright: (c) 2018-2019 Vanessa McHale
 maintainer:      vamchale@gmail.com
 author:          Vanessa McHale
-tested-with:     ghc ==8.4.4 ghc ==8.6.5 ghc==8.8.1
+tested-with:     ghc ==8.4.4 ghc ==8.6.5 ghc ==8.8.1
 bug-reports:     https://github.com/vmchale/libarchive/issues
 synopsis:        Haskell interface to libarchive
 description:
@@ -22,14 +22,15 @@ source-repository head
     type:     git
     location: https://github.com/vmchale/libarchive
 
+custom-setup
+    setup-depends:
+        base -any,
+        chs-cabal -any
+
 flag cross
     description: Set this flag if cross-compiling
     default:     False
     manual:      True
-
-custom-setup
-    setup-depends: base -any,
-                   chs-cabal
 
 library
     exposed-modules:
@@ -38,7 +39,7 @@ library
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
 
-    pkgconfig-depends: libarchive >=3.4.0 && <4.0
+    pkgconfig-depends: libarchive (==3.4.0 || >3.4.0) && <4.0
     hs-source-dirs:    src
     other-modules:
         Codec.Archive.Foreign.Archive.Macros
