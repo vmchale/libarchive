@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.0.0.1
+
+  * Polish documentation
+
 ## 2.0.0.0
 
   * Fix typo in documentation
