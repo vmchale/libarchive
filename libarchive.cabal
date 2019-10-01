@@ -1,7 +1,7 @@
-cabal-version:   3.1
+cabal-version:   1.18
 name:            libarchive
 version:         2.0.0.0
-license:         BSD-3-Clause
+license:         BSD3
 license-file:    LICENSE
 copyright:       Copyright: (c) 2018-2019 Vanessa McHale
 maintainer:      vamchale@gmail.com
@@ -13,7 +13,7 @@ description:
     Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives, including the ability to unpack archives lazily.
 
 category:        Codec
-build-type:      Simple
+build-type:      Custom
 extra-doc-files:
     README.md
     CHANGELOG.md
@@ -26,6 +26,10 @@ flag cross
     description: Set this flag if cross-compiling
     default:     False
     manual:      True
+
+custom-setup
+    setup-depends: base -any,
+                   chs-cabal
 
 library
     exposed-modules:

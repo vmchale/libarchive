@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+cabal new-build --with-ghc=arm-linux-gnueabihf-ghc --with-ghc-pkg=arm-linux-gnueabihf-ghc-pkg --constraint='libarchive +cross' --with-c2hs=c2hs $(cpkg dump-cabal libarchive zlib xz bzip2 --target=arm-linux-gnueabihf)
