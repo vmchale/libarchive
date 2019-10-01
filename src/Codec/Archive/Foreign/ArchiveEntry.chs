@@ -1,4 +1,4 @@
-
+-- | This module corresponds to @archive_entry.h@
 --
 -- Functions in this module are stateful and hence take place in the 'IO'
 -- monad.
