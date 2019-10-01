@@ -277,6 +277,8 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , Archive
                                      -- * Haskell types
                                      , ArchiveEncryption (..)
+                                     -- * C types
+                                     , FilePtr (..)
                                      -- * Enum types
                                      , ArchiveFilter (..)
                                      , ArchiveFormat (..)

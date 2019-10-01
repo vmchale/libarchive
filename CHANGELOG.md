@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.0.0.2
+
+  * Export `FilePtr` type constructor
+
 ## 2.0.0.1
 
   * Polish documentation
