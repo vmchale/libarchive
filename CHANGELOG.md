@@ -3,6 +3,7 @@
 ## 2.0.0.2
 
   * Export `FilePtr` type constructor
+  * Clean up spurious code
 
 ## 2.0.0.1
 
