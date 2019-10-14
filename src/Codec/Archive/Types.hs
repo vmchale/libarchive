@@ -14,7 +14,6 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , ArchiveCloseCallback
                            , ArchiveSwitchCallback
                            -- * Marshalling functions
-                           , errorRes
                            , resultToErr
                            ) where
 
@@ -31,9 +30,6 @@ type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveResu
 
 resultToErr :: ArchiveResult -> CInt
 resultToErr = fromIntegral . fromEnum
-
-errorRes :: Integral a => a -> ArchiveResult
-errorRes = toEnum . fromIntegral
 
 data ArchiveEncryption = HasEncryption
                        | NoEncryption
