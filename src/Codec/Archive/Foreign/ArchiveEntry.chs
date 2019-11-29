@@ -127,7 +127,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryCopyMacMetadata
                                           , archiveEntryAclClear
                                           , archiveEntryAclNext
-                                          , archiveEntryAclNextW
+                                          -- , archiveEntryAclNextW
                                           , archiveEntryAclReset
                                           , archiveEntryAclToText
                                           , archiveEntryAclToTextW
@@ -355,7 +355,7 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_acl_add_entry_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', coerce `EntryACL', coerce `EntryACL', `CInt', `CWString' } -> `CInt' #}
 {# fun archive_entry_acl_reset as ^ { `ArchiveEntryPtr', coerce `EntryACL' } -> `CInt' #}
 {# fun archive_entry_acl_next as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CString' } -> `CInt' #}
-{# fun archive_entry_acl_next_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CWString' } -> `CInt' #}
+-- {# fun archive_entry_acl_next_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CWString' } -> `CInt' #}
 {# fun archive_entry_acl_to_text_w as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CWString' #}
 {# fun archive_entry_acl_to_text as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CString' #}
 {# fun archive_entry_acl_from_text as ^ { `ArchiveEntryPtr', `CString', coerce `EntryACL' } -> `CInt' #}
