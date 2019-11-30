@@ -1,5 +1,10 @@
 # libarchive
 
+## 2.1.0.0
+
+  * Remove `archiveEntryAclNext` since it doesn't exist in the static linked
+    library. This means `libarchive` can be used in profiling builds.
+
 ## 2.0.0.2
 
   * Export `FilePtr` type constructor
