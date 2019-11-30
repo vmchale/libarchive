@@ -25,6 +25,7 @@ source-repository head
 custom-setup
     setup-depends:
         base -any,
+        Cabal -any,
         chs-cabal -any
 
 flag cross
