@@ -6,9 +6,11 @@ import qualified Data.ByteString      as BS
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
 import           Data.Foldable        (traverse_)
-import           System.Directory     (doesDirectoryExist, listDirectory)
+import           System.Directory     (doesDirectoryExist, listDirectory, withCurrentDirectory)
 import           System.FilePath      ((</>))
-import           Data.List            (intersperse)
+import           System.IO.Temp       (withSystemTempDirectory)
+import           Data.List            (intersperse, sort, sortOn)
+import           Control.Monad.Except
 import           Test.Hspec
 
 
@@ -42,6 +44,24 @@ itPacksUnpacks entries = it "packs/unpacks successfully without loss" $ do
         packed = entriesToBSL entries
         unpacked = readArchiveBSL packed
 
+itPacksUnpacksViaFS :: HasCallStack => [Entry] -> Spec
+itPacksUnpacksViaFS entries = unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked -> do
+        (testEntries <$> unpacked) `shouldBe` (Right . testEntries $ entries)
+    where
+        -- Use this to test content as well
+        -- testEntries = TestEntries . sortOn filepath . map (stripOwnership . stripPermissions)
+        testEntries = sort . map filepath
+        unpackedFromFS = around $ \action -> do
+            withSystemTempDirectory "spec-" $ \tmpdir -> do
+                unpacked <- {- withCurrentDirectory tmpdir . -} runArchiveM $ do
+                    entriesToDir tmpdir entries
+                    packed <- liftIO . withCurrentDirectory tmpdir $ do
+                        files <- listDirectoryRecursive "."
+                        packFiles files
+                    liftEither $ readArchiveBSL packed
+
+                action unpacked
+
 testFp :: HasCallStack => FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
     roundtrip fp >>= (`shouldSatisfy` isRight)
@@ -53,18 +73,33 @@ main = do
     hspec $
         describe "roundtrip" $ do
             traverse_ testFp (("test/data" </>) <$> tarballs)
-            context "with symlinks" . itPacksUnpacks $
-                [ simpleFile "a.txt" (NormalFile "referenced")
-                , simpleFile "b.txt" (Symlink "a.txt")
-                ]
-            context "with hardlinks" . itPacksUnpacks $
-                [ simpleFile "a.txt" (NormalFile "shared")
-                , simpleFile "b.txt" (Hardlink "a.txt")
-                ]
-            context "withforward referenced hardlinks" . itPacksUnpacks $
-                [ simpleFile "b.txt" (Hardlink "a.txt")
-                , simpleFile "a.txt" (NormalFile "shared")
-                ]
+            context "with symlinks" $ do
+                let entries =
+                        [ simpleDir "x/"
+                        , simpleFile "x/a.txt" (NormalFile "referenced")
+                        , simpleFile "x/b.txt" (Symlink "a.txt")
+                        ]
+                itPacksUnpacks entries
+                itPacksUnpacksViaFS entries
+
+            context "with hardlinks" $ do
+                let entries =
+                        [ simpleDir "x/"
+                        , simpleFile "x/a.txt" (NormalFile "shared")
+                        , simpleFile "x/b.txt" (Hardlink "x/a.txt")
+                        ]
+                itPacksUnpacks entries
+                xcontext "issue#4" $ itPacksUnpacksViaFS entries
+
+            context "with forward referenced hardlinks" $ do
+                let entries =
+                        [ simpleDir "x/"
+                        , simpleFile "x/b.txt" (Hardlink "x/a.txt")
+                        , simpleFile "x/a.txt" (NormalFile "shared")
+                        ]
+                itPacksUnpacks entries
+                xcontext "re-ordering on unpack" $ itPacksUnpacksViaFS entries
+
             xcontext "having entry without ownership" . itPacksUnpacks $
                 [ stripOwnership (simpleFile "a.txt" (NormalFile "text")) ]
             xcontext "having entry without timestamp" . itPacksUnpacks $
@@ -72,7 +107,29 @@ main = do
 
 simpleFile :: FilePath -> EntryContent -> Entry
 simpleFile name what = Entry name what standardPermissions (Ownership (Just "root") (Just "root")  0 0) (Just (0,0))
+simpleDir name = Entry name Directory dirPermissions (Ownership (Just "root") (Just "root")  0 0) (Just (0,0))
 
-stripOwnership, stripTime :: Entry -> Entry
+dirPermissions = executablePermissions
+
+-- TODO: expose something like this via archive_write_disk
+-- entriesToDir :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToDir :: FilePath -> [Entry] -> ArchiveM ()
+entriesToDir dest = unpackToDirLazy dest . entriesToBSL
+
+stripOwnership, stripTime, stripPermissions :: Entry -> Entry
 stripOwnership entry = entry { ownership = Ownership Nothing Nothing 0 0 }
 stripTime entry = entry { time = Nothing }
+stripPermissions entry = entry { permissions = executablePermissions }
+
+listDirectoryRecursive :: FilePath -> IO [FilePath]
+listDirectoryRecursive root = listDirectory root >>= go where
+    prefix | root == "." = id
+           | otherwise = (root </>)
+    go [] = pure []
+    go (x:xs) = doesDirectoryExist x' >>= \case
+            False -> (x':) <$> go xs
+            True -> do
+                ys <- (x':) <$> listDirectoryRecursive x'
+                (ys ++) <$> go xs
+        where
+            x' = prefix x

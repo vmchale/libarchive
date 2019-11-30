@@ -92,7 +92,9 @@ test-suite libarchive-test
         hspec -any,
         bytestring -any,
         directory >=1.2.5.0,
-        filepath -any
+        filepath -any,
+        temporary -any,
+        mtl >=2.2.2
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
