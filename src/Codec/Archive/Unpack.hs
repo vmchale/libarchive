@@ -96,27 +96,27 @@ unpackEntriesFp a fp = do
     case res of
         Nothing -> pure ()
         Just x  -> do
-            preFile <- liftIO $ archiveEntryPathname x
-            file <- liftIO $ peekCString preFile
-            let file' = fp </> file
-            liftIO $ withCString file' $ \fileC ->
-                archiveEntrySetPathname x fileC
-            ft <- liftIO $ archiveEntryFiletype x
-            case ft of
-                Just{} -> do
-                    ignore $ archiveReadExtract a x archiveExtractTime
-                    liftIO $ archiveEntrySetPathname x preFile
-                Nothing -> do
-                    preHardlink <- liftIO $ archiveEntryHardlink x
-                    hardlink <- liftIO $ peekCString preHardlink
-                    let hardlink' = fp </> hardlink
-                    liftIO $ withCString hardlink' $ \hl ->
-                        archiveEntrySetHardlink x hl
-                    ignore $ archiveReadExtract a x archiveExtractTime
-                    liftIO $ archiveEntrySetPathname x preFile
-                    liftIO $ archiveEntrySetHardlink x preHardlink
+            ignore . withPrefix fp x $ archiveReadExtract a x archiveExtractTime
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
+
+-- TODO: work with libarchive to get rid of this unsafe hack
+-- See https://github.com/libarchive/libarchive/issues/1203
+withPrefix :: FilePath -> ArchiveEntryPtr -> IO a -> IO a
+withPrefix fp x inner = do
+    file0 <- peekCString =<< archiveEntryPathname x
+    withCString (fp </> file0) $ archiveEntrySetPathname x
+    ft <- archiveEntryFiletype x
+    result <- case ft of
+        Just{} -> inner
+        Nothing -> do
+            target0 <- peekCString =<< archiveEntryHardlink x
+            withCString (fp </> target0) $ archiveEntrySetHardlink x
+            result <- inner
+            withCString target0 $ archiveEntrySetHardlink x
+            return result
+    withCString file0 $ archiveEntrySetPathname x
+    return result
 
 readBS :: Ptr Archive -> Int -> IO BS.ByteString
 readBS a sz =
