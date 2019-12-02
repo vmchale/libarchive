@@ -1,6 +1,7 @@
 # libarchive
 
   * `packEntries` and friends now detect hardlinks
+  * Add `Cabal` to `custom-setup` depends to ensure builds work with stack
 
 ## 2.1.0.0
 
