@@ -1,23 +1,26 @@
-{-# LANGUAGE LambdaCase, OverloadedStrings #-}
+{-# LANGUAGE LambdaCase        #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Main ( main ) where
 
 import           Codec.Archive
-import qualified Data.ByteString      as BS
-import qualified Data.ByteString.Lazy as BSL
-import           Data.Either          (isRight)
-import           Data.Foldable        (traverse_)
-import           System.Directory     (doesDirectoryExist, listDirectory, withCurrentDirectory)
-import           System.FilePath      ((</>))
-import           System.IO.Temp       (withSystemTempDirectory)
-import           Data.List            (intersperse, sort, sortOn)
+import           Control.Composition        (thread)
 import           Control.Monad.Except
+import qualified Data.ByteString            as BS
+import qualified Data.ByteString.Lazy       as BSL
+import           Data.Either                (isRight)
+import           Data.Foldable              (traverse_)
+import           Data.List                  (intersperse, sort)
+import           System.Directory           (doesDirectoryExist, listDirectory, withCurrentDirectory)
+import           System.Directory.Recursive (getDirRecursive)
+import           System.FilePath            ((</>))
+import           System.IO.Temp             (withSystemTempDirectory)
 import           Test.Hspec
 
 
 newtype TestEntries = TestEntries [Entry]
     deriving (Eq)
 
-instance Show (TestEntries) where
+instance Show TestEntries where
     showsPrec _ (TestEntries entries) = ("(TestEntries [" ++) . joinBy (", "++) (map showsEntry entries) . ("])" ++) where
         showsEntry entry = ("Entry " ++) .
             ("{filepath=" ++) . shows (filepath entry) .
@@ -32,35 +35,38 @@ instance Show (TestEntries) where
             Symlink target -> ("(Symlink " ++) . shows target . (')':)
             Hardlink target -> ("(Hardlink " ++) . shows target . (')':)
         joinBy :: ShowS -> [ShowS] -> ShowS
-        joinBy sep = foldr (.) id . intersperse sep
+        joinBy sep = thread . intersperse sep
 
 roundtrip :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtrip = fmap (fmap entriesToBSL . readArchiveBSL) . BSL.readFile
 
 itPacksUnpacks :: HasCallStack => [Entry] -> Spec
-itPacksUnpacks entries = it "packs/unpacks successfully without loss" $ do
-        (TestEntries <$> unpacked) `shouldBe` (Right $ TestEntries entries)
+itPacksUnpacks entries = it "packs/unpacks successfully without loss" $
+        (TestEntries <$> unpacked) `shouldBe` Right (TestEntries entries)
     where
         packed = entriesToBSL entries
         unpacked = readArchiveBSL packed
 
 itPacksUnpacksViaFS :: HasCallStack => [Entry] -> Spec
-itPacksUnpacksViaFS entries = unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked -> do
-        (testEntries <$> unpacked) `shouldBe` (Right . testEntries $ entries)
+itPacksUnpacksViaFS entries = unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
+        fmap (fmap stripDotSlash . testEntries) unpacked `shouldBe` Right (testEntries entries)
     where
         -- Use this to test content as well
         -- testEntries = TestEntries . sortOn filepath . map (stripOwnership . stripPermissions)
         testEntries = sort . map filepath
-        unpackedFromFS = around $ \action -> do
+        unpackedFromFS = around $ \action ->
             withSystemTempDirectory "spec-" $ \tmpdir -> do
-                unpacked <- {- withCurrentDirectory tmpdir . -} runArchiveM $ do
-                    entriesToDir tmpdir entries
-                    packed <- liftIO . withCurrentDirectory tmpdir $ do
-                        files <- listDirectoryRecursive "."
-                        packFiles files
-                    liftEither $ readArchiveBSL packed
+            unpacked <- {- withCurrentDirectory tmpdir . -} runArchiveM $ do
+                entriesToDir tmpdir entries
+                packed <- liftIO . withCurrentDirectory tmpdir $ do
+                    files <- getDirRecursive "."
+                    packFiles files
+                liftEither $ readArchiveBSL packed
 
-                action unpacked
+            action unpacked
+        stripDotSlash :: FilePath -> FilePath
+        stripDotSlash ('.':'/':fp) = fp
+        stripDotSlash fp           = fp
 
 testFp :: HasCallStack => FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
@@ -107,8 +113,11 @@ main = do
 
 simpleFile :: FilePath -> EntryContent -> Entry
 simpleFile name what = Entry name what standardPermissions (Ownership (Just "root") (Just "root")  0 0) (Just (0,0))
+
+simpleDir :: FilePath -> Entry
 simpleDir name = Entry name Directory dirPermissions (Ownership (Just "root") (Just "root")  0 0) (Just (0,0))
 
+dirPermissions :: Permissions
 dirPermissions = executablePermissions
 
 -- TODO: expose something like this via archive_write_disk
@@ -116,20 +125,6 @@ dirPermissions = executablePermissions
 entriesToDir :: FilePath -> [Entry] -> ArchiveM ()
 entriesToDir dest = unpackToDirLazy dest . entriesToBSL
 
-stripOwnership, stripTime, stripPermissions :: Entry -> Entry
+stripOwnership, stripTime :: Entry -> Entry
 stripOwnership entry = entry { ownership = Ownership Nothing Nothing 0 0 }
 stripTime entry = entry { time = Nothing }
-stripPermissions entry = entry { permissions = executablePermissions }
-
-listDirectoryRecursive :: FilePath -> IO [FilePath]
-listDirectoryRecursive root = listDirectory root >>= go where
-    prefix | root == "." = id
-           | otherwise = (root </>)
-    go [] = pure []
-    go (x:xs) = doesDirectoryExist x' >>= \case
-            False -> (x':) <$> go xs
-            True -> do
-                ys <- (x':) <$> listDirectoryRecursive x'
-                (ys ++) <$> go xs
-        where
-            x' = prefix x

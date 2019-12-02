@@ -94,7 +94,9 @@ test-suite libarchive-test
         directory >=1.2.5.0,
         filepath -any,
         temporary -any,
-        mtl >=2.2.2
+        mtl >=2.2.2,
+        dir-traverse,
+        composition-prelude >=1.1.0.1
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
