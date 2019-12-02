@@ -41,6 +41,7 @@ data EntryContent = NormalFile !BS.ByteString
                   | Directory
                   | Symlink !FilePath
                   | Hardlink !FilePath
+    deriving (Eq)
 
 data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent
@@ -48,12 +49,14 @@ data Entry = Entry { filepath    :: !FilePath
                    , ownership   :: !Ownership
                    , time        :: !(Maybe ModTime)
                    }
+    deriving (Eq)
 
 data Ownership = Ownership { userName  :: !(Maybe String)
                            , groupName :: !(Maybe String)
                            , ownerId   :: !Id
                            , groupId   :: !Id
                            }
+    deriving (Eq, Show)
 
 type Permissions = CMode
 type ModTime = (CTime, CLong)
