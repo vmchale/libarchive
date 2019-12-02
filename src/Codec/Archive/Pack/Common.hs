@@ -5,17 +5,18 @@ import qualified Data.ByteString          as BS
 import           System.PosixCompat.Files (fileGroup, fileMode, fileOwner,
                                            getFileStatus, isDirectory,
                                            isRegularFile, isSymbolicLink,
-                                           readSymbolicLink)
+                                           linkCount, readSymbolicLink)
 
 mkContent :: FilePath -> IO EntryContent
 mkContent fp = do
     status <- getFileStatus fp
-    let res = (isRegularFile status, isDirectory status, isSymbolicLink status)
+    let res = (isRegularFile status, isDirectory status, isSymbolicLink status, linkCount status)
     case res of
-        (True, False, False) -> NormalFile <$> BS.readFile fp
-        (False, True, False) -> pure Directory
-        (False, False, True) -> Symlink <$> readSymbolicLink fp
-        (_, _, _)            -> error "inconsistent read result"
+        (True, False, False, 1) -> NormalFile <$> BS.readFile fp
+        (True, False, False, _) -> pure $ Hardlink fp
+        (False, True, False, _) -> pure Directory
+        (False, False, True, _) -> Symlink <$> readSymbolicLink fp
+        (_, _, _, _)            -> error "inconsistent read result"
 
 mkEntry :: FilePath -> IO Entry
 mkEntry fp = do

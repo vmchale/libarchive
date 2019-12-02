@@ -1,5 +1,7 @@
 # libarchive
 
+  * `packEntries` and friends now detect hardlinks
+
 ## 2.1.0.0
 
   * Remove `archiveEntryAclNext` since it doesn't exist in the static linked
