@@ -1,4 +1,3 @@
-{-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Main ( main ) where
 
@@ -29,11 +28,10 @@ instance Show TestEntries where
             (", ownership=" ++) . shows (ownership entry) .
             (", time=" ++) . shows (time entry) .
             ("}" ++)
-        showsContent = \case
-            NormalFile bytes -> ("(NormalFile $ " ++) . shows (BS.take 10 bytes) . (" <> undefined)" ++)
-            Directory -> ("Directory" ++)
-            Symlink target -> ("(Symlink " ++) . shows target . (')':)
-            Hardlink target -> ("(Hardlink " ++) . shows target . (')':)
+        showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BS.take 10 bytes) . (" <> undefined)" ++)
+        showsContent Directory          = ("Directory" ++)
+        showsContent (Symlink target)   = ("(Symlink " ++) . shows target . (')':)
+        showsContent (Hardlink target)  = ("(Hardlink " ++) . shows target . (')':)
         joinBy :: ShowS -> [ShowS] -> ShowS
         joinBy sep = thread . intersperse sep
 
