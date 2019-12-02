@@ -41,14 +41,14 @@ roundtrip :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtrip = fmap (fmap entriesToBSL . readArchiveBSL) . BSL.readFile
 
 itPacksUnpacks :: HasCallStack => [Entry] -> Spec
-itPacksUnpacks entries = it "packs/unpacks successfully without loss" $
+itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $
         (TestEntries <$> unpacked) `shouldBe` Right (TestEntries entries)
     where
         packed = entriesToBSL entries
         unpacked = readArchiveBSL packed
 
 itPacksUnpacksViaFS :: HasCallStack => [Entry] -> Spec
-itPacksUnpacksViaFS entries = unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
+itPacksUnpacksViaFS entries = parallel $ unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
         fmap (fmap stripDotSlash . testEntries) unpacked `shouldBe` Right (testEntries entries)
     where
         -- Use this to test content as well
