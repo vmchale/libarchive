@@ -3,7 +3,7 @@
 module Main ( main ) where
 
 import           Codec.Archive
-import           Control.Composition        (thread)
+import           Control.Composition        (thread, (.@))
 import           Control.Monad.Except
 import qualified Data.ByteString            as BS
 import qualified Data.ByteString.Lazy       as BSL
@@ -123,7 +123,7 @@ dirPermissions = executablePermissions
 -- TODO: expose something like this via archive_write_disk
 -- entriesToDir :: Foldable t => FilePath -> t Entry -> ArchiveM ()
 entriesToDir :: FilePath -> [Entry] -> ArchiveM ()
-entriesToDir dest = unpackToDirLazy dest . entriesToBSL
+entriesToDir = entriesToBSL .@ unpackToDirLazy
 
 stripOwnership, stripTime :: Entry -> Entry
 stripOwnership entry = entry { ownership = Ownership Nothing Nothing 0 0 }
