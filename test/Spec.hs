@@ -95,7 +95,7 @@ main = do
                         , simpleFile "x/b.txt" (Hardlink "x/a.txt")
                         ]
                 itPacksUnpacks entries
-                xcontext "issue#4" $ itPacksUnpacksViaFS entries
+                context "issue#4" $ itPacksUnpacksViaFS entries
 
             context "with forward referenced hardlinks" $ do
                 let entries =
