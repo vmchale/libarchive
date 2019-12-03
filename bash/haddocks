@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -e pipefail
-DOCS_PATH=$(cabal haddock --haddock-for-hackage | tail -n1)
-cabal upload --publish -d "$DOCS_PATH"
