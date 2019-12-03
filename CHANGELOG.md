@@ -1,5 +1,10 @@
 # libarchive
 
+## 2.1.0.1
+
+  * `packEntries` and friends now detect hardlinks
+  * Add `Cabal` to `custom-setup` depends to ensure builds work with stack
+
 ## 2.1.0.0
 
   * Remove `archiveEntryAclNext` since it doesn't exist in the static linked

@@ -101,8 +101,20 @@ unpackEntriesFp a fp = do
             let file' = fp </> file
             liftIO $ withCString file' $ \fileC ->
                 archiveEntrySetPathname x fileC
-            ignore $ archiveReadExtract a x archiveExtractTime
-            liftIO $ archiveEntrySetPathname x preFile
+            ft <- liftIO $ archiveEntryFiletype x
+            case ft of
+                Just{} -> do
+                    ignore $ archiveReadExtract a x archiveExtractTime
+                    liftIO $ archiveEntrySetPathname x preFile
+                Nothing -> do
+                    preHardlink <- liftIO $ archiveEntryHardlink x
+                    hardlink <- liftIO $ peekCString preHardlink
+                    let hardlink' = fp </> hardlink
+                    liftIO $ withCString hardlink' $ \hl ->
+                        archiveEntrySetHardlink x hl
+                    ignore $ archiveReadExtract a x archiveExtractTime
+                    liftIO $ archiveEntrySetPathname x preFile
+                    liftIO $ archiveEntrySetHardlink x preHardlink
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
@@ -114,11 +126,11 @@ readBS a sz =
 
 readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
-    where go Nothing = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
-          go (Just FtRegular) = NormalFile <$> (readBS a =<< sz)
-          go (Just FtLink) = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
+    where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
+          go (Just FtRegular)   = NormalFile <$> (readBS a =<< sz)
+          go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
           go (Just FtDirectory) = pure Directory
-          go (Just _) = error "Unsupported filetype"
+          go (Just _)           = error "Unsupported filetype"
           sz = fromIntegral <$> archiveEntrySize entry
 
 archiveGetterHelper :: (Ptr ArchiveEntry -> IO a) -> (Ptr ArchiveEntry -> IO Bool) -> Ptr ArchiveEntry -> IO (Maybe a)

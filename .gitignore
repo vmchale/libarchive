@@ -9,3 +9,4 @@ dist-newstyle
 *.chi
 *.chs.h
 .hspec-failures
+.stack-work
