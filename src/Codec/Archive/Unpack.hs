@@ -74,17 +74,17 @@ readEntry a entry =
         <*> readTimes entry
 
 -- | Yield the next entry in an archive
-getHsEntry :: MonadIO m => Ptr Archive -> m (Maybe Entry)
+getHsEntry :: Ptr Archive -> IO (Maybe Entry)
 getHsEntry a = do
-    entry <- liftIO $ getEntry a
+    entry <- getEntry a
     case entry of
         Nothing -> pure Nothing
-        Just x  -> Just <$> liftIO (readEntry a x)
+        Just x  -> Just <$> readEntry a x
 
 -- | Return a list of 'Entry's.
 hsEntries :: MonadIO m => Ptr Archive -> m [Entry]
 hsEntries a = do
-    next <- getHsEntry a
+    next <- liftIO $ getHsEntry a
     case next of
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntries a
