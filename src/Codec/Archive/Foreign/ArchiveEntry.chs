@@ -196,6 +196,10 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryACLEveryone
                                           , archiveEntryACLStyleExtraID
                                           , archiveEntryACLStyleMarkDefault
+                                          , archiveEntryACLEntryInherited
+                                          , archiveEntryACLStyleCompact
+                                          , archiveEntryACLStyleSeparatorComma
+                                          , archiveEntryACLStyleSolaris
                                           -- * Abstract types
                                           , ArchiveEntry
                                           , Stat

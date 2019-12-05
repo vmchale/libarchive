@@ -4,7 +4,6 @@ module Codec.Archive.Monad ( handle
                            -- * Bracketed resources within 'ArchiveM'
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
-                           , allocaArchiveM
                            , allocaBytesArchiveM
                            , ArchiveM
                            ) where
@@ -49,9 +48,6 @@ genBracket :: (a -> (b -> IO (Either c d)) -> IO (Either c d)) -- ^ Function lik
            -> (b -> ExceptT c IO d) -- ^ The action
            -> ExceptT c IO d
 genBracket f x = flipExceptIO . f x . (runExceptT .)
-
-allocaArchiveM :: Storable a => (Ptr a -> ExceptT b IO c) -> ExceptT b IO c
-allocaArchiveM = genBracket (pure alloca) ()
 
 allocaBytesArchiveM :: Int -> (Ptr a -> ExceptT b IO c) -> ExceptT b IO c
 allocaBytesArchiveM = genBracket allocaBytes

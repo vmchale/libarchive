@@ -203,6 +203,8 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskSetBehavior
                                      , archiveReadDiskSetMatching
                                      , archiveReadDiskSetMetadataFilterCallback
+                                     , archiveReadDiskNoAcl
+                                     , archiveReadDiskNoFFlags
                                      -- * Version macros
                                      , archiveVersionNumberMacro
                                      , archiveVersionOnlyString

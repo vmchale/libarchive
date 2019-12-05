@@ -1,6 +1,5 @@
 module Codec.Archive.Test ( simpleFile
                           , simpleDir
-                          , dirPermissions
                           , stripOwnership
                           , stripTime
                           ) where
