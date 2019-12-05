@@ -208,6 +208,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           -- * Lower-level API types
                                           , FileType (..)
                                           , EntryACL
+                                          , Symlink (..)
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
                                           , LinkResolverPtr
