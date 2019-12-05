@@ -1,4 +1,4 @@
-.PHONY: clean setup
+.PHONY: clean setup ci
 
 setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar
 
@@ -37,3 +37,11 @@ test/data/ATS2-Postiats-0.3.13.tgz: test/data
 
 test/data/libarchive-1.0.5.1.tar.gz: test/data
 	wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz -O $@
+
+ci: .github/workflows/haskell.yml
+
+.github/workflows:
+	mkdir -p $@
+
+.github/workflows/haskell.yml: github-action.dhall .github/workflows
+	dhall-to-yaml --file $< --output $@
