@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.1.2.0
+
+  * More complete API
+
 ## 2.1.1.0
 
   * Remove weeds, export things that were missing from past releases

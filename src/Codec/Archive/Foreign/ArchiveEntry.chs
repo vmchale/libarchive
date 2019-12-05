@@ -52,6 +52,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntrySizeIsSet
                                           , archiveEntryStrmode
                                           , archiveEntrySymlink
+                                          , archiveEntrySymlinkType
                                           , archiveEntrySymlinkW
                                           , archiveEntrySymlinkUtf8
                                           , archiveEntryUid
@@ -288,6 +289,8 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_size as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_strmode as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_symlink as ^ { `ArchiveEntryPtr' } -> `CString' #}
+-- | @since 2.1.2.0
+{# fun archive_entry_symlink_type as ^ { `ArchiveEntryPtr' } -> `Symlink' #}
 {# fun archive_entry_symlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_symlink_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_uid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
