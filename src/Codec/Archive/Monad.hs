@@ -15,9 +15,8 @@ import           Control.Monad.IO.Class
 import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc  (alloca, allocaBytes)
+import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr)
-import           Foreign.Storable       (Storable)
 
 type ArchiveM = ExceptT ArchiveResult IO
 
