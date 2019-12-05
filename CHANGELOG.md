@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.1.1.0
+
+  * Remove weeds, export things that were missing from past releases
+
 ## 2.1.0.1
 
   * `packEntries` and friends now detect hardlinks
