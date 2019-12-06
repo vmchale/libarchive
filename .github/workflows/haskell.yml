@@ -23,8 +23,7 @@ jobs:
       - name: Build
         run: "cabal build --enable-tests --enable-benchmarks"
       - name: "Get test data"
-        run: |
-          make -j
+        run: "make -j"
       - name: Tests
         run: "cabal test"
       - name: Documentation
