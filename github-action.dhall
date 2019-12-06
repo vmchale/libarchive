@@ -16,7 +16,7 @@ let installLibarchive =
             ''
         }
 
-in  haskellCi.defaultWith
+in  haskellCi.generalCi
       [ haskellCi.checkout
       , haskellCi.haskellEnv haskellCi.matrixEnv
       , installLibarchive
