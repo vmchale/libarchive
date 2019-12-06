@@ -103,18 +103,14 @@ unpackEntriesFp a fp = do
                 archiveEntrySetPathname x fileC
             ft <- liftIO $ archiveEntryFiletype x
             case ft of
-                Just{} -> do
+                Just{} ->
                     ignore $ archiveReadExtract a x archiveExtractTime
-                    liftIO $ archiveEntrySetPathname x preFile
                 Nothing -> do
-                    preHardlink <- liftIO $ archiveEntryHardlink x
-                    hardlink <- liftIO $ peekCString preHardlink
+                    hardlink <- liftIO $ peekCString =<< archiveEntryHardlink x
                     let hardlink' = fp </> hardlink
                     liftIO $ withCString hardlink' $ \hl ->
                         archiveEntrySetHardlink x hl
                     ignore $ archiveReadExtract a x archiveExtractTime
-                    liftIO $ archiveEntrySetPathname x preFile
-                    liftIO $ archiveEntrySetHardlink x preHardlink
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
