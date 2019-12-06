@@ -1,5 +1,5 @@
 let haskellCi =
-      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/haskell-ci.dhall
+      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/haskell-ci.dhall sha256:ff0522efb1b85daaf578203a42e1caad156d6d461b318c1e7b83c3fcf5d144ba
 
 let installLibarchive =
       haskellCi.BuildStep.Name
