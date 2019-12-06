@@ -18,7 +18,7 @@ let installLibarchive =
 
 in  haskellCi.defaultWith
       [ haskellCi.checkout
-      , haskellCi.haskellEnv haskellCi.latestEnv
+      , haskellCi.haskellEnv haskellCi.matrixEnv
       , installLibarchive
       , haskellCi.cabalDeps
       , haskellCi.cabalBuild
