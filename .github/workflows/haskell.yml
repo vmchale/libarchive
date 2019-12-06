@@ -7,6 +7,15 @@ jobs:
         with:
           cabal-version: "3.0"
           ghc-version: "8.8.1"
+      - name: "Install libarchive"
+        run: |
+          wget https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz
+          tar xvf libarchive-3.4.0.tar.gz
+          cd libarchive 3.4.0
+          ./configure
+          make -j
+          sudo make install
+          cd -
       - name: "Install dependencies"
         run: |
           cabal update
