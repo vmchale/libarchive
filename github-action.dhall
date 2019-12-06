@@ -9,7 +9,7 @@ in  haskellCi.defaultWithSteps
                         ''
                         wget https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz
                         tar xvf libarchive-3.4.0.tar.gz
-                        cd libarchive 3.4.0
+                        cd libarchive-3.4.0
                         ./configure
                         make -j
                         sudo make install
