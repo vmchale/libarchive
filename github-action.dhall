@@ -34,4 +34,4 @@ in  haskellCi.generalCi
               ]
           , cabal = [ haskellCi.Cabal.Cabal30 ]
           }
-      )
+      ) : haskellCi.CI.Type
