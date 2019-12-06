@@ -26,6 +26,12 @@ in  haskellCi.defaultWith
       , haskellCi.cabalTest
       , haskellCi.cabalDoc
       ]
-      ( haskellCi.mkMatrix
-          { ghc = [ "8.4.4", "8.6.5", "8.8.1" ], cabal = [ "3.0" ] }
+      ( Some
+          { ghc =
+              [ haskellCi.GHC.GHC844
+              , haskellCi.GHC.GHC865
+              , haskellCi.GHC.GHC881
+              ]
+          , cabal = [ haskellCi.Cabal.Cabal30 ]
+          }
       )
