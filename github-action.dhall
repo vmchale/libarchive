@@ -1,5 +1,5 @@
 let haskellCi =
-      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/haskell-ci.dhall sha256:decfd4579e49d96095b3dfaaf82e31db96028ae7656796480e4764f30d60d790
+      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/haskell-ci.dhall sha256:864399147f8a2161eadd867f6dc22da794a25deae9a375fc3c98715960b4c07e
 
 let installLibarchive =
       haskellCi.BuildStep.Name
@@ -33,5 +33,6 @@ in  haskellCi.generalCi
               , haskellCi.GHC.GHC881
               ]
           , cabal = [ haskellCi.Cabal.Cabal30 ]
+          , operating-system = [ haskellCi.OS.Ubuntu1804 ]
           }
       ) : haskellCi.CI.Type

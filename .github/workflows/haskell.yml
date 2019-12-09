@@ -1,12 +1,13 @@
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: "actions/checkout@v1"
       - uses: "actions/setup-haskell@v1"
         with:
           cabal-version: "${{ matrix.cabal }}"
           ghc-version: "${{ matrix.ghc }}"
+          operating-system: "${{ matrix.operating-system }}"
       - name: "Install libarchive"
         run: |
           wget https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz
@@ -36,6 +37,8 @@ jobs:
           - "8.4.4"
           - "8.6.5"
           - "8.8.1"
+        operating-system:
+          - ubuntu-18.04
 name: "Haskell CI"
 on:
   - push
