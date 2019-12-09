@@ -16,23 +16,24 @@ let installLibarchive =
             ''
         }
 
-in  haskellCi.generalCi
-      [ haskellCi.checkout
-      , haskellCi.haskellEnv haskellCi.matrixEnv
-      , installLibarchive
-      , haskellCi.cabalDeps
-      , haskellCi.cabalBuild
-      , haskellCi.BuildStep.Name { name = "Get test data", run = "make -j" }
-      , haskellCi.cabalTest
-      , haskellCi.cabalDoc
-      ]
-      ( Some
-          { ghc =
-              [ haskellCi.GHC.GHC844
-              , haskellCi.GHC.GHC865
-              , haskellCi.GHC.GHC881
-              ]
-          , cabal = [ haskellCi.Cabal.Cabal30 ]
-          , operating-system = [ haskellCi.OS.Ubuntu1804 ]
-          }
-      ) : haskellCi.CI.Type
+in    haskellCi.generalCi
+        [ haskellCi.checkout
+        , haskellCi.haskellEnv haskellCi.matrixEnv
+        , installLibarchive
+        , haskellCi.cabalDeps
+        , haskellCi.cabalBuild
+        , haskellCi.BuildStep.Name { name = "Get test data", run = "make -j" }
+        , haskellCi.cabalTest
+        , haskellCi.cabalDoc
+        ]
+        ( Some
+            { ghc =
+                [ haskellCi.GHC.GHC844
+                , haskellCi.GHC.GHC865
+                , haskellCi.GHC.GHC881
+                ]
+            , cabal = [ haskellCi.Cabal.Cabal30 ]
+            , operating-system = [ haskellCi.OS.Ubuntu1804 ]
+            }
+        )
+    : haskellCi.CI.Type

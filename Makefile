@@ -38,10 +38,13 @@ test/data/ATS2-Postiats-0.3.13.tgz: test/data
 test/data/libarchive-1.0.5.1.tar.gz: test/data
 	wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz -O $@
 
-ci: .github/workflows/haskell.yml
+ci: .github/workflows/haskell.yml .github/workflows/hlint.yml
 
 .github/workflows:
 	mkdir -p $@
+
+.github/workflows/hlint.yml: hlint-ci.dhall .github/workflows
+	dhall-to-yaml --file $< --output $@
 
 .github/workflows/haskell.yml: github-action.dhall .github/workflows
 	dhall-to-yaml --file $< --output $@
