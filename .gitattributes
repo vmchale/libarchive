@@ -1,2 +1,1 @@
 *.chs linguist-language=Haskell
-.github/workflows/haskell.yaml linguist-vendored
