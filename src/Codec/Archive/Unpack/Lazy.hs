@@ -14,8 +14,7 @@ import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString.Lazy   as BSL
 import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
-import           Data.IORef             (modifyIORef, newIORef, readIORef,
-                                         writeIORef)
+import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
 import           Foreign.C.Types
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
 import           Foreign.Ptr
@@ -81,6 +80,9 @@ bslToArchive bs = do
                         useAsCStringLen x $ \(charPtr, sz) -> do
                             bufSz <- readIORef bufSzRef
                             bufPtr' <- if sz > bufSz
+                                -- FIXME: realloc fails because not alloc'd?
+                                -- calling reallocBytes twice on the same
+                                -- pointer is bad
                                 then writeIORef bufSzRef sz *> reallocBytes bufPtr sz
                                 else pure bufPtr
                             hmemcpy bufPtr' charPtr (fromIntegral sz)

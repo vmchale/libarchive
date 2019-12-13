@@ -1,6 +1,7 @@
 module Codec.Archive.Roundtrip ( itPacksUnpacks
                                , itPacksUnpacksViaFS
                                , roundtrip
+                               , roundtripFreaky
                                ) where
 
 import           Codec.Archive
@@ -34,8 +35,20 @@ instance Show TestEntries where
         joinBy :: ShowS -> [ShowS] -> ShowS
         joinBy sep = thread . intersperse sep
 
+roundtripRead :: (FilePath -> IO BSL.ByteString) -> FilePath -> IO (Either ArchiveResult BSL.ByteString)
+roundtripRead = (fmap (fmap entriesToBSL . readArchiveBSL) .)
+
 roundtrip :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
-roundtrip = fmap (fmap entriesToBSL . readArchiveBSL) . BSL.readFile
+roundtrip = roundtripRead BSL.readFile
+
+roundtripFreaky :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
+roundtripFreaky = roundtripRead nonstandardRead
+
+nonstandardRead :: FilePath -> IO BSL.ByteString
+nonstandardRead fp = do
+    bStrict <- BS.readFile fp
+    let (h, t) = BS.splitAt (64 * 1024) bStrict
+    pure $ BSL.fromChunks [h, t]
 
 itPacksUnpacks :: [Entry] -> Spec
 itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $
