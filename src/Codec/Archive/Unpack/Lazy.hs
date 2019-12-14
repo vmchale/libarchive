@@ -58,9 +58,10 @@ bslToArchive bs = do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
+    bufPtrRef <- liftIO $ newIORef bufPtr
     bsChunksRef <- liftIO $ newIORef bsChunks
     bufSzRef <- liftIO $ newIORef (32 * 1024)
-    rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtr)
+    rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtrRef)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     nothingPtr <- liftIO $ mallocBytes 0
     let seqErr = traverse_ handle
@@ -69,9 +70,9 @@ bslToArchive bs = do
            , archiveReadSetCallbackData a nothingPtr
            , archiveReadOpen1 a
            ]
-    pure (a, freeHaskellFunPtr cc *> free bufPtr)
+    pure (a, freeHaskellFunPtr cc *> (free =<< readIORef bufPtrRef))
 
-    where readBSL bsRef bufSzRef bufPtr _ _ dataPtr = do
+    where readBSL bsRef bufSzRef bufPtrRef _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of
                     [] -> pure 0
@@ -79,12 +80,14 @@ bslToArchive bs = do
                         modifyIORef bsRef tail
                         useAsCStringLen x $ \(charPtr, sz) -> do
                             bufSz <- readIORef bufSzRef
+                            bufPtr <- readIORef bufPtrRef
                             bufPtr' <- if sz > bufSz
-                                -- FIXME: realloc fails because not alloc'd?
-                                -- calling reallocBytes twice on the same
-                                -- pointer is bad
-                                then writeIORef bufSzRef sz *> reallocBytes bufPtr sz
-                                else pure bufPtr
+                                then do
+                                    writeIORef bufSzRef sz
+                                    newBufPtr <- reallocBytes bufPtr sz
+                                    writeIORef bufPtrRef newBufPtr
+                                    pure newBufPtr
+                                else readIORef bufPtrRef
                             hmemcpy bufPtr' charPtr (fromIntegral sz)
                             poke dataPtr bufPtr' $> fromIntegral sz
           bsChunks = BSL.toChunks bs
