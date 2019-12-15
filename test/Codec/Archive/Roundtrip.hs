@@ -2,6 +2,7 @@ module Codec.Archive.Roundtrip ( itPacksUnpacks
                                , itPacksUnpacksViaFS
                                , roundtrip
                                , roundtripFreaky
+                               , roundtripSmall
                                ) where
 
 import           Codec.Archive
@@ -44,11 +45,23 @@ roundtrip = roundtripRead BSL.readFile
 roundtripFreaky :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripFreaky = roundtripRead nonstandardRead
 
+roundtripSmall :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
+roundtripSmall = roundtripRead smallRead
+
 nonstandardRead :: FilePath -> IO BSL.ByteString
 nonstandardRead fp = do
     bStrict <- BS.readFile fp
     let (h, t) = BS.splitAt (64 * 1024) bStrict
     pure $ BSL.fromChunks [h, t]
+
+smallRead :: FilePath -> IO BSL.ByteString
+smallRead fp = do
+    bStrict <- BS.readFile fp
+    pure $ BSL.fromChunks $ bsChunksOf (2 * 1024) bStrict
+
+bsChunksOf :: Int -> BS.ByteString -> [BS.ByteString]
+bsChunksOf n bytes | BS.null bytes = []
+                   | otherwise = let (h, t) = BS.splitAt n bytes in h : bsChunksOf n t
 
 itPacksUnpacks :: [Entry] -> Spec
 itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $

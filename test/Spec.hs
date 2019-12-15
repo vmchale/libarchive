@@ -2,7 +2,7 @@
 module Main ( main ) where
 
 import           Codec.Archive
-import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky)
+import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripSmall)
 import           Codec.Archive.Test
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
@@ -18,18 +18,23 @@ testFpFreaky :: FilePath -> Spec
 testFpFreaky fp = parallel $ it ("works on nonstandard bytestring (" ++ fp ++ ")") $
     roundtripFreaky fp >>= (`shouldSatisfy` isRight)
 
+testFpSmall :: FilePath -> Spec
+testFpSmall fp = parallel $ it ("works on small bytestring (" ++ fp ++ ")") $
+    roundtripSmall fp >>= (`shouldSatisfy` isRight)
+
 main :: IO ()
 main = do
 
     dir <- doesDirectoryExist "test/data"
     tarballs <- if dir then listDirectory "test/data" else pure []
-    let tarPaths = (("test/data" </>) <$> tarballs)
+    let tarPaths = ("test/data" </>) <$> tarballs
 
     hspec $
         describe "roundtrip" $ do
 
             traverse_ testFp tarPaths
             traverse_ testFpFreaky tarPaths
+            traverse_ testFpSmall tarPaths
 
             context "with symlinks" $ do
                 let entries =
