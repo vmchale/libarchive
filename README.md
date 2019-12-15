@@ -22,12 +22,3 @@ make -j
 ```
 
 so that you have appropriate test data downloaded.
-
-### CI
-
-To edit the CI script, edit `github-action.dhall` and regenerate
-`.github/workflows/haskell.yml` with
-
-```
-make ci
-```
