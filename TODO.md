@@ -9,3 +9,6 @@
     - [ ] Dependent on upstream
 # Documentation
 - [ ] Add example in haddocks
+# Upstream
+- [ ] PVP for signatures?
+- [ ] sig: specify compatible stuff? versions not clear...
