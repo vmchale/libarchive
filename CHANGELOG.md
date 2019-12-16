@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.1.3.0
+
+  * `archiveVersionString` &c. are now pure
+
 ## 2.1.2.1
 
   * Fixed bug that would cause segfaults on lazy bytestrings with large chunks

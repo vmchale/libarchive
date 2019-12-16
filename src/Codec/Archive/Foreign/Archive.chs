@@ -407,9 +407,9 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_set_error as ^ { `ArchivePtr', `CInt', `CString' } -> `()' #}
 {# fun archive_copy_error as ^ { `ArchivePtr', `ArchivePtr' } -> `()' #}
 {# fun archive_file_count as ^ { `ArchivePtr' } -> `CInt' #}
-{# fun archive_version_number as ^ {} -> `CInt' #}
-{# fun archive_version_string as ^ {} -> `String' #}
-{# fun archive_version_details as ^ {} -> `String' #}
+{# fun pure archive_version_number as ^ {} -> `CInt' #}
+{# fun pure archive_version_string as ^ {} -> `String' #}
+{# fun pure archive_version_details as ^ {} -> `String' #}
 {# fun archive_filter_count as ^ { `ArchivePtr' } -> `CInt' #}
 {# fun archive_filter_bytes as ^ { `ArchivePtr', `CInt' } -> `LaInt64' #}
 {# fun archive_filter_code as ^ { `ArchivePtr', `CInt' } -> `Int' #}
