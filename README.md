@@ -18,7 +18,7 @@ to the C API. Like the `tar` package, it can stream from lazy `ByteString`s.
 To run the test suite, first run
 
 ```
-make -j
+make
 ```
 
 so that you have appropriate test data downloaded.
