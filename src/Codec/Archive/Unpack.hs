@@ -60,6 +60,7 @@ unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Dirctory to unpack in
               -> ArchiveM ()
 unpackArchive tarFp dirFp = do
+    -- TODO: bracket here
     a <- archiveFile tarFp
     unpackEntriesFp a dirFp
     ignore $ archiveFree a
