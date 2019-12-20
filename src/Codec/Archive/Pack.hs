@@ -177,13 +177,15 @@ entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
 entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7zip
 
 entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
-entriesToFileGeneral modifier fp hsEntries' = do
-    a <- liftIO archiveWriteNew
-    ignore $ modifier a
-    withCStringArchiveM fp $ \fpc ->
-        handle $ archiveWriteOpenFilename a fpc
-    packEntries a hsEntries'
-    ignore $ archiveFree a
+entriesToFileGeneral modifier fp hsEntries' =
+    bracketM
+        archiveWriteNew
+        archiveFree
+        (\a -> do
+            ignore $ modifier a
+            withCStringArchiveM fp $ \fpc ->
+                handle $ archiveWriteOpenFilename a fpc
+            packEntries a hsEntries')
 
 withArchiveEntry :: MonadIO m => (Ptr ArchiveEntry -> m a) -> m a
 withArchiveEntry fact = do
