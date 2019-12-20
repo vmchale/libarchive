@@ -28,7 +28,7 @@ main = do
 
     dir <- doesDirectoryExist "test/data"
     tarballs <- if dir then listDirectory "test/data" else pure []
-    let tarPaths = (("test/data" </>) <$> tarballs)
+    let tarPaths = ("test/data" </>) <$> tarballs
 
     hspec $
         describe "roundtrip" $ do
