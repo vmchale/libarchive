@@ -5,10 +5,12 @@ module Codec.Archive.Monad ( handle
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
                            , allocaBytesArchiveM
+                           , bracketM
                            , ArchiveM
                            ) where
 
 import           Codec.Archive.Types
+import           Control.Exception      (bracket)
 import           Control.Monad          (void)
 import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
@@ -56,3 +58,11 @@ withCStringArchiveM = genBracket withCString
 
 useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
 useAsCStringLenArchiveM = genBracket useAsCStringLen
+
+bracketM :: IO a -- ^ Allocate/aquire a resource
+         -> (a -> IO b) -- ^ Free/release a resource (assumed not to fail)
+         -> (a -> ArchiveM c)
+         -> ArchiveM c
+bracketM get free act =
+    flipExceptIO $
+        bracket get free (runArchiveM.act)
