@@ -2,7 +2,7 @@
 module Main ( main ) where
 
 import           Codec.Archive
-import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky)
+import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict)
 import           Codec.Archive.Test
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
@@ -10,9 +10,14 @@ import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           Test.Hspec
 
-testFp :: HasCallStack => FilePath -> Spec
+testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
     roundtrip fp >>= (`shouldSatisfy` isRight)
+
+-- TODO: remove strict bytestring functions
+testFpStrict :: FilePath -> Spec
+testFpStrict fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
+    roundtripStrict fp >>= (`shouldSatisfy` isRight)
 
 testFpFreaky :: FilePath -> Spec
 testFpFreaky fp = parallel $ it ("works on nonstandard bytestring (" ++ fp ++ ")") $
@@ -30,6 +35,7 @@ main = do
 
             traverse_ testFp tarPaths
             traverse_ testFpFreaky tarPaths
+            traverse_ testFpStrict tarPaths
 
             context "with symlinks" $ do
                 let entries =

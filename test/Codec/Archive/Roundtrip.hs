@@ -1,6 +1,7 @@
 module Codec.Archive.Roundtrip ( itPacksUnpacks
                                , itPacksUnpacksViaFS
                                , roundtrip
+                               , roundtripStrict
                                , roundtripFreaky
                                ) where
 
@@ -34,6 +35,9 @@ instance Show TestEntries where
         showsContent (Hardlink target)  = ("(Hardlink " ++) . shows target . (')':)
         joinBy :: ShowS -> [ShowS] -> ShowS
         joinBy sep = thread . intersperse sep
+
+roundtripStrict :: FilePath -> IO (Either ArchiveResult BS.ByteString)
+roundtripStrict = fmap (fmap entriesToBS . readArchiveBS) . BS.readFile
 
 roundtripRead :: (FilePath -> IO BSL.ByteString) -> FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripRead = (fmap (fmap entriesToBSL . readArchiveBSL) .)
