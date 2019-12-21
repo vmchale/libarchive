@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.1.3.2
+
+  * Fix segfault in strict function
+
 ## 2.1.3.0
 
   * `archiveVersionString` &c. are now pure
