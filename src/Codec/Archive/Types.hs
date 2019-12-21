@@ -41,7 +41,7 @@ data EntryContent = NormalFile !BS.ByteString
                   | Directory
                   | Symlink !FilePath
                   | Hardlink !FilePath
-    deriving (Eq)
+    deriving (Show, Eq)
 
 data Entry = Entry { filepath    :: !FilePath
                    , content     :: !EntryContent
@@ -49,7 +49,7 @@ data Entry = Entry { filepath    :: !FilePath
                    , ownership   :: !Ownership
                    , time        :: !(Maybe ModTime)
                    }
-    deriving (Eq)
+    deriving (Show, Eq)
 
 data Ownership = Ownership { userName  :: !(Maybe String)
                            , groupName :: !(Maybe String)
