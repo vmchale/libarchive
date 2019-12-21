@@ -7,27 +7,17 @@ import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
 import           Codec.Archive.Unpack
-import           Control.Composition    ((.**))
-import           Control.Monad          (void, (<=<))
+import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class
 import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString.Lazy   as BSL
 import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
 import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
-import           Foreign.C.Types
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
 import           Foreign.Ptr
 import           Foreign.Storable       (poke)
 import           System.IO.Unsafe       (unsafeDupablePerformIO)
-
-foreign import ccall memcpy :: Ptr a -- ^ Destination
-                            -> Ptr b -- ^ Source
-                            -> CSize -- ^ Size
-                            -> IO (Ptr a) -- ^ Pointer to destination
-
-hmemcpy :: Ptr a -> Ptr b -> CSize -> IO ()
-hmemcpy = void .** memcpy
 
 -- | In general, this will be more efficient than 'unpackToDir'
 --
