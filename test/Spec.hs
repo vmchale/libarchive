@@ -14,7 +14,6 @@ testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
     roundtrip fp >>= (`shouldSatisfy` isRight)
 
--- TODO: replace strict bytestring functions? find bug first
 testFpStrict :: FilePath -> Spec
 testFpStrict fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
     roundtripStrict fp >>= (`shouldSatisfy` isRight)

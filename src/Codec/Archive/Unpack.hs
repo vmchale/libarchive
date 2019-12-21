@@ -15,7 +15,7 @@ import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Bifunctor         (first)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
-import           Foreign.Marshal.Alloc  (allocaBytes)
+import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
 import           Foreign.Ptr            (Ptr, nullPtr)
 import           System.FilePath        ((</>))
 import           System.IO.Unsafe       (unsafeDupablePerformIO)
@@ -25,17 +25,20 @@ import           System.IO.Unsafe       (unsafeDupablePerformIO)
 --
 -- @since 1.0.0.0
 readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
-readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFree hsEntries <=< bsToArchive)
+readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bsToArchive)
 {-# NOINLINE readArchiveBS #-}
 
-bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive)
+bsToArchive :: BS.ByteString -> ArchiveM (Ptr Archive, IO ())
 bsToArchive bs = do
     a <- liftIO archiveReadNew
     ignore $ archiveReadSupportFormatAll a
-    useAsCStringLenArchiveM bs $
-        \(buf, sz) ->
+    bufPtr <- useAsCStringLenArchiveM bs $
+        \(buf, sz) -> do
+            buf' <- liftIO $ mallocBytes sz
+            _ <- liftIO $ hmemcpy buf' buf (fromIntegral sz)
             handle $ archiveReadOpenMemory a buf (fromIntegral sz)
-    pure a
+            pure buf'
+    pure (a, free bufPtr)
 
 -- | Read an archive from a file. The format of the archive is automatically
 -- detected.
@@ -172,6 +175,7 @@ unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive
             -> ArchiveM ()
 unpackToDir fp bs = do
-    a <- bsToArchive bs
+    (a, act) <- bsToArchive bs
     unpackEntriesFp a fp
+    liftIO act
     void $ liftIO $ archiveFree a

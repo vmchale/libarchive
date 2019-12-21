@@ -37,7 +37,7 @@ instance Show TestEntries where
         joinBy sep = thread . intersperse sep
 
 roundtripStrict :: FilePath -> IO (Either ArchiveResult BS.ByteString)
-roundtripStrict = fmap (fmap entriesToBS . readArchiveBS) . BS.readFile
+roundtripStrict = fmap (fmap entriesToBS . readArchiveBSL . BSL.fromStrict) . BS.readFile
 
 roundtripRead :: (FilePath -> IO BSL.ByteString) -> FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripRead = (fmap (fmap entriesToBSL . readArchiveBSL) .)
