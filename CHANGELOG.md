@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.2.0.0
+
+  * Haskell `Entry` type now includes `Symlink` field
+
 ## 2.1.3.2
 
   * Fix segfault in strict function
