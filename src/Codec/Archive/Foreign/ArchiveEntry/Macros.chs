@@ -38,10 +38,6 @@ module Codec.Archive.Foreign.ArchiveEntry.Macros ( archiveEntryACLExecute
                                                  , archiveEntryACLEveryone
                                                  , archiveEntryACLStyleExtraID
                                                  , archiveEntryACLStyleMarkDefault
-                                                 , archiveEntryACLEntryInherited
-                                                 , archiveEntryACLStyleSolaris
-                                                 , archiveEntryACLStyleSeparatorComma
-                                                 , archiveEntryACLStyleCompact
                                                  ) where
 
 import Codec.Archive.Types
@@ -105,10 +101,6 @@ archiveEntryACLWriteOwner = EntryACL {# const ARCHIVE_ENTRY_ACL_WRITE_OWNER #}
 archiveEntryACLSynchronize :: EntryACL
 archiveEntryACLSynchronize = EntryACL {# const ARCHIVE_ENTRY_ACL_SYNCHRONIZE #}
 
--- | @since 2.1.1.0
-archiveEntryACLEntryInherited :: EntryACL
-archiveEntryACLEntryInherited = EntryACL {# const ARCHIVE_ENTRY_ACL_ENTRY_INHERITED #}
-
 archiveEntryACLEntryFileInherit :: EntryACL
 archiveEntryACLEntryFileInherit = EntryACL {# const ARCHIVE_ENTRY_ACL_ENTRY_FILE_INHERIT #}
 
@@ -171,15 +163,3 @@ archiveEntryACLStyleExtraID = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_EXTRA_ID
 
 archiveEntryACLStyleMarkDefault :: EntryACL
 archiveEntryACLStyleMarkDefault = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_MARK_DEFAULT #}
-
--- | @since 2.1.1.0
-archiveEntryACLStyleSolaris :: EntryACL
-archiveEntryACLStyleSolaris = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_SOLARIS #}
-
--- | @since 2.1.1.0
-archiveEntryACLStyleSeparatorComma :: EntryACL
-archiveEntryACLStyleSeparatorComma = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_SEPARATOR_COMMA #}
-
--- | @since 2.1.1.0
-archiveEntryACLStyleCompact :: EntryACL
-archiveEntryACLStyleCompact = EntryACL {# const ARCHIVE_ENTRY_ACL_STYLE_COMPACT #}

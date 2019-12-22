@@ -18,7 +18,6 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    -- * Enum types
                                    , ArchiveResult (..)
                                    , FileType (..)
-                                   , Symlink (..)
                                    -- * Macros
                                    , Flags (..)
                                    , ArchiveFilter (..)
@@ -64,12 +63,6 @@ type LaSSize = {# type la_ssize_t #}
                         } deriving (Eq)
   #}
 
-{# enum define Symlink { AE_SYMLINK_TYPE_UNDEFINED as SymlinkUndefined
-                       , AE_SYMLINK_TYPE_FILE as SymlinkFile
-                       , AE_SYMLINK_TYPE_DIRECTORY as SymlinkDirectory
-                       } deriving (Eq)
-  #}
-
 {# enum define ArchiveFilter { ARCHIVE_FILTER_NONE as ArchiveFilterNone
                              , ARCHIVE_FILTER_GZIP as ArchiveFilterGzip
                              , ARCHIVE_FILTER_BZIP2 as ArchiveFilterBzip2
@@ -84,7 +77,6 @@ type LaSSize = {# type la_ssize_t #}
                              , ARCHIVE_FILTER_LZOP as ArchiveFilterLzop
                              , ARCHIVE_FILTER_GRZIP as ArchiveFilterGrzip
                              , ARCHIVE_FILTER_LZ4 as ArchiveFilterLz4
-                             , ARCHIVE_FILTER_ZSTD as ArchiveFilterZstd
                              }
   #}
 
@@ -118,7 +110,6 @@ type LaSSize = {# type la_ssize_t #}
                              , ARCHIVE_FORMAT_RAR as ArchiveFormatRar
                              , ARCHIVE_FORMAT_7ZIP as ArchiveFormat7zip
                              , ARCHIVE_FORMAT_WARC as ArchiveFormatWarc
-                             , ARCHIVE_FORMAT_RAR_V5 as ArchiveFormatRarV5
                              } deriving (Eq)
   #}
 

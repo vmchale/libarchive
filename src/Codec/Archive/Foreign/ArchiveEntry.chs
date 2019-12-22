@@ -52,7 +52,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntrySizeIsSet
                                           , archiveEntryStrmode
                                           , archiveEntrySymlink
-                                          , archiveEntrySymlinkType
                                           , archiveEntrySymlinkW
                                           , archiveEntrySymlinkUtf8
                                           , archiveEntryUid
@@ -111,7 +110,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryCopySourcepath
                                           , archiveEntryCopySourcepathW
                                           , archiveEntrySetSymlink
-                                          , archiveEntrySetSymlinkType
                                           , archiveEntrySetSymlinkUtf8
                                           , archiveEntryCopySymlink
                                           , archiveEntryCopySymlinkW
@@ -130,11 +128,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryAclNext
                                           -- , archiveEntryAclNextW
                                           , archiveEntryAclReset
-                                          , archiveEntryAclToText
-                                          , archiveEntryAclToTextW
-                                          , archiveEntryAclFromText
-                                          , archiveEntryAclFromTextW
-                                          , archiveEntryAclTypes
                                           , archiveEntryAclCount
                                           , archiveEntryAclAddEntry
                                           , archiveEntryAclAddEntryW
@@ -197,10 +190,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryACLEveryone
                                           , archiveEntryACLStyleExtraID
                                           , archiveEntryACLStyleMarkDefault
-                                          , archiveEntryACLEntryInherited
-                                          , archiveEntryACLStyleCompact
-                                          , archiveEntryACLStyleSeparatorComma
-                                          , archiveEntryACLStyleSolaris
                                           -- * Abstract types
                                           , ArchiveEntry
                                           , Stat
@@ -208,7 +197,6 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           -- * Lower-level API types
                                           , FileType (..)
                                           , EntryACL
-                                          , Symlink (..)
                                           -- * Type synonyms
                                           , ArchiveEntryPtr
                                           , LinkResolverPtr
@@ -291,7 +279,6 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_strmode as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_symlink as ^ { `ArchiveEntryPtr' } -> `CString' #}
 -- | @since 2.1.2.0
-{# fun archive_entry_symlink_type as ^ { `ArchiveEntryPtr' } -> `Symlink' #}
 {# fun archive_entry_symlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_symlink_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_uid as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
@@ -344,7 +331,6 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_copy_sourcepath as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_sourcepath_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
 {# fun archive_entry_set_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
-{# fun archive_entry_set_symlink_type as ^ { `ArchiveEntryPtr', `Symlink' } -> `()' #}
 {# fun archive_entry_set_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_symlink as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_symlink_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
@@ -365,11 +351,6 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_acl_next as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CString' } -> `CInt' #}
 -- This function is in the header but not in nm libarchive.a | rg ...
 -- {# fun archive_entry_acl_next_w as ^ { `ArchiveEntryPtr', coerce `EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', castPtr `Ptr EntryACL', id `Ptr CInt', id `Ptr CWString' } -> `CInt' #}
-{# fun archive_entry_acl_to_text_w as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CWString' #}
-{# fun archive_entry_acl_to_text as ^ { `ArchiveEntryPtr', castPtr `Ptr LaSSize', coerce `EntryACL' } -> `CString' #}
-{# fun archive_entry_acl_from_text as ^ { `ArchiveEntryPtr', `CString', coerce `EntryACL' } -> `CInt' #}
-{# fun archive_entry_acl_from_text_w as ^ { `ArchiveEntryPtr', `CWString', coerce `EntryACL' } -> `CInt' #}
-{# fun archive_entry_acl_types as ^ { `ArchiveEntryPtr' } -> `EntryACL' coerce #}
 {# fun archive_entry_acl_count as ^ { `ArchiveEntryPtr', coerce `EntryACL' } -> `CInt' #}
 
 {# fun archive_entry_xattr_clear as ^ { `ArchiveEntryPtr' } -> `()' #}

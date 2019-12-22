@@ -11,7 +11,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveLiblzmaVersion
                                      , archiveBzlibVersion
                                      , archiveLiblz4Version
-                                     , archiveLibzstdVersion
                                      -- * Miscellany
                                      , archiveErrorString
                                      , archiveFormatName
@@ -95,7 +94,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadSupportFormatLha
                                      , archiveReadSupportFormatMtree
                                      , archiveReadSupportFormatRar
-                                     , archiveReadSupportFormatRar5
                                      , archiveReadSupportFormatRaw
                                      , archiveReadSupportFormatTar
                                      , archiveReadSupportFormatWarc
@@ -133,7 +131,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveWriteAddFilterProgram
                                      , archiveWriteAddFilterUuencode
                                      , archiveWriteAddFilterXz
-                                     , archiveWriteAddFilterZstd
                                      , archiveWriteSetFormat
                                      , archiveWriteSetFormatByName
                                      , archiveWriteSetFormatArBsd
@@ -203,8 +200,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskSetBehavior
                                      , archiveReadDiskSetMatching
                                      , archiveReadDiskSetMetadataFilterCallback
-                                     , archiveReadDiskNoAcl
-                                     , archiveReadDiskNoFFlags
                                      -- * Version macros
                                      , archiveVersionNumberMacro
                                      , archiveVersionOnlyString
@@ -247,7 +242,6 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveFree
                                      , archiveMatchExcluded
                                      , archiveMatchPathExcluded
-                                     , archiveMatchSetInclusionRecursion
                                      , archiveMatchExcludePattern
                                      , archiveMatchExcludePatternW
                                      , archiveMatchIncludePattern
@@ -398,7 +392,6 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_liblzma_version as ^ {} -> `CString' #}
 {# fun archive_bzlib_version as ^ {} -> `CString' #}
 {# fun archive_liblz4_version as ^ {} -> `CString' #}
-{# fun archive_libzstd_version as ^ {} -> `CString' #}
 
 {# fun archive_error_string as ^ { `ArchivePtr' } -> `CString' #}
 {# fun archive_format_name as ^ { `ArchivePtr' } -> `CString' #}
@@ -421,7 +414,6 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_exclude_pattern as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_match_exclude_pattern_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
-{# fun archive_match_set_inclusion_recursion as ^ { `ArchivePtr', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_exclude_pattern_from_file as ^ { `ArchivePtr', `CString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_exclude_pattern_from_file_w as ^ { `ArchivePtr', `CWString', `Bool' } -> `ArchiveResult' #}
 {# fun archive_match_include_pattern as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
@@ -521,7 +513,6 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_add_filter_program as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_uuencode as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_add_filter_xz as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-{# fun archive_write_add_filter_zstd as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
 {# fun archive_write_set_format as ^ { `ArchivePtr', `ArchiveFormat' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_by_name as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
@@ -668,7 +659,6 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_support_format_lha as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_mtree as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_rar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
-{# fun archive_read_support_format_rar5 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_raw as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_tar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_format_warc as ^ { `ArchivePtr' } -> `ArchiveResult' #}
