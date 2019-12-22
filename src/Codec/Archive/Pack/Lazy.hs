@@ -60,18 +60,20 @@ entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWrit
 {-# NOINLINE entriesToBSL #-}
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
-entriesToBSLGeneral modifier hsEntries' = do
-    a <- liftIO archiveWriteNew
-    bsRef <- liftIO $ newIORef mempty
-    oc <- liftIO $ mkOpenCallback doNothing
-    wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
-    cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
-    nothingPtr <- liftIO $ mallocBytes 0
-    ignore $ modifier a
-    handle $ archiveWriteOpen a nothingPtr oc wc cc
-    packEntries a hsEntries'
-    ignore $ archiveFree a
-    BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc)
+entriesToBSLGeneral modifier hsEntries' =
+    bracketM
+        archiveWriteNew
+        archiveFree
+        (\a -> do
+            bsRef <- liftIO $ newIORef mempty
+            oc <- liftIO $ mkOpenCallback doNothing
+            wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
+            cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
+            nothingPtr <- liftIO $ mallocBytes 0
+            ignore $ modifier a
+            handle $ archiveWriteOpen a nothingPtr oc wc cc
+            packEntries a hsEntries'
+            BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc))
 
     where writeBSL bsRef _ _ bufPtr sz = do
             let bytesRead = min (fromIntegral sz) (32 * 1024)
