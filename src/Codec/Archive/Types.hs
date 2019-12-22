@@ -39,7 +39,7 @@ data ArchiveEncryption = HasEncryption
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
 data EntryContent = NormalFile !BS.ByteString
                   | Directory
-                  | Symlink !FilePath
+                  | Symlink !FilePath !Symlink
                   | Hardlink !FilePath
     deriving (Show, Eq)
 

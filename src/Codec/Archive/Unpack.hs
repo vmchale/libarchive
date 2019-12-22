@@ -128,7 +128,7 @@ readContents :: Ptr Archive -> Ptr ArchiveEntry -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
     where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
           go (Just FtRegular)   = NormalFile <$> (readBS a =<< sz)
-          go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry)
+          go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
           go (Just FtDirectory) = pure Directory
           go (Just _)           = error "Unsupported filetype"
           sz = fromIntegral <$> archiveEntrySize entry

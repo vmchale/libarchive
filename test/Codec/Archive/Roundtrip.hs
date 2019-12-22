@@ -31,7 +31,7 @@ instance Show TestEntries where
             ("}" ++)
         showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BS.take 10 bytes) . (" <> undefined)" ++)
         showsContent Directory          = ("Directory" ++)
-        showsContent (Symlink target)   = ("(Symlink " ++) . shows target . (')':)
+        showsContent (Symlink target _) = ("(Symlink " ++) . shows target . (')':)
         showsContent (Hardlink target)  = ("(Hardlink " ++) . shows target . (')':)
         joinBy :: ShowS -> [ShowS] -> ShowS
         joinBy sep = thread . intersperse sep

@@ -14,7 +14,7 @@ mkContent fp status =
         (True, False, False, 1) -> NormalFile <$> BS.readFile fp
         (True, False, False, _) -> pure $ Hardlink fp
         (False, True, False, _) -> pure Directory
-        (False, False, True, _) -> Symlink <$> readSymbolicLink fp
+        (False, False, True, _) -> Symlink <$> readSymbolicLink fp <*> pure SymlinkUndefined
         (_, _, _, _)            -> error "inconsistent read result"
 
 mkEntry :: FilePath -> IO Entry

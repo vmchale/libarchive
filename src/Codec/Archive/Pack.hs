@@ -40,8 +40,9 @@ contentAdd (NormalFile contents) a entry = do
 contentAdd Directory a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtDirectory)
     handle $ archiveWriteHeader a entry
-contentAdd (Symlink fp) a entry = do
+contentAdd (Symlink fp st) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtLink)
+    liftIO $ archiveEntrySetSymlinkType entry st
     liftIO $ withCString fp $ \fpc ->
         archiveEntrySetSymlink entry fpc
     handle $ archiveWriteHeader a entry
@@ -78,7 +79,7 @@ entriesSz = getSum . foldMap (Sum . entrySz)
     where entrySz e = 512 + 512 * (contentSz (content e) `div` 512 + 1)
           contentSz (NormalFile str) = fromIntegral $ BS.length str
           contentSz Directory        = 0
-          contentSz (Symlink fp)     = fromIntegral $ length fp
+          contentSz (Symlink fp _)   = 1 + fromIntegral (length fp)
           contentSz (Hardlink fp)    = fromIntegral $ length fp --idk if this is right
 
 -- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's

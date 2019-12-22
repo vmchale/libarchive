@@ -67,7 +67,7 @@ type LaSSize = {# type la_ssize_t #}
 {# enum define Symlink { AE_SYMLINK_TYPE_UNDEFINED as SymlinkUndefined
                        , AE_SYMLINK_TYPE_FILE as SymlinkFile
                        , AE_SYMLINK_TYPE_DIRECTORY as SymlinkDirectory
-                       } deriving (Eq)
+                       } deriving (Show, Eq)
   #}
 
 {# enum define ArchiveFilter { ARCHIVE_FILTER_NONE as ArchiveFilterNone

@@ -27,6 +27,7 @@ module Codec.Archive
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
     , Entry (..)
+    , Symlink (..)
     , EntryContent (..)
     , Ownership (..)
     , Permissions

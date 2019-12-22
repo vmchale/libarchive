@@ -40,7 +40,7 @@ main = do
                 let entries =
                         [ simpleDir "x/"
                         , simpleFile "x/a.txt" (NormalFile "referenced")
-                        , simpleFile "x/b.txt" (Symlink "a.txt")
+                        , simpleFile "x/b.txt" (Symlink "a.txt" SymlinkUndefined)
                         ]
                 itPacksUnpacks entries
                 itPacksUnpacksViaFS entries
