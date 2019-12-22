@@ -13,8 +13,7 @@ description:
     Haskell bindings for [libarchive](https://www.libarchive.org/). Provides the ability to unpack archives, including the ability to unpack archives lazily.
 
 category:        Codec
-build-type:      Simple
-data-files:      test/data/libarchive-0.2.1.2.tar
+build-type:      Custom
 extra-doc-files:
     README.md
     CHANGELOG.md
@@ -22,6 +21,12 @@ extra-doc-files:
 source-repository head
     type:     git
     location: https://github.com/vmchale/libarchive
+
+custom-setup
+    setup-depends:
+        base -any,
+        Cabal -any,
+        chs-cabal -any
 
 flag cross
     description: Set this flag if cross-compiling
