@@ -45,14 +45,13 @@ bsToArchive bs = do
 --
 -- @since 1.0.0.0
 readArchiveFile :: FilePath -> ArchiveM [Entry]
-readArchiveFile = actFree hsEntries <=< archiveFile
+readArchiveFile fp = actFree archiveReadNew (\a -> archiveFile fp a *> hsEntries a)
+-- actFree hsEntries <=< a dorchiveFile
 
-archiveFile :: FilePath -> ArchiveM (Ptr Archive)
-archiveFile fp = withCStringArchiveM fp $ \cpath -> do
-    a <- liftIO archiveReadNew
-    ignore $ archiveReadSupportFormatAll a
-    handle $ archiveReadOpenFilename a cpath 10240
-    pure a
+archiveFile :: FilePath -> Ptr Archive -> ArchiveM ()
+archiveFile fp a = withCStringArchiveM fp $ \cpath ->
+    ignore (archiveReadSupportFormatAll a) *>
+    handle (archiveReadOpenFilename a cpath 10240)
 
 -- | This is more efficient than
 --
@@ -62,11 +61,13 @@ archiveFile fp = withCStringArchiveM fp $ \cpath -> do
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Dirctory to unpack in
               -> ArchiveM ()
-unpackArchive tarFp dirFp = do
-    -- TODO: bracket here
-    a <- archiveFile tarFp
-    unpackEntriesFp a dirFp
-    ignore $ archiveFree a
+unpackArchive tarFp dirFp =
+    bracketM
+        archiveReadNew
+        archiveFree
+        (\a ->
+            archiveFile tarFp a *>
+            unpackEntriesFp a dirFp)
 
 readEntry :: Ptr Archive -> Ptr ArchiveEntry -> IO Entry
 readEntry a entry =

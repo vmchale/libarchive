@@ -8,6 +8,7 @@ import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
+import           System.IO.Temp          (withSystemTempDirectory)
 import           Test.Hspec
 
 testFp :: FilePath -> Spec
@@ -22,6 +23,21 @@ testFpFreaky :: FilePath -> Spec
 testFpFreaky fp = parallel $ it ("works on nonstandard bytestring (" ++ fp ++ ")") $
     roundtripFreaky fp >>= (`shouldSatisfy` isRight)
 
+unpack :: FilePath -> IO (Either ArchiveResult ())
+unpack fp = withSystemTempDirectory "libarchive" $
+    \tmp -> runArchiveM $ unpackArchive fp tmp
+
+readArchiveFile' :: FilePath -> IO (Either ArchiveResult [Entry])
+readArchiveFile' = runArchiveM . readArchiveFile
+
+testUnpackLibarchive :: FilePath -> Spec
+testUnpackLibarchive fp = parallel $ it ("unpacks " ++ fp) $
+    unpack fp >>= (`shouldSatisfy` isRight)
+
+testReadArchiveFile :: FilePath -> Spec
+testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
+    readArchiveFile' fp >>= (`shouldSatisfy` isRight)
+
 main :: IO ()
 main = do
 
@@ -35,6 +51,8 @@ main = do
             traverse_ testFp tarPaths
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
+            traverse_ testUnpackLibarchive tarPaths
+            traverse_ testReadArchiveFile tarPaths
 
             context "with symlinks" $ do
                 let entries =

@@ -4,6 +4,7 @@ module Codec.Archive.Common ( actFree
                             ) where
 
 import           Codec.Archive.Foreign
+import           Codec.Archive.Monad    (ArchiveM, bracketM)
 import           Control.Composition    ((.**))
 import           Control.Monad          (void)
 import           Control.Monad.IO.Class (MonadIO (..))
@@ -19,11 +20,10 @@ hmemcpy :: Ptr a -> Ptr b -> CSize -> IO ()
 hmemcpy = void .** memcpy
 
 -- | Do something with an 'Archive' and then free it
-actFree :: MonadIO m
-        => (Ptr Archive -> m a)
-        -> Ptr Archive
-        -> m a
-actFree fact a = fact a <* liftIO (archiveFree a)
+actFree :: IO (Ptr Archive)
+        -> (Ptr Archive -> ArchiveM a)
+        -> ArchiveM a
+actFree get = bracketM get archiveFree
 
 actFreeCallback :: MonadIO m
                 => (Ptr Archive -> m a)
