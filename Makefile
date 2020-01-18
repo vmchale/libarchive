@@ -1,4 +1,4 @@
-.PHONY: clean setup ci
+.PHONY: clean
 
 SHELL := bash
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
