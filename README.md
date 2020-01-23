@@ -25,4 +25,4 @@ so that you have appropriate test data downloaded.
 
 ## Performance
 
-`libarchive` is faster than `tar` or `tar-conduit` at unpacking archives.
+`libarchive` is faster than `tar` or `tar-conduit` when unpacking archives.
