@@ -9,6 +9,7 @@
     - [ ] Dependent on upstream
 # Documentation
 - [ ] Add example in haddocks
+- [ ] Document ability to use via `archive-sig`/`archive-libarchive`.
 # Upstream
 - [ ] PVP for signatures?
 - [ ] sig: specify compatible stuff? versions not clear...
