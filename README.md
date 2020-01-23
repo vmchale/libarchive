@@ -22,3 +22,7 @@ make
 ```
 
 so that you have appropriate test data downloaded.
+
+## Performance
+
+`libarchive` is faster than `tar` or `tar-conduit` at unpacking archives.
