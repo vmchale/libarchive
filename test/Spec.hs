@@ -18,7 +18,7 @@ reChunk bSz b =
         then [b]
         else
             let (b', b'') = BS.splitAt bSz b
-            in b' : reChunk b''
+            in b' : reChunk bSz b''
 
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
