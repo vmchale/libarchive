@@ -384,6 +384,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {#pointer *archive as ArchivePtr -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
 {#pointer *stat as StatPtr -> Stat #}
+-- | @FILE*@ in C
 {#pointer *FILE as FilePtr newtype#}
 
 {#typedef size_t CSize#}
