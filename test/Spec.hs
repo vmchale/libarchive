@@ -4,12 +4,21 @@ module Main ( main ) where
 import           Codec.Archive
 import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict)
 import           Codec.Archive.Test
+import qualified Data.ByteString         as BS
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
 import           Test.Hspec
+
+reChunk :: Int -> BS.ByteString -> [BS.ByteString]
+reChunk bSz b =
+    if BS.length b <= bSz
+        then [b]
+        else
+            let (b', b'') = BS.splitAt bSz b
+            in b' : reChunk b''
 
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
