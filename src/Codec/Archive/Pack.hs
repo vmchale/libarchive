@@ -188,12 +188,12 @@ entriesToFileGeneral modifier fp hsEntries' =
                 handle $ archiveWriteOpenFilename a fpc
             packEntries a hsEntries')
 
-withArchiveEntry :: MonadIO m => (Ptr ArchiveEntry -> m a) -> m a
-withArchiveEntry fact = do
-    entry <- liftIO archiveEntryNew
-    res <- fact entry
-    liftIO $ archiveEntryFree entry
-    pure res
+withArchiveEntry :: (Ptr ArchiveEntry -> ArchiveM a) -> ArchiveM a
+withArchiveEntry fact =
+    bracketM
+        archiveEntryNew
+        archiveEntryFree
+        fact
 
 archiveEntryAdd :: Ptr Archive -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
