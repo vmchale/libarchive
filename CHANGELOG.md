@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.2.0.2
+
+  * Use `bracket` where it doesn't crash GHC
+
 ## 2.2.0.1
 
   * Use `bracket` in a few places where it doesn't crash GHC
