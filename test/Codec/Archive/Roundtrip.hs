@@ -6,15 +6,16 @@ module Codec.Archive.Roundtrip ( itPacksUnpacks
                                ) where
 
 import           Codec.Archive
-import           Control.Composition        (thread, (.@))
-import           Control.Monad.Except       (liftEither)
-import           Control.Monad.IO.Class     (liftIO)
-import qualified Data.ByteString            as BS
-import qualified Data.ByteString.Lazy       as BSL
-import           Data.List                  (intersperse, sort)
-import           System.Directory           (withCurrentDirectory)
-import           System.Directory.Recursive (getDirRecursive)
-import           System.IO.Temp             (withSystemTempDirectory)
+import           Control.Composition          (thread, (.@))
+import           Control.Monad.Except         (liftEither)
+import           Control.Monad.IO.Class       (liftIO)
+import qualified Data.ByteString              as BS
+import qualified Data.ByteString.Lazy         as BSL
+import           Data.ByteString.Pathological (nonstandardRead)
+import           Data.List                    (intersperse, sort)
+import           System.Directory             (withCurrentDirectory)
+import           System.Directory.Recursive   (getDirRecursive)
+import           System.IO.Temp               (withSystemTempDirectory)
 import           Test.Hspec
 
 newtype TestEntries = TestEntries [Entry]
@@ -47,12 +48,6 @@ roundtrip = roundtripRead BSL.readFile
 
 roundtripFreaky :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripFreaky = roundtripRead nonstandardRead
-
-nonstandardRead :: FilePath -> IO BSL.ByteString
-nonstandardRead fp = do
-    bStrict <- BS.readFile fp
-    let (h, t) = BS.splitAt (64 * 1024) bStrict
-    pure $ BSL.fromChunks [h, t]
 
 itPacksUnpacks :: [Entry] -> Spec
 itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $

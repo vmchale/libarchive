@@ -12,14 +12,6 @@ import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
 import           Test.Hspec
 
-reChunk :: Int -> BS.ByteString -> [BS.ByteString]
-reChunk bSz b =
-    if BS.length b <= bSz
-        then [b]
-        else
-            let (b', b'') = BS.splitAt bSz b
-            in b' : reChunk bSz b''
-
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
     roundtrip fp >>= (`shouldSatisfy` isRight)
