@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+cabal build libarchive-test --enable-profiling
+"$(fd '^libarchive-test$' -t x -I)" +RTS -h
+hp2pretty libarchive-test.hp
+open libarchive-test.svg
