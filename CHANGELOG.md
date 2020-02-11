@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.2.1.0
+
+  * Add `Exception` instance for `ArchiveResult`
+
 ## 2.2.0.2
 
   * Use `bracket` where it doesn't crash GHC
