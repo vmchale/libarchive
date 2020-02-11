@@ -33,6 +33,7 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    ) where
 
 import           Control.DeepSeq    (NFData)
+import           Control.Exception  (Exception)
 import           Data.Bits          (Bits (..))
 import           Foreign.C.String   (CString)
 import           Foreign.C.Types    (CInt, CSize)
@@ -51,7 +52,7 @@ type LaSSize = {# type la_ssize_t #}
                              , ARCHIVE_WARN as ArchiveWarn
                              , ARCHIVE_FAILED as ArchiveFailed
                              , ARCHIVE_FATAL as ArchiveFatal
-                             } deriving (Eq, Show, Generic, NFData)
+                             } deriving (Eq, Show, Generic, NFData, Exception)
   #}
 
 {# enum define FileType { AE_IFREG as FtRegular
