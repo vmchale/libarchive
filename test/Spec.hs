@@ -4,7 +4,6 @@ module Main ( main ) where
 import           Codec.Archive
 import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict)
 import           Codec.Archive.Test
-import qualified Data.ByteString         as BS
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
