@@ -17,7 +17,7 @@ import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
 import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
-import           Data.Functor              (($>))
+import           Data.Functor              (void, ($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr
@@ -60,21 +60,29 @@ entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWrit
 {-# NOINLINE entriesToBSL #-}
 
 entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
-entriesToBSLGeneral modifier hsEntries' = do
-    a <- liftIO archiveWriteNew
-    bsRef <- liftIO $ newIORef mempty
-    oc <- liftIO $ mkOpenCallback doNothing
-    wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
-    cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
-    nothingPtr <- liftIO $ mallocBytes 0
-    ignore $ modifier a
-    handle $ archiveWriteOpen a nothingPtr oc wc cc
-    packEntries a hsEntries'
-    ignore $ archiveFree a
-    BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc)
+entriesToBSLGeneral modifier hsEntries' =
+    bracketM
+        setup
+        cleanup
+        (\(a, bsRef, oc, wc, cc) -> do
+            nothingPtr <- liftIO $ mallocBytes 0
+            ignore $ modifier a
+            handle $ archiveWriteOpen a nothingPtr oc wc cc
+            packEntries a hsEntries'
+            BSL.fromChunks . toList <$> liftIO (readIORef bsRef))
 
-    where writeBSL bsRef _ _ bufPtr sz = do
-            let bytesRead = min (fromIntegral sz) (32 * 1024)
+    where setup = do
+            a <- archiveWriteNew
+            bsRef <- newIORef mempty
+            oc <- mkOpenCallback doNothing
+            wc <- mkWriteCallback (writeBSL bsRef)
+            cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
+            pure (a, bsRef, oc, wc, cc)
+          cleanup (a, _, _, _, cc) = do
+            void $ archiveFree a
+            freeHaskellFunPtr cc
+          writeBSL bsRef _ _ bufPtr sz = do
+            let bytesRead = min (fromIntegral sz) (32 * 1024) -- TODO: tweak this parameter
             bsl <- packCStringLen (bufPtr, fromIntegral bytesRead)
             modifyIORef' bsRef (`DL.snoc` bsl)
             pure bytesRead
