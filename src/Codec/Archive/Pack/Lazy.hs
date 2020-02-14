@@ -76,7 +76,7 @@ entriesToBSLGeneral modifier hsEntries' =
             bsRef <- newIORef mempty
             oc <- mkOpenCallback doNothing
             wc <- mkWriteCallback (writeBSL bsRef)
-            cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
+            cc <- mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
             pure (a, bsRef, oc, wc, cc)
           cleanup (a, _, _, _, cc) = do
             void $ archiveFree a
