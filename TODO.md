@@ -13,3 +13,4 @@
 # Upstream
 - [ ] PVP for signatures?
 - [ ] sig: specify compatible stuff? versions not clear...
+- [ ] GHC: `bracket` branch? What is going on??
