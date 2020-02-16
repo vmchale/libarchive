@@ -49,8 +49,10 @@ main = do
         describe "roundtrip" $ do
 
             traverse_ testFp tarPaths
+#ifndef LOW_MEMORY
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
+#endif
             traverse_ testUnpackLibarchive tarPaths
             traverse_ testReadArchiveFile tarPaths
 
