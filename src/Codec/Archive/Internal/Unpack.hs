@@ -1,4 +1,4 @@
-module Codec.Archive.Unpack ( hsEntries
+module Codec.Archive.Internal.Unpack ( hsEntries
                             , unpackEntriesFp
                             , unpackArchive
                             , readArchiveFile
@@ -6,10 +6,10 @@ module Codec.Archive.Unpack ( hsEntries
                             , unpackToDir
                             ) where
 
-import           Codec.Archive.Common
+import           Codec.Archive.Internal.Common
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Types
 import           Control.Monad          (void, (<=<))
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Bifunctor         (first)

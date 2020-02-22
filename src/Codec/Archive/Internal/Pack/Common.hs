@@ -1,6 +1,6 @@
-module Codec.Archive.Pack.Common ( mkEntry ) where
+module Codec.Archive.Internal.Pack.Common ( mkEntry ) where
 
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Types
 import qualified Data.ByteString          as BS
 import           System.PosixCompat.Files (FileStatus, fileGroup, fileMode, fileOwner, getFileStatus, isDirectory, isRegularFile, isSymbolicLink, linkCount,
                                            readSymbolicLink)

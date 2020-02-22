@@ -1,4 +1,4 @@
-module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
+module Codec.Archive.Internal.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , archiveVersionOnlyString
                                             , archiveVersionStringMacro
                                             , archiveReadFormatCapsNone
@@ -38,7 +38,7 @@ module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , encryptionResult
                                             ) where
 
-import Codec.Archive.Types
+import Codec.Archive.Internal.Types
 import Data.Bits (Bits (..))
 import Foreign.C.Types
 

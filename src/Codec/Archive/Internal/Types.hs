@@ -1,4 +1,4 @@
-module Codec.Archive.Types ( -- * Concrete (Haskell) data types
+module Codec.Archive.Internal.Types ( -- * Concrete (Haskell) data types
                              Entry (..)
                            , EntryContent (..)
                            , Ownership (..)
@@ -8,7 +8,7 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , ArchiveEncryption (..)
                            , ArchiveResult (..)
                            -- * Foreign types
-                           , module Codec.Archive.Types.Foreign
+                           , module Codec.Archive.Internal.Types.Foreign
                            -- * Callbacks
                            , ArchiveOpenCallback
                            , ArchiveCloseCallback
@@ -17,7 +17,7 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , resultToErr
                            ) where
 
-import           Codec.Archive.Types.Foreign
+import           Codec.Archive.Internal.Types.Foreign
 import qualified Data.ByteString             as BS
 import           Data.Int                    (Int64)
 import           Foreign.C.Types             (CInt, CLong, CTime)

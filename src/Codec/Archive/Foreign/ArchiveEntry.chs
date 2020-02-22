@@ -216,8 +216,8 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
 
 {# import Codec.Archive.Foreign.Archive #}
 
-import Codec.Archive.Foreign.ArchiveEntry.Macros
-import Codec.Archive.Types
+import Codec.Archive.Internal.Foreign.ArchiveEntry.Macros
+import Codec.Archive.Internal.Types
 import Data.Coerce (coerce)
 import Foreign.C.String
 import Foreign.C.Types

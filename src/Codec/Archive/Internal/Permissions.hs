@@ -1,8 +1,8 @@
-module Codec.Archive.Permissions ( standardPermissions
+module Codec.Archive.Internal.Permissions ( standardPermissions
                                  , executablePermissions
                                  ) where
 
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Types
 
 standardPermissions :: Permissions
 standardPermissions = 0o644

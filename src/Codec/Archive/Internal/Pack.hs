@@ -1,4 +1,4 @@
-module Codec.Archive.Pack ( entriesToFile
+module Codec.Archive.Internal.Pack ( entriesToFile
                           , entriesToFileZip
                           , entriesToFile7Zip
                           , entriesToBS
@@ -12,9 +12,9 @@ module Codec.Archive.Pack ( entriesToFile
                           ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack.Common
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack.Common
+import           Codec.Archive.Internal.Types
 import           Control.Monad             (void)
 import           Control.Monad.IO.Class    (MonadIO (..))
 import           Data.ByteString           (packCStringLen)

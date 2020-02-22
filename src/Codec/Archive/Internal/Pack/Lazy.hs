@@ -1,4 +1,4 @@
-module Codec.Archive.Pack.Lazy ( entriesToBSL
+module Codec.Archive.Internal.Pack.Lazy ( entriesToBSL
                                , entriesToBSL7zip
                                , entriesToBSLzip
                                , packFiles
@@ -7,10 +7,10 @@ module Codec.Archive.Pack.Lazy ( entriesToBSL
                                ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack
-import           Codec.Archive.Pack.Common
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack
+import           Codec.Archive.Internal.Pack.Common
+import           Codec.Archive.Internal.Types
 import           Control.Composition       ((.@))
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)

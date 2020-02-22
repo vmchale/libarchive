@@ -1,12 +1,12 @@
-module Codec.Archive.Unpack.Lazy ( readArchiveBSL
+module Codec.Archive.Internal.Unpack.Lazy ( readArchiveBSL
                                  , unpackToDirLazy
                                  ) where
 
-import           Codec.Archive.Common
+import           Codec.Archive.Internal.Common
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Types
-import           Codec.Archive.Unpack
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Types
+import           Codec.Archive.Internal.Unpack
 import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class
 import           Data.ByteString        (useAsCStringLen)

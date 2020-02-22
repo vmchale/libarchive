@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric  #-}
 
-module Codec.Archive.Types.Foreign ( -- * Callbacks
+module Codec.Archive.Internal.Types.Foreign ( -- * Callbacks
                                      ArchiveReadCallback
                                    , ArchiveSkipCallback
                                    , ArchiveSeekCallback

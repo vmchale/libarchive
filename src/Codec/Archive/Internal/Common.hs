@@ -1,10 +1,10 @@
-module Codec.Archive.Common ( actFree
+module Codec.Archive.Internal.Common ( actFree
                             , actFreeCallback
                             , hmemcpy
                             ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad    (ArchiveM, bracketM)
+import           Codec.Archive.Internal.Monad    (ArchiveM, bracketM)
 import           Control.Composition    ((.**))
 import           Control.Monad          (void)
 import           Control.Monad.IO.Class (MonadIO (..))

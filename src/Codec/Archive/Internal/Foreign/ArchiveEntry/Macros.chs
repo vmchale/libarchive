@@ -1,4 +1,4 @@
-module Codec.Archive.Foreign.ArchiveEntry.Macros ( archiveEntryACLExecute
+module Codec.Archive.Internal.Foreign.ArchiveEntry.Macros ( archiveEntryACLExecute
                                                  , archiveEntryACLWrite
                                                  , archiveEntryACLRead
                                                  , archiveEntryACLReadData
@@ -44,7 +44,7 @@ module Codec.Archive.Foreign.ArchiveEntry.Macros ( archiveEntryACLExecute
                                                  , archiveEntryACLStyleCompact
                                                  ) where
 
-import Codec.Archive.Types
+import Codec.Archive.Internal.Types
 
 #include <archive_entry.h>
 

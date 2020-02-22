@@ -326,10 +326,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , LaSSize
                                      ) where
 
-{# import qualified Codec.Archive.Types.Foreign #}
+{# import qualified Codec.Archive.Internal.Types.Foreign #}
 
-import Codec.Archive.Foreign.Archive.Macros
-import Codec.Archive.Types
+import Codec.Archive.Internal.Foreign.Archive.Macros
+import Codec.Archive.Internal.Types
 import Control.Composition ((.*), (.**))
 import Data.Coerce (coerce)
 import Foreign.C.String

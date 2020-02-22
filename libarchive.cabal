@@ -43,22 +43,21 @@ library
         Codec.Archive.Foreign
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
+        Codec.Archive.Internal.Foreign.Archive.Macros
+        Codec.Archive.Internal.Foreign.ArchiveEntry.Macros
+        Codec.Archive.Internal.Pack
+        Codec.Archive.Internal.Pack.Lazy
+        Codec.Archive.Internal.Pack.Common
+        Codec.Archive.Internal.Unpack.Lazy
+        Codec.Archive.Internal.Unpack
+        Codec.Archive.Internal.Types
+        Codec.Archive.Internal.Types.Foreign
+        Codec.Archive.Internal.Permissions
+        Codec.Archive.Internal.Common
+        Codec.Archive.Internal.Monad
 
     pkgconfig-depends: libarchive (==3.4.0 || >3.4.0) && <4.0
     hs-source-dirs:    src
-    other-modules:
-        Codec.Archive.Foreign.Archive.Macros
-        Codec.Archive.Foreign.ArchiveEntry.Macros
-        Codec.Archive.Pack
-        Codec.Archive.Pack.Lazy
-        Codec.Archive.Pack.Common
-        Codec.Archive.Unpack.Lazy
-        Codec.Archive.Unpack
-        Codec.Archive.Types
-        Codec.Archive.Types.Foreign
-        Codec.Archive.Permissions
-        Codec.Archive.Common
-        Codec.Archive.Monad
 
     default-language:  Haskell2010
     other-extensions:  DeriveGeneric DeriveAnyClass

@@ -1,4 +1,4 @@
-module Codec.Archive.Monad ( handle
+module Codec.Archive.Internal.Monad ( handle
                            , ignore
                            , runArchiveM
                            -- * Bracketed resources within 'ArchiveM'
@@ -9,7 +9,7 @@ module Codec.Archive.Monad ( handle
                            , ArchiveM
                            ) where
 
-import           Codec.Archive.Types
+import           Codec.Archive.Internal.Types
 import           Control.Exception      (bracket)
 import           Control.Monad          (void)
 import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
