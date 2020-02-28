@@ -1,6 +1,5 @@
 .PHONY: clean
 
-SHELL := bash
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
 .DELETE_ON_ERROR:
 
@@ -10,22 +9,22 @@ clean:
 	rm -rf dist-newstyle dist test/data/*.tar* test/data/*.tgz *.hp *.prof *.chi *.chs.h stack.yaml.lock .hspec-failures .stack-work tags
 
 test/data:
-	mkdir -p test/data
+	mkdir -p $@
 
 test/data/ghc-8.8.1-src.tar: test/data/ghc-8.8.1-src.tar.xz
-	xz -d -f test/data/ghc-8.8.1-src.tar.xz
+	xz -d -f $^
 
 test/data/alsa-lib-1.1.9.tar: test/data/alsa-lib-1.1.9.tar.bz2
-	bzip2 -d -f test/data/alsa-lib-1.1.9.tar.bz2
+	bzip2 -d -f $^
 
 test/data/llvm-9.0.0.src.tar: test/data/llvm-9.0.0.src.tar.xz
-	xz -d -f test/data/llvm-9.0.0.src.tar.xz
+	xz -d -f $^
 
 test/data/ATS2-Postiats-0.3.13.tar: test/data/ATS2-Postiats-0.3.13.tgz
-	gunzip -f test/data/ATS2-Postiats-0.3.13.tgz
+	gunzip -f $^
 
 test/data/libarchive-1.0.5.1.tar: test/data/libarchive-1.0.5.1.tar.gz
-	gunzip -f test/data/libarchive-1.0.5.1.tar.gz
+	gunzip -f $^
 
 test/data/ghc-8.8.1-src.tar.xz: test/data
 	wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz -O $@
