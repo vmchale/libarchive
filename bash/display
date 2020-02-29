@@ -2,7 +2,7 @@
 
 set -e
 
-cabal build libarchive-test --enable-profiling --constraint='libarchive +low-memory'
+cabal build libarchive-test --enable-profiling --constraint='libarchive +low-memory +single-threaded'
 "$(fd '^libarchive-test$' -t x -I)" +RTS -h
 hp2pretty libarchive-test.hp
 firefox libarchive-test.svg
