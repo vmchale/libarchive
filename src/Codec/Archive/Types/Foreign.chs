@@ -62,13 +62,13 @@ type LaSSize = {# type la_ssize_t #}
                         , AE_IFBLK as FtBlock
                         , AE_IFDIR as FtDirectory
                         , AE_IFIFO as FtFifo
-                        } deriving (Eq, Ord)
+                        } deriving (Eq)
   #}
 
 {# enum define Symlink { AE_SYMLINK_TYPE_UNDEFINED as SymlinkUndefined
                        , AE_SYMLINK_TYPE_FILE as SymlinkFile
                        , AE_SYMLINK_TYPE_DIRECTORY as SymlinkDirectory
-                       } deriving (Show, Eq, Ord)
+                       } deriving (Show, Eq)
   #}
 
 {# enum define ArchiveFilter { ARCHIVE_FILTER_NONE as ArchiveFilterNone
