@@ -35,28 +35,29 @@ data ArchiveEncryption = HasEncryption
                        | NoEncryption
                        | EncryptionUnsupported
                        | EncryptionUnknown
+                       deriving (Eq)
 
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
 data EntryContent = NormalFile !BS.ByteString
                   | Directory
                   | Symlink !FilePath !Symlink
                   | Hardlink !FilePath
-    deriving (Show, Eq)
+    deriving (Show, Eq, Ord)
 
 data Entry = Entry { filepath    :: !FilePath
-                   , content     :: !EntryContent
+                   , content     :: EntryContent
                    , permissions :: !Permissions
                    , ownership   :: !Ownership
                    , time        :: !(Maybe ModTime)
                    }
-    deriving (Show, Eq)
+    deriving (Show, Eq, Ord)
 
 data Ownership = Ownership { userName  :: !(Maybe String)
                            , groupName :: !(Maybe String)
                            , ownerId   :: !Id
                            , groupId   :: !Id
                            }
-    deriving (Eq, Show)
+    deriving (Eq, Show, Ord)
 
 type Permissions = CMode
 type ModTime = (CTime, CLong)
