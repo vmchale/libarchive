@@ -1,11 +1,5 @@
 # libarchive
 
-## 2.2.2.0
-
-  * Add `Ord` instance to `Entry`, `Symlink`, `EntryContent`, `Ownership`
-  * Make `content` field of `Entry` lazy
-  * Add `Eq` instance to `ArchiveEncryption`
-
 ## 2.2.1.0
 
   * Add `Exception` instance for `ArchiveResult`
