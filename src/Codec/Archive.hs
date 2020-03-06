@@ -9,21 +9,25 @@ module Codec.Archive
     , entriesToFile
     , entriesToFileZip
     , entriesToFile7Zip
+    , entriesToFileCpio
     , entriesToBS
     , entriesToBS7zip
     , entriesToBSzip
     , entriesToBSL
     , entriesToBSLzip
     , entriesToBSL7zip
+    , entriesToBSLCpio
     , readArchiveFile
     , readArchiveBS
     , readArchiveBSL
     , packFiles
     , packFilesZip
     , packFiles7zip
+    , packFilesCpio
     , packToFile
     , packToFileZip
     , packToFile7Zip
+    , packToFileCpio
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
     , Entry (..)

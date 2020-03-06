@@ -1,9 +1,11 @@
 module Codec.Archive.Pack.Lazy ( entriesToBSL
                                , entriesToBSL7zip
                                , entriesToBSLzip
+                               , entriesToBSLCpio
                                , packFiles
                                , packFilesZip
                                , packFiles7zip
+                               , packFilesCpio
                                ) where
 
 import           Codec.Archive.Foreign
@@ -42,6 +44,10 @@ packFilesZip = packer entriesToBSLzip
 packFiles7zip :: Traversable t => t FilePath -> IO BSL.ByteString
 packFiles7zip = packer entriesToBSL7zip
 
+-- | @since 2.2.3.0
+packFilesCpio :: Traversable t => t FilePath -> IO BSL.ByteString
+packFilesCpio = packer entriesToBSLCpio
+
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
@@ -51,6 +57,11 @@ entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveW
 entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL7zip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBSL7zip #-}
+
+-- | @since 2.2.3.0
+entriesToBSLCpio :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLCpio = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatCpio
+{-# NOINLINE entriesToBSLCpio #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
