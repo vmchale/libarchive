@@ -204,11 +204,10 @@ entriesToFileGeneral modifier fp hsEntries' =
             packEntries a hsEntries')
 
 withArchiveEntry :: (Ptr ArchiveEntry -> ArchiveM a) -> ArchiveM a
-withArchiveEntry fact =
+withArchiveEntry =
     bracketM
         archiveEntryNew
         archiveEntryFree
-        fact
 
 archiveEntryAdd :: Ptr Archive -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
