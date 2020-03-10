@@ -7,6 +7,8 @@
 - [ ] CI
   - [ ] Nix integration (`cabal2nix`)
     - [ ] Dependent on upstream
+# Features
+- [ ] xar? 7zip?
 # Documentation
 - [ ] Add example in haddocks
 - [ ] Document ability to use via `archive-sig`/`archive-libarchive`.
