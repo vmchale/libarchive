@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.2.3.0
+
+  * Add convenience functions for working with `.cpio` archives
+
 ## 2.2.2.0
 
   * Add `Ord` instance to `Entry`, `Symlink`, `EntryContent`, `Ownership`
