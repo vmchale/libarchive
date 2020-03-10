@@ -130,7 +130,7 @@ entriesToBSGeneral modifier hsEntries' = do
           bufSize = entriesSz hsEntries'
 
 filePacker :: (Traversable t) => (FilePath -> t Entry -> ArchiveM ()) -> FilePath -> t FilePath -> ArchiveM ()
-filePacker f tar fps = f tar =<< liftIO (traverse mkEntry fps) -- TODO: undsafeInterleaveIO? lol.
+filePacker f tar fps = f tar =<< liftIO (traverse mkEntry fps)
 
 -- | @since 2.0.0.0
 packToFile :: Traversable t
