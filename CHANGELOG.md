@@ -1,5 +1,9 @@
 # libarchive
 
+## 2.2.4.0
+
+  * Add convenience functions for `.xar` archives
+
 ## 2.2.3.0
 
   * Add convenience functions for working with `.cpio` archives
