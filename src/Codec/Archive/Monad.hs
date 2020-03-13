@@ -14,8 +14,8 @@ import           Control.Exception      (bracket)
 import           Control.Monad          (void)
 import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
-import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString        as BS
+import qualified Data.ByteString.Unsafe as BS
 import           Foreign.C.String
 import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr)
@@ -57,7 +57,7 @@ withCStringArchiveM :: String -> (CString -> ExceptT a IO b) -> ExceptT a IO b
 withCStringArchiveM = genBracket withCString
 
 useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
-useAsCStringLenArchiveM = genBracket useAsCStringLen
+useAsCStringLenArchiveM = genBracket BS.unsafeUseAsCStringLen
 
 bracketM :: IO a -- ^ Allocate/aquire a resource
          -> (a -> IO b) -- ^ Free/release a resource (assumed not to fail)

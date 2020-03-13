@@ -9,8 +9,8 @@ import           Codec.Archive.Types
 import           Codec.Archive.Unpack
 import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class
-import           Data.ByteString        (useAsCStringLen)
 import qualified Data.ByteString.Lazy   as BSL
+import qualified Data.ByteString.Unsafe as BS
 import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
 import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
@@ -68,7 +68,7 @@ bslToArchive bs = do
                     [] -> pure 0
                     (x:_) -> do
                         modifyIORef bsRef tail
-                        useAsCStringLen x $ \(charPtr, sz) -> do
+                        BS.unsafeUseAsCStringLen x $ \(charPtr, sz) -> do
                             bufSz <- readIORef bufSzRef
                             bufPtr <- readIORef bufPtrRef
                             bufPtr' <- if sz > bufSz
