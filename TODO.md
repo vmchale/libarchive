@@ -7,6 +7,9 @@
 - [ ] CI
   - [ ] Nix integration (`cabal2nix`)
     - [ ] Dependent on upstream
+# Performance
+- [ ] Fix actual laziness (?) -> appears downstream in sak in particular
+  conditions
 # Features
 - [ ] xar? 7zip?
 # Documentation
