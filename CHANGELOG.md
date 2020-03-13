@@ -1,5 +1,7 @@
 # libarchive
 
+  * Speed improvements in places
+
 ## 2.2.4.0
 
   * Add convenience functions for `.xar` archives
