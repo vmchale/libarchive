@@ -10,6 +10,10 @@
 # Performance
 - [ ] Fix actual laziness (?) -> appears downstream in sak in particular
   conditions
+# Bugs
+- [ ] segfault (libarchive?) when I mess with .tar files
+- [ ] librachive haskell broken? my .7z and .xar outputs aren't great
+  - [ ] Fix space leak in converting stuff (bad; also from verify-archive)
 # Features
 - [ ] xar? 7zip?
 # Documentation
