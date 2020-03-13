@@ -2,7 +2,12 @@
 
 set -e
 
-cabal build libarchive-test --enable-profiling --constraint='libarchive +low-memory +single-threaded'
+case "$(uname)" in
+    "Darwin") svg_open="open";;
+    *) svg_open="firefox";;
+esac
+
+cabal build libarchive-test --enable-profiling --constraint='libarchive +low-memory +single-threaded' -w ghc-8.8.3
 "$(fd '^libarchive-test$' -t x -I)" +RTS -h
 hp2pretty libarchive-test.hp
-firefox libarchive-test.svg
+$svg_open libarchive-test.svg
