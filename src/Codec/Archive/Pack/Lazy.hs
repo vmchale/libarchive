@@ -23,8 +23,9 @@ import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
 import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
+import           Foreign.ForeignPtr        (castForeignPtr, newForeignPtr)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
-import           Foreign.Ptr
+import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
@@ -81,9 +82,10 @@ entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
-entriesToBSLGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
-    a <- liftIO archiveWriteNew
+    preA <- liftIO archiveWriteNew
+    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
     bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
@@ -92,7 +94,6 @@ entriesToBSLGeneral modifier hsEntries' = do
     ignore $ modifier a
     handle $ archiveWriteOpen a nothingPtr oc wc cc
     packEntries a hsEntries'
-    ignore $ archiveFree a
     BSL.fromChunks . toList <$> liftIO (readIORef bsRef) <* liftIO (freeHaskellFunPtr cc)
 
     where writeBSL bsRef _ _ bufPtr sz = do

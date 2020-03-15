@@ -245,6 +245,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadDiskNoTraverseMounts
                                      , archiveReadDiskNoXattr
                                      , archiveFree
+                                     , archiveEntryFree
                                      , archiveMatchExcluded
                                      , archiveMatchPathExcluded
                                      , archiveMatchSetInclusionRecursion
@@ -349,7 +350,7 @@ foreign import ccall "wrapper" mkOpenCallbackRaw :: ArchiveOpenCallbackRaw a -> 
 foreign import ccall "wrapper" mkCloseCallbackRaw :: ArchiveCloseCallbackRaw a -> IO (FunPtr (ArchiveCloseCallbackRaw a))
 foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
-foreign import ccall "wrapper" mkExcludedCallback :: (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()) -> IO (FunPtr (ArchivePtr -> Ptr a -> ArchiveEntryPtr -> IO ()))
+foreign import ccall "wrapper" mkExcludedCallback :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()))
 
 -- | Don't use an open callback. This is the recommended argument to 'archiveReadOpen'
 noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
@@ -380,9 +381,10 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
           boolToInt True  = 1
 
 #include <archive.h>
+#include <archive_entry.h>
 
-{#pointer *archive as ArchivePtr -> Archive #}
-{#pointer *archive_entry as ArchiveEntryPtr -> ArchiveEntry #}
+{#pointer *archive as ArchivePtr foreign finalizer archive_free as ^ -> Archive #}
+{#pointer *archive_entry as ArchiveEntryPtr foreign finalizer archive_entry_free as ^ -> ArchiveEntry #}
 {#pointer *stat as StatPtr -> Stat #}
 -- | @FILE*@ in C
 {#pointer *FILE as FilePtr newtype#}
@@ -416,7 +418,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_filter_code as ^ { `ArchivePtr', `CInt' } -> `Int' #}
 {# fun archive_filter_name as ^ { `ArchivePtr', `CInt' } -> `CString' #}
 
-{# fun archive_read_new as ^ {} -> `ArchivePtr' #}
+{# fun archive_read_new as ^ {} -> `Ptr Archive' id #}
 
 {# fun archive_match_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
@@ -476,7 +478,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_open_memory as ^ { `ArchivePtr', castPtr `Ptr a', `CSize' } -> `ArchiveResult' #}
 {# fun archive_read_open_fd as ^ { `ArchivePtr', coerce `Fd', `CSize' } -> `ArchiveResult' #}
 {# fun archive_read_open_FILE as ^ { `ArchivePtr', `FilePtr' } -> `ArchiveResult' #}
-{# fun archive_read_next_header as ^ { `ArchivePtr', alloca- `ArchiveEntryPtr' peek* } -> `ArchiveResult' #}
+{# fun archive_read_next_header as ^ { `ArchivePtr', alloca- `Ptr ArchiveEntry' peek* } -> `ArchiveResult' #}
 {# fun archive_read_next_header2 as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `ArchiveResult' #}
 {# fun archive_read_header_position as ^ { `ArchivePtr' } -> `LaInt64' #}
 {# fun archive_read_has_encrypted_entries as ^ { `ArchivePtr' } -> `ArchiveEncryption' encryptionResult #}
@@ -501,7 +503,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_read_close as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
-{# fun archive_write_new as ^ {} -> `ArchivePtr' #}
+{# fun archive_write_new as ^ {} -> `Ptr Archive' id #}
 {# fun archive_write_set_bytes_per_block as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
 {# fun archive_write_get_bytes_per_block as ^ { `ArchivePtr' } -> `CInt' #}
 {# fun archive_write_set_bytes_in_last_block as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
@@ -578,7 +580,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_set_passphrase_callback as ^ { `ArchivePtr', castPtr `Ptr a', castFunPtr `FunPtr (ArchivePassphraseCallback a)' } -> `ArchiveResult' #}
 {# fun archive_write_disk_set_options as ^ { `ArchivePtr', coerce `Flags' } -> `ArchiveResult' #}
 
-{# fun archive_write_disk_new as ^ {} -> `ArchivePtr' #}
+{# fun archive_write_disk_new as ^ {} -> `Ptr Archive' id #}
 {# fun archive_write_disk_set_skip_file as ^ { `ArchivePtr', `LaInt64', `LaInt64' } -> `ArchiveResult' #}
 
 {# fun archive_write_disk_set_standard_lookup as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -595,7 +597,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_disk_gid as ^ { `ArchivePtr', `CString', `LaInt64' } -> `LaInt64' #}
 {# fun archive_write_disk_uid as ^ { `ArchivePtr', `CString', `LaInt64' } -> `LaInt64' #}
 
-{# fun archive_read_disk_new as ^ {} -> `ArchivePtr' #}
+{# fun archive_read_disk_new as ^ {} -> `Ptr Archive' id #}
 {# fun archive_read_disk_set_symlink_logical as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_disk_set_symlink_physical as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_disk_set_symlink_hybrid as ^ { `ArchivePtr' } -> `ArchiveResult' #}
@@ -632,8 +634,6 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
                                                            , castFunPtr `FunPtr (ArchivePtr -> Ptr a -> ArchiveEntry -> IO CInt)'
                                                            , castPtr `Ptr a'
                                                            } -> `ArchiveResult' #}
-
-{# fun archive_free as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 
 {# fun archive_match_include_gname_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
 {# fun archive_match_include_gname as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}

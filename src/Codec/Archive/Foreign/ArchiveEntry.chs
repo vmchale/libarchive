@@ -228,6 +228,7 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 
 #include <archive_entry.h>
 
+-- TODO: foreign ptr
 {#pointer *archive_entry_linkresolver as LinkResolverPtr -> LinkResolver #}
 
 {#typedef size_t CSize#}
@@ -250,7 +251,6 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_clear as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_clone as ^ { `ArchiveEntryPtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_new as ^ {} -> `ArchiveEntryPtr' #}
-{# fun archive_entry_free as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_new2 as ^ { `ArchivePtr' } -> `ArchiveEntryPtr' #}
 {# fun archive_entry_atime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_atime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
@@ -385,7 +385,7 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_linkresolver_new as ^ {} -> `LinkResolverPtr' #}
 {# fun archive_entry_linkresolver_set_strategy as ^ { `LinkResolverPtr', `ArchiveFormat' } -> `()' #}
 {# fun archive_entry_linkresolver_free as ^ { `LinkResolverPtr' } -> `()' #}
-{# fun archive_entry_linkify as ^ { `LinkResolverPtr', id `Ptr ArchiveEntryPtr', id `Ptr ArchiveEntryPtr' } -> `()' #}
+{# fun archive_entry_linkify as ^ { `LinkResolverPtr', id `Ptr (Ptr ArchiveEntry)', id `Ptr (Ptr ArchiveEntry)' } -> `()' #}
 {# fun archive_entry_partial_links as ^ { `LinkResolverPtr', id `Ptr CUInt' } -> `Ptr ArchiveEntry' id #}
 
 {# fun archive_entry_atime_is_set as ^ { `ArchiveEntryPtr' } -> `Bool' #}

@@ -28,13 +28,14 @@ import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
 import           Foreign.C.Types           (CLLong (..), CLong (..))
-import           Foreign.Ptr               (Ptr)
+import           Foreign.ForeignPtr        (castForeignPtr, newForeignPtr)
+import           Foreign.Ptr               (castPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
 
-contentAdd :: EntryContent -> Ptr Archive -> Ptr ArchiveEntry -> ArchiveM ()
+contentAdd :: EntryContent -> ArchivePtr -> ArchiveEntryPtr -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtRegular)
     liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
@@ -60,7 +61,7 @@ withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
 withMaybeCString (Just x) f = withCString x (f . Just)
 withMaybeCString Nothing f  = f Nothing
 
-setOwnership :: Ownership -> Ptr ArchiveEntry -> IO ()
+setOwnership :: Ownership -> ArchiveEntryPtr -> IO ()
 setOwnership (Ownership uname gname uid gid) entry =
     withMaybeCString uname $ \unameC ->
     withMaybeCString gname $ \gnameC ->
@@ -71,10 +72,10 @@ setOwnership (Ownership uname gname uid gid) entry =
         , Just (archiveEntrySetGid entry (coerce gid))
         ]
 
-setTime :: ModTime -> Ptr ArchiveEntry -> IO ()
+setTime :: ModTime -> ArchiveEntryPtr -> IO ()
 setTime (time', nsec) entry = archiveEntrySetMtime entry time' nsec
 
-packEntries :: (Foldable t) => Ptr Archive -> t Entry -> ArchiveM ()
+packEntries :: (Foldable t) => ArchivePtr -> t Entry -> ArchiveM ()
 packEntries a = traverse_ (archiveEntryAdd a)
 
 -- Get a number of bytes appropriate for creating the archive.
@@ -117,9 +118,10 @@ noFail act = do
         Left _  -> error "Should not fail."
 
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
-entriesToBSGeneral :: (Foldable t) => (Ptr Archive -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
+entriesToBSGeneral :: (Foldable t) => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
-    a <- liftIO archiveWriteNew
+    preA <- liftIO archiveWriteNew
+    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
     ignore $ modifier a
     allocaBytesArchiveM bufSize $ \buffer -> do
         (err, usedSz) <- liftIO $ archiveWriteOpenMemory a buffer bufSize
@@ -127,7 +129,6 @@ entriesToBSGeneral modifier hsEntries' = do
         packEntries a hsEntries'
         handle $ archiveWriteClose a
         res <- liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
-        ignore $ archiveFree a
         pure res
 
     where bufSize :: Integral a => a
@@ -207,24 +208,23 @@ entriesToFileCpio = entriesToFileGeneral archiveWriteSetFormatCpio
 entriesToFileXar :: Foldable t => FilePath -> t Entry -> ArchiveM ()
 entriesToFileXar = entriesToFileGeneral archiveWriteSetFormatXar
 
-entriesToFileGeneral :: Foldable t => (Ptr Archive -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
-entriesToFileGeneral modifier fp hsEntries' =
-    bracketM
-        archiveWriteNew
-        archiveFree
-        (\a -> do
-            ignore $ modifier a
-            withCStringArchiveM fp $ \fpc ->
-                handle $ archiveWriteOpenFilename a fpc
-            packEntries a hsEntries')
+entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
+entriesToFileGeneral modifier fp hsEntries' = do
+    p <- liftIO $ archiveWriteNew
+    fptr <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr p)
+    act fptr
 
-withArchiveEntry :: (Ptr ArchiveEntry -> ArchiveM a) -> ArchiveM a
-withArchiveEntry =
-    bracketM
-        archiveEntryNew
-        archiveEntryFree
+    where act =
+            (\a -> do
+                ignore $ modifier a
+                withCStringArchiveM fp $ \fpc ->
+                    handle $ archiveWriteOpenFilename a fpc
+                packEntries a hsEntries')
 
-archiveEntryAdd :: Ptr Archive -> Entry -> ArchiveM ()
+withArchiveEntry :: (ArchiveEntryPtr -> ArchiveM a) -> ArchiveM a
+withArchiveEntry = (=<< (liftIO archiveEntryNew))
+
+archiveEntryAdd :: ArchivePtr -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
     withArchiveEntry $ \entry -> do
         liftIO $ withCString fp $ \fpc ->
