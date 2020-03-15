@@ -2,7 +2,6 @@ module Main ( main ) where
 
 import           Codec.Archive
 import           Control.Exception (throw)
-import           System.IO.Unsafe  (unsafeInterleaveIO)
 
 forceList :: [a] -> IO ()
 forceList = (`seq` mempty) . last
