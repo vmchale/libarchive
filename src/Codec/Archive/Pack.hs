@@ -128,8 +128,7 @@ entriesToBSGeneral modifier hsEntries' = do
         handle (pure err)
         packEntries a hsEntries'
         handle $ archiveWriteClose a
-        res <- liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
-        pure res
+        liftIO $ curry packCStringLen buffer (fromIntegral usedSz)
 
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
@@ -210,7 +209,7 @@ entriesToFileXar = entriesToFileGeneral archiveWriteSetFormatXar
 
 entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
-    p <- liftIO $ archiveWriteNew
+    p <- liftIO archiveWriteNew
     fptr <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr p)
     act fptr
 
@@ -222,7 +221,7 @@ entriesToFileGeneral modifier fp hsEntries' = do
                 packEntries a hsEntries')
 
 withArchiveEntry :: (ArchiveEntryPtr -> ArchiveM a) -> ArchiveM a
-withArchiveEntry = (=<< (liftIO archiveEntryNew))
+withArchiveEntry = (=<< liftIO archiveEntryNew)
 
 archiveEntryAdd :: ArchivePtr -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =

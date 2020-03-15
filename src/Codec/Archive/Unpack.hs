@@ -10,14 +10,14 @@ import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
-import           Control.Monad          (void, (<=<))
+import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Bifunctor         (first)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
 import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr)
 import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
-import           Foreign.Ptr            (Ptr, castPtr, nullPtr)
+import           Foreign.Ptr            (castPtr, nullPtr)
 import           System.FilePath        ((</>))
 import           System.IO.Unsafe       (unsafeDupablePerformIO)
 
@@ -31,7 +31,8 @@ readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntrie
 
 bsToArchive :: BS.ByteString -> ArchiveM (ArchivePtr, IO ())
 bsToArchive bs = do
-    a <- liftIO archiveReadNew
+    preA <- liftIO archiveReadNew
+    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- useAsCStringLenArchiveM bs $
         \(buf, sz) -> do
@@ -67,15 +68,17 @@ archiveFile fp a = withCStringArchiveM fp $ \cpath ->
 unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> FilePath -- ^ Dirctory to unpack in
               -> ArchiveM ()
-unpackArchive tarFp dirFp =
-    bracketM
-        archiveReadNew
-        archiveFree
-        (\a ->
-            archiveFile tarFp a *>
-            unpackEntriesFp a dirFp)
+unpackArchive tarFp dirFp = do
+    preA <- liftIO archiveReadNew
+    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    act a
 
-readEntry :: ArchivePtr -> Ptr ArchiveEntry -> IO Entry
+    where act =
+            (\a ->
+                archiveFile tarFp a *>
+                unpackEntriesFp a dirFp)
+
+readEntry :: ArchivePtr -> ArchiveEntryPtr -> IO Entry
 readEntry a entry =
     Entry
         <$> (peekCString =<< archiveEntryPathname entry)
@@ -168,15 +171,15 @@ readTimes = archiveGetterHelper go archiveEntryMtimeIsSet
             (,) <$> archiveEntryMtime entry <*> archiveEntryMtimeNsec entry
 
 -- | Get the next 'ArchiveEntry' in an 'Archive'
-getEntry :: ArchiveEntryPtr -> IO (Maybe (ArchiveEntryPtr))
+getEntry :: ArchivePtr -> IO (Maybe ArchiveEntryPtr)
 getEntry a = do
     let done ArchiveOk    = False
         done ArchiveRetry = False
         done _            = True
     (stop, res) <- first done <$> archiveReadNextHeader a
-    pure $ if stop
-        then Nothing
-        else Just res
+    if stop
+        then pure Nothing
+        else Just <$> castForeignPtr <$> newForeignPtr archiveEntryFree (castPtr res)
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive
@@ -185,4 +188,3 @@ unpackToDir fp bs = do
     (a, act) <- bsToArchive bs
     unpackEntriesFp a fp
     liftIO act
-    void $ liftIO $ archiveFree a

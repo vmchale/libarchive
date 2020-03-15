@@ -14,8 +14,9 @@ import qualified Data.ByteString.Unsafe as BS
 import           Data.Foldable          (traverse_)
 import           Data.Functor           (($>))
 import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
+import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr)
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
-import           Foreign.Ptr
+import           Foreign.Ptr            (castPtr, freeHaskellFunPtr)
 import           Foreign.Storable       (poke)
 import           System.IO.Unsafe       (unsafeDupablePerformIO)
 
@@ -28,7 +29,6 @@ unpackToDirLazy :: FilePath -- ^ Directory to unpack in
 unpackToDirLazy fp bs = do
     (a, act) <- bslToArchive bs
     unpackEntriesFp a fp
-    ignore $ archiveFree a
     liftIO act
 
 -- | Read an archive lazily. The format of the archive is automatically
@@ -43,9 +43,10 @@ readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntri
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString
-             -> ArchiveM (Ptr Archive, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
+             -> ArchiveM (ArchivePtr, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
-    a <- liftIO archiveReadNew
+    preA <- liftIO archiveReadNew
+    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
     bufPtrRef <- liftIO $ newIORef bufPtr
