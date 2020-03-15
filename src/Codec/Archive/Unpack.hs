@@ -87,7 +87,7 @@ getHsEntry a = do
         Just x  -> Just <$> readEntry a x
 
 -- | Return a list of 'Entry's.
-hsEntries :: MonadIO m => Ptr Archive -> m [Entry]
+hsEntries :: Ptr Archive -> ArchiveM [Entry]
 hsEntries a = do
     next <- liftIO $ getHsEntry a
     case next of
