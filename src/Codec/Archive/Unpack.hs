@@ -11,7 +11,7 @@ import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
 import           Control.Monad          (void, (<=<))
-import           Control.Monad.IO.Class (MonadIO (..))
+import           Control.Monad.IO.Class (liftIO)
 import           Data.Bifunctor         (first)
 import qualified Data.ByteString        as BS
 import           Foreign.C.String
