@@ -7,7 +7,7 @@ case "$(uname)" in
     *) svg_open="firefox";;
 esac
 
-cabal build libarchive-test --enable-profiling --constraint='libarchive +low-memory +single-threaded' -w ghc-8.8.3
-"$(fd '^libarchive-test$' -t x -I)" +RTS -h
-hp2pretty libarchive-test.hp
-$svg_open libarchive-test.svg
+cabal build mem --enable-profiling -w ghc-8.8.3
+"$(fd '^mem$' -t x -I)" +RTS -h
+hp2pretty mem.hp
+$svg_open mem.svg
