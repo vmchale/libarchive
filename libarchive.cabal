@@ -82,6 +82,9 @@ library
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
 
+    if impl(ghc >=8.10)
+        ghc-options: -Wunused-packages
+
 test-suite libarchive-test
     type:               exitcode-stdio-1.0
     main-is:            Spec.hs
@@ -116,6 +119,9 @@ test-suite libarchive-test
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
 
+    if impl(ghc >=8.10)
+        ghc-options: -Wunused-packages
+
 benchmark libarchive-bench
     type:             exitcode-stdio-1.0
     main-is:          Bench.hs
@@ -137,6 +143,9 @@ benchmark libarchive-bench
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
 
+    if impl(ghc >=8.10)
+        ghc-options: -Wunused-packages
+
 benchmark mem
     type:             exitcode-stdio-1.0
     main-is:          Mem.hs
@@ -152,3 +161,6 @@ benchmark mem
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
+
+    if impl(ghc >=8.10)
+        ghc-options: -Wunused-packages
