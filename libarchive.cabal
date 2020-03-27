@@ -1,12 +1,12 @@
 cabal-version:   1.18
 name:            libarchive
-version:         2.2.4.0
+version:         2.2.5.0
 license:         BSD3
 license-file:    LICENSE
 copyright:       Copyright: (c) 2018-2020 Vanessa McHale
 maintainer:      vamchale@gmail.com
 author:          Vanessa McHale
-tested-with:     ghc ==8.4.4 ghc ==8.6.5 ghc ==8.8.3 ghc==8.10.1
+tested-with:     ghc ==8.4.4 ghc ==8.6.5 ghc ==8.8.3 ghc ==8.10.1
 bug-reports:     https://github.com/vmchale/libarchive/issues
 synopsis:        Haskell interface to libarchive
 description:
