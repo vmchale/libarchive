@@ -44,6 +44,7 @@ module Codec.Archive
     -- * Archive monad
     , ArchiveM
     , runArchiveM
+    , throwArchiveM
     -- * Permissions helpers
     , standardPermissions
     , executablePermissions
