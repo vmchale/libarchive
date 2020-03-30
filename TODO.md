@@ -4,9 +4,10 @@
   - [ ] Space leak via Neil Mitchell
   - [ ] Valgrind?
   - [x] Test edge cases (non-standard chunk sizes)
+  - [ ] Test multithreaded (start unpacking in one thread)
 - [ ] CI
-  - [ ] Nix integration (`cabal2nix`)
-    - [ ] Dependent on upstream
+  - [x] Nix integration (`cabal2nix`)
+    - [x] Dependent on upstream
 # Performance
 - [ ] Fix actual laziness (?) -> appears downstream in sak in particular
   conditions
