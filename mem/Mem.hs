@@ -10,5 +10,5 @@ main :: IO ()
 main = readArc
 
 readArc :: IO ()
-readArc = either throw forceList =<< runArchiveM
+readArc = forceList =<< throwArchiveM
     (readArchiveFile "test/data/llvm-9.0.0.src.tar")
