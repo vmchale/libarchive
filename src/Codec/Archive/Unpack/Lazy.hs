@@ -47,14 +47,14 @@ bslToArchive :: BSL.ByteString
              -> ArchiveM (ArchivePtr, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
     preA <- liftIO archiveReadNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree  preA)
-    ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
     bufPtrRef <- liftIO $ newIORef bufPtr
     bsChunksRef <- liftIO $ newIORef bsChunks
     bufSzRef <- liftIO $ newIORef (32 * 1024)
     rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtrRef)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
+    ignore $ archiveReadSupportFormatAll a
     nothingPtr <- liftIO $ mallocBytes 0
     let seqErr = traverse_ handle
     seqErr [ archiveReadSetReadCallback a rc
@@ -62,7 +62,7 @@ bslToArchive bs = do
            , archiveReadSetCallbackData a nothingPtr
            , archiveReadOpen1 a
            ]
-    pure (a, freeHaskellFunPtr cc *> (free =<< readIORef bufPtrRef))
+    pure (a, free =<< readIORef bufPtrRef)
 
     where readBSL bsRef bufSzRef bufPtrRef _ _ dataPtr = do
                 bs' <- readIORef bsRef
