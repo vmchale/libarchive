@@ -101,3 +101,4 @@ entriesToBSLGeneral modifier hsEntries' = do
             modifyIORef' bsRef (`DL.snoc` bsl)
             pure bytesRead
           doNothing _ _ = pure ArchiveOk
+          -- FIXME: this part isn't sufficiently lazy
