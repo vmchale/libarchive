@@ -17,7 +17,7 @@ import qualified Data.ByteString        as BS
 import           Data.Functor           (void)
 import           Foreign.C.String
 import           Foreign.Concurrent     (newForeignPtr)
-import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr_)
+import           Foreign.ForeignPtr     (castForeignPtr)
 import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
 import           Foreign.Ptr            (castPtr, nullPtr)
 import           System.FilePath        ((</>))
@@ -181,7 +181,7 @@ getEntry a = do
     (stop, res) <- first done <$> archiveReadNextHeader a
     if stop
         then pure Nothing
-        else Just <$> castForeignPtr <$> newForeignPtr_ (castPtr res)
+        else Just <$> castForeignPtr <$> newForeignPtr (castPtr res) mempty
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive
