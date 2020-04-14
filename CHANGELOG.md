@@ -1,6 +1,9 @@
 # libarchive
 
+## 2.2.5.0
+
   * Speed improvements in places
+  * Add `throwArchiveM` convenience function
 
 ## 2.2.4.0
 

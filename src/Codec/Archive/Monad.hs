@@ -1,6 +1,7 @@
 module Codec.Archive.Monad ( handle
                            , ignore
                            , runArchiveM
+                           , throwArchiveM
                            -- * Bracketed resources within 'ArchiveM'
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
@@ -9,7 +10,7 @@ module Codec.Archive.Monad ( handle
                            ) where
 
 import           Codec.Archive.Types
-import           Control.Exception      (bracket)
+import           Control.Exception      (bracket, throw)
 import           Control.Monad          (void)
 import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
@@ -24,6 +25,12 @@ type ArchiveM = ExceptT ArchiveResult IO
 -- for things we don't think is going to fail
 ignore :: IO ArchiveResult -> ArchiveM ()
 ignore = void . liftIO
+
+-- | Throws 'ArchiveResult' on error.
+--
+-- @since 2.2.5.0
+throwArchiveM :: ArchiveM a -> IO a
+throwArchiveM = fmap (either throw id) . runArchiveM
 
 runArchiveM :: ArchiveM a -> IO (Either ArchiveResult a)
 runArchiveM = runExceptT
