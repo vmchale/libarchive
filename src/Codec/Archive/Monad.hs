@@ -8,6 +8,7 @@ module Codec.Archive.Monad ( handle
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
                            , allocaBytesArchiveM
+                           , bracketM
                            , ArchiveM
                            ) where
 
@@ -74,3 +75,11 @@ withCStringArchiveM = genBracket withCString
 
 useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
 useAsCStringLenArchiveM = genBracket BS.unsafeUseAsCStringLen
+
+bracketM :: IO a -- ^ Allocate/aquire a resource
+         -> (a -> IO b) -- ^ Free/release a resource (assumed not to fail)
+         -> (a -> ArchiveM c)
+         -> ArchiveM c
+bracketM get free act =
+    flipExceptIO $
+        bracket get free (runArchiveM.act)
