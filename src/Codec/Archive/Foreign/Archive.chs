@@ -383,7 +383,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 #include <archive.h>
 #include <archive_entry.h>
 
-{#pointer *archive as ArchivePtr foreign finalizer archive_free as ^ -> Archive #}
+{#pointer *archive as ArchivePtr foreign -> Archive #}
 {#pointer *archive_entry as ArchiveEntryPtr foreign finalizer archive_entry_free as ^ -> ArchiveEntry #}
 {#pointer *stat as StatPtr -> Stat #}
 -- | @FILE*@ in C
@@ -419,6 +419,8 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_filter_name as ^ { `ArchivePtr', `CInt' } -> `CString' #}
 
 {# fun archive_read_new as ^ {} -> `Ptr Archive' id #}
+
+{# fun archive_free as ^ { id `Ptr Archive' } -> `CInt' #}
 
 {# fun archive_match_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}
 {# fun archive_match_path_excluded as ^ { `ArchivePtr', `ArchiveEntryPtr' } -> `Bool' #}

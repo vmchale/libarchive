@@ -12,9 +12,10 @@ import           Control.Monad.IO.Class
 import qualified Data.ByteString.Lazy   as BSL
 import qualified Data.ByteString.Unsafe as BS
 import           Data.Foldable          (traverse_)
-import           Data.Functor           (($>))
+import           Data.Functor           (void, ($>))
 import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
-import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr)
+import           Foreign.Concurrent     (newForeignPtr)
+import           Foreign.ForeignPtr     (castForeignPtr)
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
 import           Foreign.Ptr            (castPtr, freeHaskellFunPtr)
 import           Foreign.Storable       (poke)
@@ -46,7 +47,7 @@ bslToArchive :: BSL.ByteString
              -> ArchiveM (ArchivePtr, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
 bslToArchive bs = do
     preA <- liftIO archiveReadNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree  preA)
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
     bufPtrRef <- liftIO $ newIORef bufPtr

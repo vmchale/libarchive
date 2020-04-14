@@ -14,8 +14,10 @@ import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class (liftIO)
 import           Data.Bifunctor         (first)
 import qualified Data.ByteString        as BS
+import           Data.Functor           (void)
 import           Foreign.C.String
-import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr, newForeignPtr_)
+import           Foreign.Concurrent     (newForeignPtr)
+import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr_)
 import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
 import           Foreign.Ptr            (castPtr, nullPtr)
 import           System.FilePath        ((</>))
@@ -32,7 +34,7 @@ readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntrie
 bsToArchive :: BS.ByteString -> ArchiveM (ArchivePtr, IO ())
 bsToArchive bs = do
     preA <- liftIO archiveReadNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree preA)
     ignore $ archiveReadSupportFormatAll a
     bufPtr <- useAsCStringLenArchiveM bs $
         \(buf, sz) -> do
@@ -49,7 +51,7 @@ bsToArchive bs = do
 readArchiveFile :: FilePath -> ArchiveM [Entry]
 readArchiveFile fp = act =<< (liftIO $ do
     pre <- archiveReadNew
-    castForeignPtr <$> newForeignPtr archiveFree (castPtr pre))
+    castForeignPtr <$> newForeignPtr (castPtr pre) (void $ archiveFree pre))
 
     where act =
             (\a -> archiveFile fp a *> hsEntries a)
@@ -70,7 +72,7 @@ unpackArchive :: FilePath -- ^ Filepath pointing to archive
               -> ArchiveM ()
 unpackArchive tarFp dirFp = do
     preA <- liftIO archiveReadNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree preA)
     act a
 
     where act =

@@ -28,7 +28,8 @@ import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
 import           Foreign.C.String
 import           Foreign.C.Types           (CLLong (..), CLong (..))
-import           Foreign.ForeignPtr        (castForeignPtr, newForeignPtr)
+import           Foreign.Concurrent        (newForeignPtr)
+import           Foreign.ForeignPtr        (castForeignPtr)
 import           Foreign.Ptr               (castPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
@@ -121,7 +122,7 @@ noFail act = do
 entriesToBSGeneral :: (Foldable t) => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
     preA <- liftIO archiveWriteNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree preA)
     ignore $ modifier a
     allocaBytesArchiveM bufSize $ \buffer -> do
         (err, usedSz) <- liftIO $ archiveWriteOpenMemory a buffer bufSize
@@ -210,7 +211,7 @@ entriesToFileXar = entriesToFileGeneral archiveWriteSetFormatXar
 entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
     p <- liftIO archiveWriteNew
-    fptr <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr p)
+    fptr <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr p) (void $ archiveFree p)
     act fptr
 
     where act =

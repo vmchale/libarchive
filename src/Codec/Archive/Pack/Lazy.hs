@@ -21,9 +21,10 @@ import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
 import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
-import           Data.Functor              (($>))
+import           Data.Functor              (void, ($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
-import           Foreign.ForeignPtr        (castForeignPtr, newForeignPtr)
+import           Foreign.Concurrent        (newForeignPtr)
+import           Foreign.ForeignPtr        (castForeignPtr)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
@@ -85,7 +86,7 @@ entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWrit
 entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
     preA <- liftIO archiveWriteNew
-    a <- liftIO $ castForeignPtr <$> newForeignPtr archiveFree (castPtr preA)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree  preA)
     bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
