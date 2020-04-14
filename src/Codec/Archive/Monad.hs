@@ -1,5 +1,6 @@
 module Codec.Archive.Monad ( handle
                            , ignore
+                           , touchForeignPtrM
                            , runArchiveM
                            , throwArchiveM
                            -- * Bracketed resources within 'ArchiveM'
@@ -17,10 +18,14 @@ import           Control.Monad.IO.Class
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
 import           Foreign.C.String
+import           Foreign.ForeignPtr     (ForeignPtr, touchForeignPtr)
 import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr)
 
 type ArchiveM = ExceptT ArchiveResult IO
+
+touchForeignPtrM :: ForeignPtr a -> ArchiveM ()
+touchForeignPtrM = liftIO . touchForeignPtr
 
 -- for things we don't think is going to fail
 ignore :: IO ArchiveResult -> ArchiveM ()
