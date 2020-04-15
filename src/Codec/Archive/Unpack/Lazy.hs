@@ -12,8 +12,8 @@ import           Control.Monad.IO.Class
 import qualified Data.ByteString.Lazy   as BSL
 import qualified Data.ByteString.Unsafe as BS
 import           Data.Foldable          (traverse_)
-import           Data.Functor           (void, ($>))
-import           Data.IORef             (modifyIORef, newIORef, readIORef, writeIORef)
+import           Data.Functor           (($>))
+import           Data.IORef             (modifyIORef', newIORef, readIORef, writeIORef)
 import           Foreign.Concurrent     (newForeignPtr)
 import           Foreign.ForeignPtr     (castForeignPtr)
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
@@ -69,7 +69,7 @@ bslToArchive bs = do
                 case bs' of
                     [] -> pure 0
                     (x:_) -> do
-                        modifyIORef bsRef tail
+                        modifyIORef' bsRef tail
                         BS.unsafeUseAsCStringLen x $ \(charPtr, sz) -> do
                             bufSz <- readIORef bufSzRef
                             bufPtr <- readIORef bufPtrRef
