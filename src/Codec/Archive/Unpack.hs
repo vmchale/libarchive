@@ -10,18 +10,20 @@ import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
-import           Control.Monad          ((<=<))
-import           Control.Monad.IO.Class (liftIO)
-import           Data.Bifunctor         (first)
-import qualified Data.ByteString        as BS
-import           Data.Functor           (void)
+import           Control.Monad                ((<=<))
+import           Control.Monad.IO.Class       (liftIO)
+import qualified Control.Monad.ST.Lazy        as LazyST
+import qualified Control.Monad.ST.Lazy.Unsafe as LazyST
+import           Data.Bifunctor               (first)
+import qualified Data.ByteString              as BS
+import           Data.Functor                 (void)
 import           Foreign.C.String
-import           Foreign.Concurrent     (newForeignPtr)
-import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr_)
-import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
-import           Foreign.Ptr            (castPtr, nullPtr)
-import           System.FilePath        ((</>))
-import           System.IO.Unsafe       (unsafeDupablePerformIO, unsafeInterleaveIO)
+import           Foreign.Concurrent           (newForeignPtr)
+import           Foreign.ForeignPtr           (castForeignPtr, newForeignPtr_)
+import           Foreign.Marshal.Alloc        (allocaBytes, free, mallocBytes)
+import           Foreign.Ptr                  (castPtr, nullPtr)
+import           System.FilePath              ((</>))
+import           System.IO.Unsafe             (unsafeDupablePerformIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
@@ -49,13 +51,12 @@ bsToArchive bs = do
 --
 -- @since 1.0.0.0
 readArchiveFile :: FilePath -> ArchiveM [Entry]
-readArchiveFile fp = act =<< (liftIO $ do
+readArchiveFile fp = act =<< liftIO (do
     pre <- archiveReadNew
     castForeignPtr <$> newForeignPtr (castPtr pre) (void $ archiveFree pre))
 
-    where act =
-            (\a -> archiveFile fp a *> hsEntries a)
--- actFree hsEntries <=< a dorchiveFile
+    where act a =
+            archiveFile fp a *> hsEntries a
 
 archiveFile :: FilePath -> ArchivePtr -> ArchiveM ()
 archiveFile fp a = withCStringArchiveM fp $ \cpath ->
@@ -75,10 +76,9 @@ unpackArchive tarFp dirFp = do
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree preA)
     act a
 
-    where act =
-            (\a ->
-                archiveFile tarFp a *>
-                unpackEntriesFp a dirFp)
+    where act a =
+            archiveFile tarFp a *>
+            unpackEntriesFp a dirFp
 
 readEntry :: ArchivePtr -> ArchiveEntryPtr -> IO Entry
 readEntry a entry =
@@ -99,15 +99,15 @@ getHsEntry a = do
 
 -- | Return a list of 'Entry's.
 hsEntries :: ArchivePtr -> ArchiveM [Entry]
-hsEntries = liftIO . hsEntriesIO
+hsEntries p = liftIO (LazyST.stToIO $ hsEntriesIO p)
 
 -- | Return a list of 'Entry's.
-hsEntriesIO :: ArchivePtr -> IO [Entry]
+hsEntriesIO :: ArchivePtr -> LazyST.ST s [Entry]
 hsEntriesIO a = do
-    next <- getHsEntry a
+    next <- LazyST.unsafeIOToST (getHsEntry a)
     case next of
         Nothing -> pure []
-        Just x  -> (x:) <$> unsafeInterleaveIO (hsEntriesIO a)
+        Just x  -> (x:) <$> hsEntriesIO a
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
@@ -185,7 +185,7 @@ getEntry a = do
     (stop, res) <- first done <$> archiveReadNextHeader a
     if stop
         then pure Nothing
-        else Just <$> castForeignPtr <$> newForeignPtr_ (castPtr res)
+        else Just . castForeignPtr <$> newForeignPtr_ (castPtr res)
 
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive

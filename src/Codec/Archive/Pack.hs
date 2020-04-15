@@ -214,12 +214,11 @@ entriesToFileGeneral modifier fp hsEntries' = do
     fptr <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr p) (void $ archiveFree p)
     act fptr
 
-    where act =
-            (\a -> do
+    where act a = do
                 ignore $ modifier a
                 withCStringArchiveM fp $ \fpc ->
                     handle $ archiveWriteOpenFilename a fpc
-                packEntries a hsEntries')
+                packEntries a hsEntries'
 
 withArchiveEntry :: (ArchiveEntryPtr -> ArchiveM a) -> ArchiveM a
 withArchiveEntry = (=<< liftIO archiveEntryNew)
