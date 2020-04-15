@@ -3,7 +3,6 @@ module Codec.Archive.Monad ( handle
                            , touchForeignPtrM
                            , runArchiveM
                            , throwArchiveM
-                           , unsafeInterleave
                            -- * Bracketed resources within 'ArchiveM'
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
@@ -23,12 +22,8 @@ import           Foreign.C.String
 import           Foreign.ForeignPtr     (ForeignPtr, touchForeignPtr)
 import           Foreign.Marshal.Alloc  (allocaBytes)
 import           Foreign.Ptr            (Ptr)
-import           System.IO.Unsafe       (unsafeInterleaveIO)
 
 type ArchiveM = ExceptT ArchiveResult IO
-
-unsafeInterleave :: ArchiveM a -> ArchiveM a
-unsafeInterleave = mapExceptT unsafeInterleaveIO
 
 touchForeignPtrM :: ForeignPtr a -> ArchiveM ()
 touchForeignPtrM = liftIO . touchForeignPtr

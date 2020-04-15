@@ -21,7 +21,7 @@ import           Foreign.ForeignPtr     (castForeignPtr, newForeignPtr_)
 import           Foreign.Marshal.Alloc  (allocaBytes, free, mallocBytes)
 import           Foreign.Ptr            (castPtr, nullPtr)
 import           System.FilePath        ((</>))
-import           System.IO.Unsafe       (unsafeDupablePerformIO)
+import           System.IO.Unsafe       (unsafeDupablePerformIO, unsafeInterleaveIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
 -- automatically detected.
@@ -99,11 +99,15 @@ getHsEntry a = do
 
 -- | Return a list of 'Entry's.
 hsEntries :: ArchivePtr -> ArchiveM [Entry]
-hsEntries a = do
-    next <- liftIO $ getHsEntry a
+hsEntries = liftIO . hsEntriesIO
+
+-- | Return a list of 'Entry's.
+hsEntriesIO :: ArchivePtr -> IO [Entry]
+hsEntriesIO a = do
+    next <- getHsEntry a
     case next of
         Nothing -> pure []
-        Just x  -> (x:) <$> hsEntries a
+        Just x  -> (x:) <$> unsafeInterleaveIO (hsEntriesIO a)
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
