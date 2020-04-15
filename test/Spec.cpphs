@@ -4,6 +4,7 @@ module Main ( main ) where
 import           Codec.Archive
 import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict)
 import           Codec.Archive.Test
+import qualified Data.ByteString.Lazy    as BSL
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
@@ -38,6 +39,11 @@ testReadArchiveFile :: FilePath -> Spec
 testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
     readArchiveFile' fp >>= (`shouldSatisfy` isRight)
 
+repack :: ([Entry] -> BSL.ByteString) -> FilePath -> Spec
+repack packer fp = parallel $ it "should repack" $ do
+    res <- runArchiveM $ packer <$> readArchiveFile fp
+    res `shouldSatisfy` (\x -> isRight x && x /= Right mempty)
+
 main :: IO ()
 main = do
 
@@ -50,6 +56,8 @@ main = do
 
             traverse_ testFp tarPaths
 #ifndef LOW_MEMORY
+            traverse_ (repack entriesToBSLXar) tarPaths
+            traverse_ (repack entriesToBSL7zip) tarPaths
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
 #endif
