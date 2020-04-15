@@ -21,7 +21,7 @@ import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString.Lazy      as BSL
 import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
-import           Data.Functor              (void, ($>))
+import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Concurrent        (newForeignPtr)
 import           Foreign.ForeignPtr        (castForeignPtr)
