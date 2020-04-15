@@ -99,7 +99,7 @@ getHsEntry a = do
 
 -- | Return a list of 'Entry's.
 hsEntries :: ArchivePtr -> ArchiveM [Entry]
-hsEntries p = liftIO (LazyST.stToIO $ hsEntriesST p)
+hsEntries p = pure (LazyST.runST $ hsEntriesST p) -- liftIO (LazyST.stToIO $ hsEntriesST p)
 
 -- | Return a list of 'Entry's.
 hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry]

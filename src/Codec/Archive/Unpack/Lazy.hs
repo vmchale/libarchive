@@ -28,9 +28,8 @@ unpackToDirLazy :: FilePath -- ^ Directory to unpack in
                 -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive
                 -> ArchiveM ()
 unpackToDirLazy fp bs = do
-    (a, act) <- bslToArchive bs
+    a <- bslToArchive bs
     unpackEntriesFp a fp
-    liftIO act
 
 -- | Read an archive lazily. The format of the archive is automatically
 -- detected.
@@ -39,12 +38,12 @@ unpackToDirLazy fp bs = do
 --
 -- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry]
-readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bslToArchive)
+readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (hsEntries <=< bslToArchive)
 {-# NOINLINE readArchiveBSL #-}
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString
-             -> ArchiveM (ArchivePtr, IO ()) -- ^ Returns an 'IO' action to be used to clean up after we're done with the archive
+             -> ArchiveM ArchivePtr
 bslToArchive bs = do
     preA <- liftIO archiveReadNew
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
@@ -53,7 +52,7 @@ bslToArchive bs = do
     bufSzRef <- liftIO $ newIORef (32 * 1024)
     rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtrRef)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
-    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
+    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc *> (free =<< readIORef bufPtrRef))
     ignore $ archiveReadSupportFormatAll a
     nothingPtr <- liftIO $ mallocBytes 0
     let seqErr = traverse_ handle
@@ -62,7 +61,7 @@ bslToArchive bs = do
            , archiveReadSetCallbackData a nothingPtr
            , archiveReadOpen1 a
            ]
-    pure (a, free =<< readIORef bufPtrRef)
+    pure a
 
     where readBSL bsRef bufSzRef bufPtrRef _ _ dataPtr = do
                 bs' <- readIORef bsRef
