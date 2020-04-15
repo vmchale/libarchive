@@ -42,7 +42,7 @@ testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
 repack :: ([Entry] -> BSL.ByteString) -> FilePath -> Spec
 repack packer fp = parallel $ it "should repack" $ do
     res <- runArchiveM $ packer <$> readArchiveFile fp
-    res `shouldSatisfy` (\x -> isRight x && x /= Right mempty)
+    res `shouldSatisfy` (\x -> case x of { Left{} -> False; Right b -> not $ BSL.null b })
 
 main :: IO ()
 main = do
