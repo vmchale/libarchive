@@ -16,7 +16,7 @@ import qualified Control.Monad.ST.Lazy        as LazyST
 import qualified Control.Monad.ST.Lazy.Unsafe as LazyST
 import           Data.Bifunctor               (first)
 import qualified Data.ByteString              as BS
-import           Data.Functor                 (void)
+import           Data.Functor                 (void, ($>))
 import           Foreign.C.String
 import           Foreign.Concurrent           (newForeignPtr)
 import           Foreign.ForeignPtr           (castForeignPtr, newForeignPtr_)
@@ -56,7 +56,7 @@ readArchiveFile fp = act =<< liftIO (do
     castForeignPtr <$> newForeignPtr (castPtr pre) (void $ archiveFree pre))
 
     where act a =
-            archiveFile fp a *> hsEntries a
+            archiveFile fp a $> LazyST.runST (hsEntriesST a)
 
 archiveFile :: FilePath -> ArchivePtr -> ArchiveM ()
 archiveFile fp a = withCStringArchiveM fp $ \cpath ->
@@ -99,15 +99,15 @@ getHsEntry a = do
 
 -- | Return a list of 'Entry's.
 hsEntries :: ArchivePtr -> ArchiveM [Entry]
-hsEntries p = liftIO (LazyST.stToIO $ hsEntriesIO p)
+hsEntries p = liftIO (LazyST.stToIO $ hsEntriesST p)
 
 -- | Return a list of 'Entry's.
-hsEntriesIO :: ArchivePtr -> LazyST.ST s [Entry]
-hsEntriesIO a = do
+hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry]
+hsEntriesST a = do
     next <- LazyST.unsafeIOToST (getHsEntry a)
     case next of
         Nothing -> pure []
-        Just x  -> (x:) <$> hsEntriesIO a
+        Just x  -> (x:) <$> hsEntriesST a
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
