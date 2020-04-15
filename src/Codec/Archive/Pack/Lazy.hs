@@ -24,7 +24,7 @@ import           Data.Foldable             (toList)
 import           Data.Functor              (($>))
 import           Data.IORef                (modifyIORef', newIORef, readIORef)
 import           Foreign.Concurrent        (newForeignPtr)
-import           Foreign.ForeignPtr        (castForeignPtr)
+import           Foreign.ForeignPtr        (castForeignPtr, finalizeForeignPtr)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
@@ -95,6 +95,7 @@ entriesToBSLGeneral modifier hsEntries' = do
     ignore $ modifier a
     handle $ archiveWriteOpen a nothingPtr oc wc cc
     packEntries a hsEntries'
+    liftIO $ finalizeForeignPtr a
     BSL.fromChunks . toList <$> liftIO (readIORef bsRef)
 
     where writeBSL bsRef _ _ bufPtr sz = do
