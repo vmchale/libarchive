@@ -1,7 +1,6 @@
 module Main ( main ) where
 
 import           Codec.Archive
-import           Control.Exception (throw)
 
 forceList :: [a] -> IO ()
 forceList = (`seq` mempty) . last
