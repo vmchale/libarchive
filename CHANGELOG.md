@@ -1,5 +1,9 @@
 # libarchive
 
+## 3.0.0.0
+
+  * Use `ForeignPtr` over `Ptr`
+
 ## 2.2.5.0
 
   * Speed improvements in places

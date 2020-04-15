@@ -1,6 +1,6 @@
 cabal-version:   1.18
 name:            libarchive
-version:         2.2.5.0
+version:         3.0.0.0
 license:         BSD3
 license-file:    LICENSE
 copyright:       Copyright: (c) 2018-2020 Vanessa McHale
@@ -157,7 +157,8 @@ benchmark mem
 
     build-depends:
         base -any,
-        libarchive -any
+        libarchive -any,
+        bytestring
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
