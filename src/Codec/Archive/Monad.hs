@@ -1,5 +1,6 @@
 module Codec.Archive.Monad ( handle
                            , ignore
+                           , lenient
                            , touchForeignPtrM
                            , runArchiveM
                            , throwArchiveM
@@ -41,12 +42,23 @@ throwArchiveM = fmap (either throw id) . runArchiveM
 runArchiveM :: ArchiveM a -> IO (Either ArchiveResult a)
 runArchiveM = runExceptT
 
+-- TODO: ArchiveFailed Writer monad?
+-- archive_clear_error
+lenient :: IO ArchiveResult -> ArchiveM ()
+lenient act = do
+    res <- liftIO act
+    case res of
+        ArchiveFatal -> throw res
+        ArchiveEOF   -> throw res
+        _            -> pure ()
+
 handle :: IO ArchiveResult -> ArchiveM ()
 handle act = do
     res <- liftIO act
     case res of
         ArchiveOk    -> pure ()
         ArchiveRetry -> pure ()
+        -- FIXME: ArchiveFailed may be ok
         x            -> throwError x
 
 flipExceptIO :: IO (Either a b) -> ExceptT a IO b

@@ -3,6 +3,7 @@
 ## 3.0.0.0
 
   * Use `ForeignPtr` over `Ptr`
+  * Fix `.cpio` and `.zip` functions
 
 ## 2.2.5.0
 

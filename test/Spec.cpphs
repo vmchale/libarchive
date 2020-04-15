@@ -39,8 +39,8 @@ testReadArchiveFile :: FilePath -> Spec
 testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
     readArchiveFile' fp >>= (`shouldSatisfy` isRight)
 
-repack :: ([Entry] -> BSL.ByteString) -> FilePath -> Spec
-repack packer fp = parallel $ it "should repack" $ do
+repack :: ([Entry] -> BSL.ByteString) -> String -> FilePath -> Spec
+repack packer str fp = parallel $ it ("should repack (" ++ str ++ ")") $ do
     res <- runArchiveM $ packer <$> readArchiveFile fp
     res `shouldSatisfy` (\x -> case x of { Left{} -> False; Right b -> not $ BSL.null b })
 
@@ -56,8 +56,10 @@ main = do
 
             traverse_ testFp tarPaths
 #ifndef LOW_MEMORY
-            traverse_ (repack entriesToBSLXar) tarPaths
-            traverse_ (repack entriesToBSL7zip) tarPaths
+            traverse_ (repack entriesToBSLzip "zip") tarPaths
+            traverse_ (repack entriesToBSLCpio "cpio") tarPaths
+            traverse_ (repack entriesToBSLXar "xar") tarPaths
+            traverse_ (repack entriesToBSL7zip "7zip") tarPaths
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
 #endif

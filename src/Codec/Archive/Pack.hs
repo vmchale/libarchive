@@ -36,6 +36,7 @@ import           System.IO.Unsafe          (unsafeDupablePerformIO)
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
 
+-- archive_error_string
 contentAdd :: EntryContent -> ArchivePtr -> ArchiveEntryPtr -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtRegular)
@@ -45,18 +46,20 @@ contentAdd (NormalFile contents) a entry = do
         liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtDirectory)
-    handle $ archiveWriteHeader a entry
+    lenient $ archiveWriteHeader a entry
+    liftIO $ archiveClearError a
 contentAdd (Symlink fp st) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtLink)
     liftIO $ archiveEntrySetSymlinkType entry st
     liftIO $ withCString fp $ \fpc ->
         archiveEntrySetSymlink entry fpc
-    handle $ archiveWriteHeader a entry
+    lenient $ archiveWriteHeader a entry
+    liftIO $ archiveClearError a
 contentAdd (Hardlink fp) a entry = do
     liftIO $ archiveEntrySetFiletype entry Nothing
     liftIO $ withCString fp $ \fpc ->
         archiveEntrySetHardlink entry fpc
-    handle $ archiveWriteHeader a entry
+    lenient $ archiveWriteHeader a entry
 
 withMaybeCString :: Maybe String -> (Maybe CString -> IO a) -> IO a
 withMaybeCString (Just x) f = withCString x (f . Just)
@@ -116,6 +119,7 @@ noFail act = do
     res <- runArchiveM act
     case res of
         Right x -> pure x
+        -- FIXME: ArchiveFailed is recoverable and whatnot
         Left _  -> error "Should not fail."
 
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
