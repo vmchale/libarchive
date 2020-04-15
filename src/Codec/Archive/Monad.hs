@@ -14,7 +14,7 @@ module Codec.Archive.Monad ( handle
 import           Codec.Archive.Types
 import           Control.Exception      (bracket, throw)
 import           Control.Monad          (void)
-import           Control.Monad.Except   (ExceptT, mapExceptT, runExceptT, throwError)
+import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
