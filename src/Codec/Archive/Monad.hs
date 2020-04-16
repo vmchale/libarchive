@@ -4,27 +4,41 @@ module Codec.Archive.Monad ( handle
                            , touchForeignPtrM
                            , runArchiveM
                            , throwArchiveM
+                           , unsafeArchiveMToArchiveST
+                           , archiveSTToArchiveM
                            -- * Bracketed resources within 'ArchiveM'
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
                            , allocaBytesArchiveM
                            , bracketM
                            , ArchiveM
+                           , ArchiveST
                            ) where
 
 import           Codec.Archive.Types
-import           Control.Exception      (bracket, throw)
-import           Control.Monad          (void)
-import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
+import           Control.Exception            (bracket, throw)
+import           Control.Monad                (void)
+import           Control.Monad.Except         (ExceptT, mapExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
-import qualified Data.ByteString        as BS
-import qualified Data.ByteString.Unsafe as BS
+import           Control.Monad.ST.Lazy        (ST)
+import qualified Control.Monad.ST.Lazy        as LazyST
+import qualified Control.Monad.ST.Lazy.Unsafe as LazyST
+import qualified Data.ByteString              as BS
+import qualified Data.ByteString.Unsafe       as BS
 import           Foreign.C.String
-import           Foreign.ForeignPtr     (ForeignPtr, touchForeignPtr)
-import           Foreign.Marshal.Alloc  (allocaBytes)
-import           Foreign.Ptr            (Ptr)
+import           Foreign.ForeignPtr           (ForeignPtr, touchForeignPtr)
+import           Foreign.Marshal.Alloc        (allocaBytes)
+import           Foreign.Ptr                  (Ptr)
 
 type ArchiveM = ExceptT ArchiveResult IO
+
+type ArchiveST s = ExceptT ArchiveResult (ST s)
+
+unsafeArchiveMToArchiveST :: ArchiveM a -> ArchiveST s a
+unsafeArchiveMToArchiveST = mapExceptT LazyST.unsafeIOToST
+
+archiveSTToArchiveM :: ArchiveST LazyST.RealWorld a -> ArchiveM a
+archiveSTToArchiveM = mapExceptT LazyST.stToIO
 
 touchForeignPtrM :: ForeignPtr a -> ArchiveM ()
 touchForeignPtrM = liftIO . touchForeignPtr
@@ -44,6 +58,8 @@ runArchiveM = runExceptT
 
 -- TODO: ArchiveFailed Writer monad?
 -- archive_clear_error
+-- | Only fails on 'ArchiveFatal', goes on in case of 'ArchiveFailed'. Make sure
+-- to call `archiveClearError' after running this.
 lenient :: IO ArchiveResult -> ArchiveM ()
 lenient act = do
     res <- liftIO act

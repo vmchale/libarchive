@@ -7,6 +7,7 @@ module Codec.Archive.Pack ( entriesToFile
                           , entriesToBSzip
                           , entriesToBS7zip
                           , packEntries
+                          , packEntriesST
                           , noFail
                           , packToFile
                           , packToFileZip
@@ -81,6 +82,9 @@ setTime (time', nsec) entry = archiveEntrySetMtime entry time' nsec
 
 packEntries :: (Foldable t) => ArchivePtr -> t Entry -> ArchiveM ()
 packEntries a = traverse_ (archiveEntryAdd a)
+
+packEntriesST :: (Foldable t) => ArchivePtr -> t Entry -> ArchiveST s ()
+packEntriesST a = traverse_ (archiveEntryAddST a)
 
 -- Get a number of bytes appropriate for creating the archive.
 entriesSz :: (Foldable t, Integral a) => t Entry -> a
@@ -226,6 +230,9 @@ entriesToFileGeneral modifier fp hsEntries' = do
 
 withArchiveEntry :: (ArchiveEntryPtr -> ArchiveM a) -> ArchiveM a
 withArchiveEntry = (=<< liftIO archiveEntryNew)
+
+archiveEntryAddST :: ArchivePtr -> Entry -> ArchiveST s ()
+archiveEntryAddST = (unsafeArchiveMToArchiveST .) . archiveEntryAdd
 
 archiveEntryAdd :: ArchivePtr -> Entry -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
