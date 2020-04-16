@@ -10,10 +10,10 @@ forceList = (`seq` mempty) . last
 main :: IO ()
 main =
     sequence_
-    [ readArc
-    , readWriteArc
-    , readArcBS
-    ]
+        [ readArc
+        , readWriteArc
+        , readArcBS
+        ]
 
 readArc :: IO ()
 readArc = forceList =<< throwArchiveM
