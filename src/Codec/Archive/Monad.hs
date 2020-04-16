@@ -1,10 +1,8 @@
 module Codec.Archive.Monad ( handle
                            , ignore
                            , lenient
-                           , liftST
                            , touchForeignPtrM
                            , runArchiveM
-                           , runArchiveST
                            , throwArchiveM
                            , unsafeArchiveMToArchiveST
                            , archiveSTToArchiveM
@@ -12,14 +10,15 @@ module Codec.Archive.Monad ( handle
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
                            , allocaBytesArchiveM
+                           , bracketM
                            , ArchiveM
                            , ArchiveST
                            ) where
 
 import           Codec.Archive.Types
-import           Control.Exception            (throw)
+import           Control.Exception            (bracket, throw)
 import           Control.Monad                (void)
-import           Control.Monad.Except         (ExceptT (..), mapExceptT, runExceptT, throwError)
+import           Control.Monad.Except         (ExceptT, mapExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
 import           Control.Monad.ST.Lazy        (ST)
 import qualified Control.Monad.ST.Lazy        as LazyST
@@ -35,17 +34,11 @@ type ArchiveM = ExceptT ArchiveResult IO
 
 type ArchiveST s = ExceptT ArchiveResult (ST s)
 
-runArchiveST :: ArchiveST s a -> ST s (Either ArchiveResult a)
-runArchiveST = runExceptT
-
 unsafeArchiveMToArchiveST :: ArchiveM a -> ArchiveST s a
 unsafeArchiveMToArchiveST = mapExceptT LazyST.unsafeIOToST
 
 archiveSTToArchiveM :: ArchiveST LazyST.RealWorld a -> ArchiveM a
 archiveSTToArchiveM = mapExceptT LazyST.stToIO
-
-liftST :: ST s a -> ArchiveST s a
-liftST = ExceptT . fmap Right
 
 touchForeignPtrM :: ForeignPtr a -> ArchiveM ()
 touchForeignPtrM = liftIO . touchForeignPtr
@@ -105,3 +98,11 @@ withCStringArchiveM = genBracket withCString
 
 useAsCStringLenArchiveM :: BS.ByteString -> (CStringLen -> ExceptT a IO b) -> ExceptT a IO b
 useAsCStringLenArchiveM = genBracket BS.unsafeUseAsCStringLen
+
+bracketM :: IO a -- ^ Allocate/aquire a resource
+         -> (a -> IO b) -- ^ Free/release a resource (assumed not to fail)
+         -> (a -> ArchiveM c)
+         -> ArchiveM c
+bracketM get free act =
+    flipExceptIO $
+        bracket get free (runArchiveM.act)
