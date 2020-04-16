@@ -17,17 +17,19 @@ import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
 import           Control.Composition       ((.@))
 import           Control.Monad.IO.Class    (liftIO)
+import qualified Control.Monad.ST.Lazy     as LazyST
 import           Data.ByteString           (packCStringLen)
+import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Lazy      as BSL
 import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
 import           Data.Functor              (($>))
-import           Data.IORef                (modifyIORef', newIORef, readIORef)
+import           Data.IORef                (IORef, modifyIORef', newIORef, readIORef)
 import           Foreign.Concurrent        (newForeignPtr)
 import           Foreign.ForeignPtr        (castForeignPtr, finalizeForeignPtr)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
-import           System.IO.Unsafe          (unsafeDupablePerformIO)
+import           System.IO.Unsafe          (unsafeDupablePerformIO, unsafeInterleaveIO)
 
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
@@ -58,50 +60,57 @@ packFilesXar = packer entriesToBSLXar
 
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
+entriesToBSLzip es = LazyST.runST (noFailST $ entriesToBSLGeneral archiveWriteSetFormatZip es)
 {-# NOINLINE entriesToBSLzip #-}
 
 -- | @since 1.0.5.0
 entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL7zip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
+entriesToBSL7zip es = LazyST.runST (noFailST $ entriesToBSLGeneral archiveWriteSetFormat7zip es)
 {-# NOINLINE entriesToBSL7zip #-}
 
 -- | @since 2.2.3.0
 entriesToBSLCpio :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLCpio = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatCpio
+entriesToBSLCpio es = LazyST.runST (noFailST $ entriesToBSLGeneral archiveWriteSetFormatCpio es)
 {-# NOINLINE entriesToBSLCpio #-}
 
 -- | @since 2.2.4.0
 entriesToBSLXar :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSLXar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatXar
+entriesToBSLXar es = LazyST.runST (noFailST $ entriesToBSLGeneral archiveWriteSetFormatXar es)
 {-# NOINLINE entriesToBSLXar #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
 entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
-entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
+entriesToBSL es = LazyST.runST (noFailST $ entriesToBSLGeneral archiveWriteSetFormatPaxRestricted es)
 {-# NOINLINE entriesToBSL #-}
 
-entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveST s BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
-    preA <- liftIO archiveWriteNew
-    bsRef <- liftIO $ newIORef mempty
-    oc <- liftIO $ mkOpenCallback doNothing
-    wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
-    cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
-    a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
-    nothingPtr <- liftIO $ mallocBytes 0
-    ignore $ modifier a
-    handle $ archiveWriteOpen a nothingPtr oc wc cc
-    packEntries a hsEntries'
-    liftIO $ finalizeForeignPtr a
-    BSL.fromChunks . toList <$> liftIO (readIORef bsRef)
+    (a, bsRef) <- setup
+    packEntriesST a hsEntries'
+    unsafeArchiveMToArchiveST $ do
+        liftIO $ finalizeForeignPtr a
+        BSL.fromChunks . toList <$> liftIO (unsafeInterleaveIO $ readIORef bsRef)
+
 
     where writeBSL bsRef _ _ bufPtr sz = do
             let bytesRead = min (fromIntegral sz) (32 * 1024)
             bsl <- packCStringLen (bufPtr, fromIntegral bytesRead)
-            modifyIORef' bsRef (`DL.snoc` bsl)
-            pure bytesRead
+            tok <- unsafeInterleaveIO $ modifyIORef' bsRef (`DL.snoc` bsl)
+            pure (tok `seq` bytesRead)
           doNothing _ _ = pure ArchiveOk
           -- FIXME: this part isn't sufficiently lazy
+
+          setup :: ArchiveST s (ArchivePtr, IORef (DL.DList BS.ByteString))
+          setup = unsafeArchiveMToArchiveST $ do
+            preA <- liftIO archiveWriteNew
+            bsRef <- liftIO $ newIORef mempty
+            oc <- liftIO $ mkOpenCallback doNothing
+            wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
+            cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
+            a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
+            nothingPtr <- liftIO $ mallocBytes 0
+            ignore $ modifier a
+            handle $ archiveWriteOpen a nothingPtr oc wc cc
+            pure (a, bsRef)

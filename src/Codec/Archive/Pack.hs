@@ -9,6 +9,7 @@ module Codec.Archive.Pack ( entriesToFile
                           , packEntries
                           , packEntriesST
                           , noFail
+                          , noFailST
                           , packToFile
                           , packToFileZip
                           , packToFile7Zip
@@ -22,6 +23,7 @@ import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
 import           Control.Monad             (void)
 import           Control.Monad.IO.Class    (MonadIO (..))
+import qualified Control.Monad.ST.Lazy     as LazyST
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString           as BS
 import           Data.Coerce               (coerce)
@@ -123,7 +125,13 @@ noFail act = do
     res <- runArchiveM act
     case res of
         Right x -> pure x
-        -- FIXME: ArchiveFailed is recoverable and whatnot
+        Left _  -> error "Should not fail."
+
+noFailST :: ArchiveST s a -> LazyST.ST s a
+noFailST act = do
+    res <- runArchiveST act
+    case res of
+        Right x -> pure x
         Left _  -> error "Should not fail."
 
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
