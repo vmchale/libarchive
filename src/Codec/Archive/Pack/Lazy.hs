@@ -32,7 +32,9 @@ import           System.IO.Unsafe          (unsafeDupablePerformIO)
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
 
--- | Pack files into a tar archive
+-- | Pack files into a tar archive. This will be more efficient than
+--
+-- @BSL.writeFile fp . entriesToBSL@
 --
 -- @since 2.0.0.0
 packFiles :: Traversable t
