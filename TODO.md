@@ -5,6 +5,8 @@
   - [ ] Valgrind?
   - [x] Test edge cases (non-standard chunk sizes)
   - [ ] Test multithreaded (start unpacking in one thread)
+  - [x] test xar &c.
+    - [ ] test read of xar, 7zip, cpio
 - [ ] CI
   - [x] Nix integration (`cabal2nix`)
     - [x] Dependent on upstream
@@ -16,7 +18,7 @@
 - [ ] librachive haskell broken? my .7z and .xar outputs aren't great
   - [ ] Fix space leak in converting stuff (bad; also from verify-archive)
 # Features
-- [ ] xar? 7zip?
+- [x] xar? 7zip?
 # Documentation
 - [ ] Add example in haddocks
 - [ ] Document ability to use via `archive-sig`/`archive-libarchive`.
