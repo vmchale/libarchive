@@ -18,6 +18,7 @@ import           Codec.Archive.Types
 import           Control.Composition       ((.@))
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)
+import qualified Data.ByteString           as BS
 import qualified Data.ByteString.Lazy      as BSL
 import qualified Data.DList                as DL
 import           Data.Foldable             (toList)
@@ -85,12 +86,15 @@ entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
-entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
-entriesToBSLGeneral modifier hsEntries' = do
+entriesToIOChunks :: Foldable t
+                  => (ArchivePtr -> IO ArchiveResult) -- ^ Action to set format of archive
+                  -> t Entry
+                  -> (BS.ByteString -> IO ()) -- ^ 'IO' Action to process the chunks
+                  -> ArchiveM ()
+entriesToIOChunks modifier hsEntries' chunkAct = do
     preA <- liftIO archiveWriteNew
-    bsRef <- liftIO $ newIORef mempty
     oc <- liftIO $ mkOpenCallback doNothing
-    wc <- liftIO $ mkWriteCallback (writeBSL bsRef)
+    wc <- liftIO $ mkWriteCallback chunkHelper
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
     nothingPtr <- liftIO $ mallocBytes 0
@@ -98,12 +102,20 @@ entriesToBSLGeneral modifier hsEntries' = do
     handle $ archiveWriteOpen a nothingPtr oc wc cc
     packEntries a hsEntries'
     liftIO $ finalizeForeignPtr a
-    BSL.fromChunks . toList <$> liftIO (readIORef bsRef)
 
-    where writeBSL bsRef _ _ bufPtr sz = do
+    where doNothing _ _ = pure ArchiveOk
+          chunkHelper _ _ bufPtr sz = do
             let bytesRead = min (fromIntegral sz) (32 * 1024)
-            bsl <- packCStringLen (bufPtr, fromIntegral bytesRead)
-            modifyIORef' bsRef (`DL.snoc` bsl)
+            bs <- packCStringLen (bufPtr, fromIntegral bytesRead)
+            chunkAct bs
             pure bytesRead
-          doNothing _ _ = pure ArchiveOk
-          -- FIXME: this part isn't sufficiently lazy
+
+entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral modifier hsEntries' = do
+    preRef <- liftIO $ newIORef mempty
+    let chunkAct = writeBSL preRef
+    entriesToIOChunks modifier hsEntries' chunkAct
+    BSL.fromChunks . toList <$> liftIO (readIORef preRef)
+
+    where writeBSL bsRef chunk =
+            modifyIORef' bsRef (`DL.snoc` chunk)
