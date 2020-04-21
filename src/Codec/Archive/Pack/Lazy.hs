@@ -16,6 +16,7 @@ import           Codec.Archive.Pack
 import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
 import           Control.Composition       ((.@))
+import           Control.Concurrent        (Chan, getChanContents, newChan, readChan, writeChan)
 import           Control.Monad.IO.Class    (liftIO)
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString           as BS
@@ -28,7 +29,7 @@ import           Foreign.Concurrent        (newForeignPtr)
 import           Foreign.ForeignPtr        (castForeignPtr, finalizeForeignPtr)
 import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
-import           System.IO.Unsafe          (unsafeDupablePerformIO)
+import           System.IO.Unsafe          (unsafeDupablePerformIO, unsafeInterleaveIO)
 
 packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
@@ -95,6 +96,7 @@ entriesToIOChunks modifier hsEntries' chunkAct = do
     preA <- liftIO archiveWriteNew
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback chunkHelper
+    -- signal "done" in the finalizer??
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
     nothingPtr <- liftIO $ mallocBytes 0
@@ -110,8 +112,24 @@ entriesToIOChunks modifier hsEntries' chunkAct = do
             chunkAct bs
             pure bytesRead
 
+-- lazy "through" a reference tho?
+-- maybe not since IORef is a STRef lol
+-- deserves a think... interleave ay
+-- how tf does it "export" ffi??
+readFinite :: Chan (Maybe a) -> IO [a]
+readFinite c = unsafeInterleaveIO $ do
+    res <- readChan c
+    case res of
+        Just x  -> (x:) <$> readFinite c
+        Nothing -> pure []
+
+
 entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
+    {- chan <- liftIO $ newChan
+    let chunkAct = writeChan chan
+    entriesToIOChunks modifier hsEntries' chunkAct
+    liftIO (BSL.fromChunks <$> readFinite chan)-}
     preRef <- liftIO $ newIORef mempty
     let chunkAct = writeBSL preRef
     entriesToIOChunks modifier hsEntries' chunkAct

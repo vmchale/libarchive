@@ -1,6 +1,8 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric  #-}
 
+-- see http://hackage.haskell.org/package/Cabal-3.2.0.0/docs/Distribution-Simple-PreProcess.html#t:PPSuffixHandler
+
 module Codec.Archive.Types.Foreign ( -- * Callbacks
                                      ArchiveReadCallback
                                    , ArchiveSkipCallback
