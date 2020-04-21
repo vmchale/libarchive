@@ -4,6 +4,7 @@ module Codec.Archive.Monad ( handle
                            , touchForeignPtrM
                            , runArchiveM
                            , throwArchiveM
+                           , forkArchiveM
                            -- * Bracketed resources within 'ArchiveM'
                            , withCStringArchiveM
                            , useAsCStringLenArchiveM
@@ -13,9 +14,10 @@ module Codec.Archive.Monad ( handle
                            ) where
 
 import           Codec.Archive.Types
+import           Control.Concurrent     (ThreadId, forkIO, newEmptyMVar, putMVar, readMVar)
 import           Control.Exception      (bracket, throw)
 import           Control.Monad          (void)
-import           Control.Monad.Except   (ExceptT, runExceptT, throwError)
+import           Control.Monad.Except   (ExceptT (..), mapExceptT, runExceptT, throwError)
 import           Control.Monad.IO.Class
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Unsafe as BS
@@ -28,6 +30,13 @@ type ArchiveM = ExceptT ArchiveResult IO
 
 touchForeignPtrM :: ForeignPtr a -> ArchiveM ()
 touchForeignPtrM = liftIO . touchForeignPtr
+
+forkArchiveM :: ArchiveM () -> ArchiveM ()
+forkArchiveM errAct = ExceptT $ do
+    comm <- newEmptyMVar
+    let ioAct = putMVar comm =<< runExceptT errAct
+    forkIO ioAct
+    readMVar comm
 
 -- for things we don't think is going to fail
 ignore :: IO ArchiveResult -> ArchiveM ()
