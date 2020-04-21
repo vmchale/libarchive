@@ -128,7 +128,7 @@ entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry
 entriesToBSLGeneral modifier hsEntries' = do
     {- chan <- liftIO $ newChan
     let chunkAct = writeChan chan
-    entriesToIOChunks modifier hsEntries' chunkAct
+    forkArchiveM $ entriesToIOChunks modifier hsEntries' chunkAct
     liftIO (BSL.fromChunks <$> readFinite chan)-}
     preRef <- liftIO $ newIORef mempty
     let chunkAct = writeBSL preRef
