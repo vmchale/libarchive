@@ -42,8 +42,10 @@ testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
 repack :: ([Entry] -> BSL.ByteString) -> String -> FilePath -> Spec
 repack packer str fp = parallel $ it ("should repack (" ++ str ++ ")") $ do
     res <- runArchiveM $ packer <$> readArchiveFile fp
-    res `shouldSatisfy` isRight
-    -- (\x -> case x of { Left{} -> False; Right b -> not $ BSL.null b })
+    res `shouldSatisfy` bsValid
+
+bsValid :: Either a BSL.ByteString -> Bool
+bsValid = \x -> case x of { Left{} -> False; Right b -> not $ BSL.null b }
 
 main :: IO ()
 main = do
@@ -60,6 +62,7 @@ main = do
             traverse_ (repack entriesToBSLzip "zip") tarPaths
             traverse_ (repack entriesToBSLCpio "cpio") tarPaths
             traverse_ (repack entriesToBSLXar "xar") tarPaths
+            traverse_ (repack entriesToBSLShar "shar") tarPaths
             traverse_ (repack entriesToBSL7zip "7zip") tarPaths
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
