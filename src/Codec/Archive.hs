@@ -11,6 +11,7 @@ module Codec.Archive
     , entriesToFile7Zip
     , entriesToFileCpio
     , entriesToFileXar
+    , entriesToFileShar
     , entriesToBS
     , entriesToBS7zip
     , entriesToBSzip
@@ -19,6 +20,7 @@ module Codec.Archive
     , entriesToBSL7zip
     , entriesToBSLCpio
     , entriesToBSLXar
+    , entriesToBSLShar
     , readArchiveFile
     , readArchiveBS
     , readArchiveBSL
@@ -27,11 +29,13 @@ module Codec.Archive
     , packFiles7zip
     , packFilesCpio
     , packFilesXar
+    , packFilesShar
     , packToFile
     , packToFileZip
     , packToFile7Zip
     , packToFileCpio
     , packToFileXar
+    , packToFileShar
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
     , Entry (..)

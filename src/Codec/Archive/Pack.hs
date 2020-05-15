@@ -3,6 +3,7 @@ module Codec.Archive.Pack ( entriesToFile
                           , entriesToFile7Zip
                           , entriesToFileCpio
                           , entriesToFileXar
+                          , entriesToFileShar
                           , entriesToBS
                           , entriesToBSzip
                           , entriesToBS7zip
@@ -13,6 +14,7 @@ module Codec.Archive.Pack ( entriesToFile
                           , packToFile7Zip
                           , packToFileCpio
                           , packToFileXar
+                          , packToFileShar
                           ) where
 
 import           Codec.Archive.Foreign
@@ -176,6 +178,13 @@ packToFileXar :: Traversable t
               -> ArchiveM ()
 packToFileXar = filePacker entriesToFileXar
 
+-- | @since 3.0.0.0
+packToFileShar :: Traversable t
+              => FilePath
+              -> t FilePath
+              -> ArchiveM ()
+packToFileShar = filePacker entriesToFileShar
+
 -- | Write some entries to a file, creating a tar archive. This is more
 -- efficient than
 --
@@ -211,6 +220,12 @@ entriesToFileCpio = entriesToFileGeneral archiveWriteSetFormatCpio
 -- @since 2.2.4.0
 entriesToFileXar :: Foldable t => FilePath -> t Entry -> ArchiveM ()
 entriesToFileXar = entriesToFileGeneral archiveWriteSetFormatXar
+
+-- | Write some entries to a file, creating a @.shar@ archive.
+--
+-- @since 3.0.0.0
+entriesToFileShar :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFileShar = entriesToFileGeneral archiveWriteSetFormatShar
 
 entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do

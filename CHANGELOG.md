@@ -4,6 +4,7 @@
 
   * Use `ForeignPtr` over `Ptr`
   * Fix `.cpio` and `.zip` functions
+  * Add `.shar` functions
 
 ## 2.2.5.0
 

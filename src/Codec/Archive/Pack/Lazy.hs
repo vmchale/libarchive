@@ -3,11 +3,13 @@ module Codec.Archive.Pack.Lazy ( entriesToBSL
                                , entriesToBSLzip
                                , entriesToBSLCpio
                                , entriesToBSLXar
+                               , entriesToBSLShar
                                , packFiles
                                , packFilesZip
                                , packFiles7zip
                                , packFilesCpio
                                , packFilesXar
+                               , packFilesShar
                                ) where
 
 import           Codec.Archive.Foreign
@@ -59,6 +61,10 @@ packFilesCpio = packer entriesToBSLCpio
 packFilesXar :: Traversable t => t FilePath -> IO BSL.ByteString
 packFilesXar = packer entriesToBSLXar
 
+-- | @since 3.0.0.0
+packFilesShar :: Traversable t => t FilePath -> IO BSL.ByteString
+packFilesShar = packer entriesToBSLShar
+
 -- | @since 1.0.5.0
 entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
@@ -79,6 +85,11 @@ entriesToBSLXar :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSLXar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatXar
 {-# NOINLINE entriesToBSLXar #-}
 
+-- | @since 3.0.0.0
+entriesToBSLShar :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLShar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatShar
+{-# NOINLINE entriesToBSLShar #-}
+
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
@@ -95,7 +106,6 @@ entriesToIOChunks modifier hsEntries' chunkAct = do
     preA <- liftIO archiveWriteNew
     oc <- liftIO $ mkOpenCallback doNothing
     wc <- liftIO $ mkWriteCallback chunkHelper
-    -- signal "done" in the finalizer??
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr oc *> freeHaskellFunPtr wc *> free ptr $> ArchiveOk)
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc)
     nothingPtr <- liftIO $ mallocBytes 0
