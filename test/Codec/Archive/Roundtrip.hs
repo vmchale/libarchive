@@ -2,6 +2,7 @@ module Codec.Archive.Roundtrip ( itPacksUnpacks
                                , itPacksUnpacksViaFS
                                , roundtrip
                                , roundtripStrict
+                               , roundtripStrict'
                                , roundtripFreaky
                                ) where
 
@@ -39,6 +40,9 @@ instance Show TestEntries where
 
 roundtripStrict :: FilePath -> IO (Either ArchiveResult BS.ByteString)
 roundtripStrict = fmap (fmap entriesToBS . readArchiveBSL . BSL.fromStrict) . BS.readFile
+
+roundtripStrict' :: FilePath -> IO (Either ArchiveResult BS.ByteString)
+roundtripStrict' = fmap (fmap entriesToBS . readArchiveBS) . BS.readFile
 
 roundtripRead :: (FilePath -> IO BSL.ByteString) -> FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripRead = (fmap (fmap entriesToBSL . readArchiveBSL) .)

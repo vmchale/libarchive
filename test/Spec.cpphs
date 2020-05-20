@@ -2,7 +2,7 @@
 module Main ( main ) where
 
 import           Codec.Archive
-import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict)
+import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict, roundtripStrict')
 import           Codec.Archive.Test
 import qualified Data.ByteString.Lazy    as BSL
 import           Data.Either             (isRight)
@@ -19,6 +19,10 @@ testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
 testFpStrict :: FilePath -> Spec
 testFpStrict fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
     roundtripStrict fp >>= (`shouldSatisfy` isRight)
+
+testFpStrict' :: FilePath -> Spec
+testFpStrict' fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
+    roundtripStrict' fp >>= (`shouldSatisfy` isRight)
 
 testFpFreaky :: FilePath -> Spec
 testFpFreaky fp = parallel $ it ("works on nonstandard bytestring (" ++ fp ++ ")") $
@@ -66,6 +70,7 @@ main = do
             traverse_ (repack entriesToBSL7zip "7zip") tarPaths
             traverse_ testFpFreaky tarPaths
             traverse_ testFpStrict tarPaths
+            traverse_ testFpStrict' tarPaths
 #endif
             traverse_ testUnpackLibarchive tarPaths
             traverse_ testReadArchiveFile tarPaths
