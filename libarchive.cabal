@@ -62,12 +62,9 @@ library
 
     default-language:  Haskell2010
     other-extensions:  DeriveGeneric DeriveAnyClass
-    ghc-options:
-        -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates
-        -Wredundant-constraints
-
+    ghc-options:       -Wall
     build-depends:
-        base >=4.9 && <5,
+        base >=4.8 && <5,
         bytestring -any,
         composition-prelude >=2.0.5.0,
         dlist -any,
@@ -78,6 +75,16 @@ library
 
     if !flag(cross)
         build-tool-depends: c2hs:c2hs >=0.26.1
+
+    if !impl(ghc >=8.0)
+        build-depends:
+            semigroups -any,
+            transformers -any
+
+    if impl(ghc >=8.0)
+        ghc-options:
+            -Wincomplete-uni-patterns -Wincomplete-record-updates
+            -Wredundant-constraints
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
@@ -96,10 +103,7 @@ test-suite libarchive-test
 
     default-language:   Haskell2010
     other-extensions:   OverloadedStrings
-    ghc-options:
-        -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates
-        -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-
+    ghc-options:        -Wall -threaded -rtsopts -with-rtsopts=-N
     build-depends:
         base -any,
         libarchive -any,
@@ -116,6 +120,11 @@ test-suite libarchive-test
     if flag(low-memory)
         cpp-options: -DLOW_MEMORY
 
+    if impl(ghc >=8.0)
+        ghc-options:
+            -Wincomplete-uni-patterns -Wincomplete-record-updates
+            -Wredundant-constraints
+
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
 
@@ -127,10 +136,7 @@ benchmark libarchive-bench
     main-is:          Bench.hs
     hs-source-dirs:   bench
     default-language: Haskell2010
-    ghc-options:
-        -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates
-        -Wredundant-constraints
-
+    ghc-options:      -Wall
     build-depends:
         base -any,
         libarchive -any,
@@ -139,6 +145,11 @@ benchmark libarchive-bench
         tar -any,
         tar-conduit >=0.2.5,
         temporary -any
+
+    if impl(ghc >=8.0)
+        ghc-options:
+            -Wincomplete-uni-patterns -Wincomplete-record-updates
+            -Wredundant-constraints
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
@@ -151,14 +162,16 @@ benchmark mem
     main-is:          Mem.hs
     hs-source-dirs:   mem
     default-language: Haskell2010
-    ghc-options:
-        -Wall -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates
-        -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
-
+    ghc-options:      -Wall -threaded -rtsopts -with-rtsopts=-N
     build-depends:
         base -any,
         libarchive -any,
-        bytestring
+        bytestring -any
+
+    if impl(ghc >=8.0)
+        ghc-options:
+            -Wincomplete-uni-patterns -Wincomplete-record-updates
+            -Wredundant-constraints
 
     if impl(ghc >=8.4)
         ghc-options: -Wmissing-export-lists
