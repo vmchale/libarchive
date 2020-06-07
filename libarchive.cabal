@@ -120,6 +120,9 @@ test-suite libarchive-test
     if flag(low-memory)
         cpp-options: -DLOW_MEMORY
 
+    if !impl(ghc >=8.0)
+        build-depends: transformers -any
+
     if impl(ghc >=8.0)
         ghc-options:
             -Wincomplete-uni-patterns -Wincomplete-record-updates
