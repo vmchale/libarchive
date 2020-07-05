@@ -21,7 +21,7 @@ To run the test suite, first run
 make
 ```
 
-so that you have appropriate test data downloaded.
+to download test data.
 
 ## Performance
 
