@@ -10,3 +10,5 @@ dist-newstyle
 *.chs.h
 .hspec-failures
 .stack-work
+libarchive-*.tar.*
+libarchive-*/
