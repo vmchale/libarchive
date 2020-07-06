@@ -1,5 +1,10 @@
 # libarchive
 
+## 2.2.5.1
+
+  * Add `static` flag to cabal which builds from bundled sources rather than
+    `pkg-config`
+
 ## 2.2.5.0
 
   * Speed improvements in places
