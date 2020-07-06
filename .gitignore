@@ -1,4 +1,5 @@
 *.swp
+.vagrant
 .ghc.environment*
 tags
 *.prof
