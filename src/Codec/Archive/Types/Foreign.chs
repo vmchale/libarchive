@@ -35,6 +35,7 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
 import           Control.DeepSeq    (NFData)
 import           Control.Exception  (Exception)
 import           Data.Bits          (Bits (..))
+import           Data.Semigroup     (Semigroup (..))
 import           Foreign.C.String   (CString)
 import           Foreign.C.Types    (CInt, CSize)
 import           Foreign.Ptr        (Ptr)
