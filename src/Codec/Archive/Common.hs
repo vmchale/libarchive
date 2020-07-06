@@ -1,12 +1,9 @@
-module Codec.Archive.Common ( actFreeCallback
-                            , hmemcpy
+module Codec.Archive.Common ( hmemcpy
                             ) where
 
-import           Codec.Archive.Foreign
-import           Control.Composition    ((.**))
-import           Control.Monad          (void)
-import           Control.Monad.IO.Class (MonadIO (..))
-import           Foreign.C.Types        (CSize (..))
+import           Control.Composition ((.**))
+import           Control.Monad       (void)
+import           Foreign.C.Types     (CSize (..))
 import           Foreign.Ptr
 
 foreign import ccall memcpy :: Ptr a -- ^ Destination
@@ -16,9 +13,3 @@ foreign import ccall memcpy :: Ptr a -- ^ Destination
 
 hmemcpy :: Ptr a -> Ptr b -> CSize -> IO ()
 hmemcpy = void .** memcpy
-
-actFreeCallback :: MonadIO m
-                => (ArchivePtr -> m a)
-                -> (ArchivePtr, IO ()) -- ^ 'Ptr' to an 'Archive' and an 'IO' action to clean up when done
-                -> m a
-actFreeCallback fact (a, freeAct) = fact a <* liftIO freeAct
