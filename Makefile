@@ -27,7 +27,7 @@ test/data/libarchive-1.0.5.1.tar: test/data/libarchive-1.0.5.1.tar.gz
 	gunzip -f $^
 
 test/data/ghc-8.8.1-src.tar.xz: test/data
-	wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz -O $@
+	wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz --no-check-certificate -O $@
 
 test/data/alsa-lib-1.1.9.tar.bz2: test/data
 	wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.9.tar.bz2 -O $@
