@@ -47,7 +47,7 @@ flag low-memory
 flag static
   default:     False
   manual:      True
-  description: Use the bundled sources (this is default for windows and darwin)
+  description: Use the bundled sources
 
 library
     exposed-modules:
