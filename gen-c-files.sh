@@ -81,4 +81,3 @@ esac
 
 rm ../c/*.[ch]
 cp libarchive/*.[ch] ../c/
-
