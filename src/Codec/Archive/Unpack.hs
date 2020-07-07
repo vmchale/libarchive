@@ -30,7 +30,8 @@ import           System.IO.Unsafe             (unsafeDupablePerformIO)
 --
 -- @since 1.0.0.0
 readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
-readArchiveBS = unsafeDupablePerformIO . runArchiveM . (actFreeCallback hsEntries <=< bsToArchive)
+readArchiveBS = unsafeDupablePerformIO . runArchiveM . (go hsEntries <=< bsToArchive)
+    where go f (y, act) = f y <* liftIO act
 {-# NOINLINE readArchiveBS #-}
 
 bsToArchive :: BS.ByteString -> ArchiveM (ArchivePtr, IO ())

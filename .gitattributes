@@ -1,1 +1,2 @@
 *.chs linguist-language=Haskell
+c/* linguist-vendored
