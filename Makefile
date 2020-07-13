@@ -30,13 +30,13 @@ test/data/ghc-8.8.1-src.tar.xz: test/data
 	wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz --no-check-certificate -O $@
 
 test/data/alsa-lib-1.1.9.tar.bz2: test/data
-	wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.9.tar.bz2 -O $@
+	wget https://www.alsa-project.org/files/pub/lib/alsa-lib-1.1.9.tar.bz2 --no-check-certificate -O $@
 
 test/data/llvm-9.0.0.src.tar.xz: test/data
-	wget http://releases.llvm.org/9.0.0/llvm-9.0.0.src.tar.xz -O $@
+	wget http://releases.llvm.org/9.0.0/llvm-9.0.0.src.tar.xz --no-check-certificate -O $@
 
 test/data/ATS2-Postiats-0.3.13.tgz: test/data
-	wget http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.3.13.tgz -O $@
+	wget http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.3.13.tgz --no-check-certificate -O $@
 
 test/data/libarchive-1.0.5.1.tar.gz: test/data
-	wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz -O $@
+	wget http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz --no-check-certificate -O $@
