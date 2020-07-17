@@ -240,7 +240,7 @@ library
 
         include-dirs: c/
 
-        cc-options: -std=gnu99 -DHAVE_CONFIG_H
+        cc-options: -std=c11 -DHAVE_CONFIG_H
     else
         pkgconfig-depends: libarchive (==3.4.0 || >3.4.0) && <4.0
 
