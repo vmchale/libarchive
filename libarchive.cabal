@@ -98,6 +98,7 @@ library
 
     if flag(static)
         -- version 3.4.3
+        -- patches applied from 'c/patches'
         c-sources:
           c/archive_acl.c
           c/archive_blake2sp_ref.c
