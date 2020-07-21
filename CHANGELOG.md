@@ -1,5 +1,11 @@
 # libarchive
 
+## 2.2.5.2
+
+  * Patch from upstream to work with pathological archives containing files that
+    are hardlinks to themselves.
+  * Some patches for various platforms when built with `+static`
+
 ## 2.2.5.1
 
   * Add `static` flag to cabal which builds from bundled sources rather than
