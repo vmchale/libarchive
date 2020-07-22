@@ -7,7 +7,7 @@ case "$(uname)" in
     *) svg_open="firefox";;
 esac
 
-cabal build mem --enable-profiling -w ghc-8.10.1
+cabal build mem --enable-profiling -w ghc-8.10.1 --constraint='libarchive +static'
 "$(fd '^mem$' -t x -I)" +RTS -h
 hp2pretty mem.hp
 $svg_open mem.svg
