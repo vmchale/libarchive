@@ -21,10 +21,11 @@ import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Pack.Common
 import           Codec.Archive.Types
-import           Control.Monad             (void)
+import           Control.Monad             (forM_, void)
 import           Control.Monad.IO.Class    (MonadIO (..))
 import           Data.ByteString           (packCStringLen)
 import qualified Data.ByteString           as BS
+import qualified Data.ByteString.Lazy      as BSL
 import           Data.Coerce               (coerce)
 import           Data.Foldable             (sequenceA_, traverse_)
 import           Data.Semigroup            (Sum (..))
@@ -42,10 +43,11 @@ maybeDo = sequenceA_
 contentAdd :: EntryContent -> ArchivePtr -> ArchiveEntryPtr -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtRegular)
-    liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
+    liftIO $ archiveEntrySetSize entry (fromIntegral (BSL.length contents))
     handle $ archiveWriteHeader a entry
-    useAsCStringLenArchiveM contents $ \(buff, sz) ->
-        liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
+    forM_ (BSL.toChunks contents) $ \b ->
+        useAsCStringLenArchiveM b $ \(buff, sz) ->
+            liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtDirectory)
     lenient $ archiveWriteHeader a entry
@@ -88,7 +90,7 @@ packEntries a = traverse_ (archiveEntryAdd a)
 entriesSz :: (Foldable t, Integral a) => t Entry -> a
 entriesSz = getSum . foldMap (Sum . entrySz)
     where entrySz e = 512 + 512 * (contentSz (content e) `div` 512 + 1)
-          contentSz (NormalFile str) = fromIntegral $ BS.length str
+          contentSz (NormalFile str) = fromIntegral $ BSL.length str
           contentSz Directory        = 0
           contentSz (Symlink fp _)   = 1 + fromIntegral (length fp)
           contentSz (Hardlink fp)    = fromIntegral $ length fp --idk if this is right

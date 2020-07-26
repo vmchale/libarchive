@@ -16,6 +16,7 @@ import qualified Control.Monad.ST.Lazy        as LazyST
 import qualified Control.Monad.ST.Lazy.Unsafe as LazyST
 import           Data.Bifunctor               (first)
 import qualified Data.ByteString              as BS
+import qualified Data.ByteString.Lazy         as BSL
 import           Data.Functor                 (void, ($>))
 import           Foreign.C.String
 import           Foreign.Concurrent           (newForeignPtr)
@@ -135,6 +136,19 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
+readBSL :: ArchivePtr -> IO BSL.ByteString
+readBSL a = BSL.fromChunks <$> loop []
+    where loop bs = allocaBytes bufSz $ \bufPtr -> do
+            { bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
+            ; if bRead == 0
+                then pure bs
+                else do
+                    bRes <- BS.packCStringLen (bufPtr, fromIntegral bRead)
+                    pure (bs ++ [bRes])
+            }
+
+          bufSz = 32 * 1024 -- read in 32k blocks
+
 readBS :: ArchivePtr -> Int -> IO BS.ByteString
 readBS a sz =
     allocaBytes sz $ \buff ->
@@ -144,7 +158,7 @@ readBS a sz =
 readContents :: ArchivePtr -> ArchiveEntryPtr -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
     where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
-          go (Just FtRegular)   = NormalFile <$> (readBS a =<< sz)
+          go (Just FtRegular)   = NormalFile <$> readBSL a
           go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
           go (Just FtDirectory) = pure Directory
           go (Just _)           = error "Unsupported filetype"

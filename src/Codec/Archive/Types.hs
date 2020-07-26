@@ -19,6 +19,7 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
 
 import           Codec.Archive.Types.Foreign
 import qualified Data.ByteString             as BS
+import qualified Data.ByteString.Lazy        as BSL
 import           Data.Int                    (Int64)
 import           Foreign.C.Types             (CInt, CLong, CTime)
 import           Foreign.Ptr                 (Ptr)
@@ -38,7 +39,7 @@ data ArchiveEncryption = HasEncryption
                        deriving (Eq)
 
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
-data EntryContent = NormalFile !BS.ByteString
+data EntryContent = NormalFile BSL.ByteString
                   | Directory
                   | Symlink !FilePath !Symlink
                   | Hardlink !FilePath

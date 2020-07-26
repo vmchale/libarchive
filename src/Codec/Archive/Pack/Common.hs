@@ -2,6 +2,7 @@ module Codec.Archive.Pack.Common ( mkEntry ) where
 
 import           Codec.Archive.Types
 import qualified Data.ByteString          as BS
+import qualified Data.ByteString.Lazy     as BSL
 import           System.PosixCompat.Files (FileStatus, fileGroup, fileMode, fileOwner, getFileStatus, isDirectory, isRegularFile, isSymbolicLink, linkCount,
                                            readSymbolicLink)
 
@@ -11,7 +12,7 @@ mkContent fp status =
     in
 
     case res of
-        (True, False, False, 1) -> NormalFile <$> BS.readFile fp
+        (True, False, False, 1) -> NormalFile <$> BSL.readFile fp
         (True, False, False, _) -> pure $ Hardlink fp
         (False, True, False, _) -> pure Directory
         (False, False, True, _) -> Symlink <$> readSymbolicLink fp <*> pure SymlinkUndefined
