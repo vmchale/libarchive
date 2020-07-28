@@ -31,7 +31,7 @@ instance Show TestEntries where
             (", ownership=" ++) . shows (ownership entry) .
             (", time=" ++) . shows (time entry) .
             ("}" ++)
-        showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BS.take 10 bytes) . (" <> undefined)" ++)
+        showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BSL.take 10 bytes) . (" <> undefined)" ++)
         showsContent Directory          = ("Directory" ++)
         showsContent (Symlink target _) = ("(Symlink " ++) . shows target . (')':)
         showsContent (Hardlink target)  = ("(Hardlink " ++) . shows target . (')':)

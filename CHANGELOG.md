@@ -5,6 +5,7 @@
   * Use `ForeignPtr` over `Ptr`
   * Fix `.cpio` and `.zip` functions
   * Add `.shar` functions
+  * A `NormalFile` now takes a lazy bytestring as its contents.
 
 ## 2.2.5.1
 
