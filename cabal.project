@@ -1,2 +1,4 @@
 packages: ./
 max-backjumps: 40000
+
+constraints: libarchive +static
