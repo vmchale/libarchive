@@ -46,7 +46,6 @@ flag low-memory
 
 flag static
   default:     False
-  manual:      True
   description: Use the bundled sources
 
 library
