@@ -44,9 +44,9 @@ flag low-memory
     description: Run low-memory version of test suite
     default:     False
 
-flag static
-  default:     False
-  description: Use the bundled sources
+flag system-libarchive
+  default:     True
+  description: Use libarchive found with pkg-config rather than the bundled sources
 
 library
     exposed-modules:
@@ -102,7 +102,7 @@ library
     if impl(ghc >=8.10)
         ghc-options: -Wunused-packages
 
-    if flag(static)
+    if !flag(system-libarchive)
         -- version 3.4.3
         -- patches applied from 'c/patches'
         c-sources:
