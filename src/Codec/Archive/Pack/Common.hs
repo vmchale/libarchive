@@ -1,7 +1,6 @@
 module Codec.Archive.Pack.Common ( mkEntry ) where
 
 import           Codec.Archive.Types
-import qualified Data.ByteString          as BS
 import qualified Data.ByteString.Lazy     as BSL
 import           System.PosixCompat.Files (FileStatus, fileGroup, fileMode, fileOwner, getFileStatus, isDirectory, isRegularFile, isSymbolicLink, linkCount,
                                            readSymbolicLink)

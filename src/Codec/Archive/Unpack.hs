@@ -149,12 +149,6 @@ readBSL a = BSL.fromChunks <$> loop []
 
           bufSz = 32 * 1024 -- read in 32k blocks
 
-readBS :: ArchivePtr -> Int -> IO BS.ByteString
-readBS a sz =
-    allocaBytes sz $ \buff ->
-        archiveReadData a buff (fromIntegral sz) *>
-        BS.packCStringLen (buff, sz)
-
 readContents :: ArchivePtr -> ArchiveEntryPtr -> IO EntryContent
 readContents a entry = go =<< archiveEntryFiletype entry
     where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
@@ -162,7 +156,6 @@ readContents a entry = go =<< archiveEntryFiletype entry
           go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
           go (Just FtDirectory) = pure Directory
           go (Just _)           = error "Unsupported filetype"
-          sz = fromIntegral <$> archiveEntrySize entry
 
 archiveGetterHelper :: (ArchiveEntryPtr -> IO a) -> (ArchiveEntryPtr -> IO Bool) -> ArchiveEntryPtr -> IO (Maybe a)
 archiveGetterHelper get check entry = do
