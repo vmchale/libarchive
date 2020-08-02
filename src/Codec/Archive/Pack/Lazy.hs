@@ -80,7 +80,10 @@ entriesToBSLCpio :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSLCpio = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatCpio
 {-# NOINLINE entriesToBSLCpio #-}
 
--- | @since 2.2.4.0
+-- | Won't work when built with @-system-libarchive@ or when libarchive is not
+-- built with zlib support.
+--
+-- @since 2.2.4.0
 entriesToBSLXar :: Foldable t => t Entry -> BSL.ByteString
 entriesToBSLXar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatXar
 {-# NOINLINE entriesToBSLXar #-}
