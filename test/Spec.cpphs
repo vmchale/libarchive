@@ -4,13 +4,25 @@ module Main ( main ) where
 import           Codec.Archive
 import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict, roundtripStrict')
 import           Codec.Archive.Test
+import           Control.Exception       (throw)
 import qualified Data.ByteString.Lazy    as BSL
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
+import           Data.Int                (Int64)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
 import           Test.Hspec
+
+getAllBytes :: IO Int64
+getAllBytes = do
+    es <- either throw id . readArchiveBSL <$> BSL.readFile "test/data/sparc64-linux-dist.tar"
+    let lastBytes = (\(NormalFile bsl) -> bsl) . content . last $ es
+    pure (BSL.length lastBytes)
+
+correctBytes :: Spec
+correctBytes = parallel $ it ("should read the full bytestring in entries") $
+    getAllBytes >>= (`shouldBe` 53963136)
 
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
@@ -60,6 +72,8 @@ main = do
 
     hspec $
         describe "roundtrip" $ do
+
+            correctBytes
 
             traverse_ testFp tarPaths
 #ifndef LOW_MEMORY
