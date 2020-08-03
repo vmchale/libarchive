@@ -45,7 +45,7 @@ data EntryContent = NormalFile BSL.ByteString
                   | Hardlink !FilePath
     deriving (Show, Eq, Ord)
 
-data Entry = Entry { filepath    :: !FilePath
+data Entry = Entry { filepath    :: !FilePath -- TODO: bytestring?
                    , content     :: EntryContent
                    , permissions :: !Permissions
                    , ownership   :: !Ownership
