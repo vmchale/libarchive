@@ -144,8 +144,7 @@ readBSL a = BSL.fromChunks <$> loop
                 then pure mempty
                 else do
                     bRes <- BS.packCStringLen (bufPtr, fromIntegral bRead)
-                    bNext <- loop
-                    pure (bRes:bNext)
+                    (bRes:) <$> loop
             }
 
           bufSz = 32 * 1024 -- read in 32k blocks
