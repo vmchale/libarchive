@@ -137,14 +137,15 @@ unpackEntriesFp a fp = do
             unpackEntriesFp a fp
 
 readBSL :: ArchivePtr -> IO BSL.ByteString
-readBSL a = BSL.fromChunks <$> loop []
-    where loop bs = allocaBytes bufSz $ \bufPtr -> do
+readBSL a = BSL.fromChunks <$> loop
+    where loop = allocaBytes bufSz $ \bufPtr -> do
             { bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
             ; if bRead == 0
-                then pure bs
+                then pure mempty
                 else do
                     bRes <- BS.packCStringLen (bufPtr, fromIntegral bRead)
-                    pure (bs ++ [bRes])
+                    bNext <- loop
+                    pure (bRes:bNext)
             }
 
           bufSz = 32 * 1024 -- read in 32k blocks
