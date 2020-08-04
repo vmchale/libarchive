@@ -18,7 +18,6 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            ) where
 
 import           Codec.Archive.Types.Foreign
-import qualified Data.ByteString             as BS
 import qualified Data.ByteString.Lazy        as BSL
 import           Data.Int                    (Int64)
 import           Foreign.C.Types             (CInt, CLong, CTime)
@@ -45,7 +44,7 @@ data EntryContent = NormalFile BSL.ByteString
                   | Hardlink !FilePath
     deriving (Show, Eq, Ord)
 
-data Entry = Entry { filepath    :: !FilePath -- TODO: bytestring?
+data Entry = Entry { filepath    :: !FilePath -- TODO: bytestring? functorial?
                    , content     :: EntryContent
                    , permissions :: !Permissions
                    , ownership   :: !Ownership

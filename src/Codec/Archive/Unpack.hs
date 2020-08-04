@@ -82,19 +82,19 @@ unpackArchive tarFp dirFp = do
             archiveFile tarFp a *>
             unpackEntriesFp a dirFp
 
-readEntry :: ArchivePtr -> ArchiveEntryPtr -> IO Entry
+readEntry :: ArchivePtr -> ArchiveEntryPtr -> LazyST.ST s Entry
 readEntry a entry =
     Entry
-        <$> (peekCString =<< archiveEntryPathname entry)
+        <$> LazyST.unsafeIOToST (peekCString =<< archiveEntryPathname entry)
         <*> readContents a entry
-        <*> archiveEntryPerm entry
-        <*> readOwnership entry
-        <*> readTimes entry
+        <*> LazyST.unsafeIOToST (archiveEntryPerm entry)
+        <*> LazyST.unsafeIOToST (readOwnership entry)
+        <*> LazyST.unsafeIOToST (readTimes entry)
 
 -- | Yield the next entry in an archive
-getHsEntry :: ArchivePtr -> IO (Maybe Entry)
+getHsEntry :: ArchivePtr -> LazyST.ST s (Maybe Entry)
 getHsEntry a = do
-    entry <- getEntry a
+    entry <- LazyST.unsafeIOToST $ getEntry a
     case entry of
         Nothing -> pure Nothing
         Just x  -> Just <$> readEntry a x
@@ -106,7 +106,7 @@ hsEntries p = pure (LazyST.runST $ hsEntriesST p)
 -- | Return a list of 'Entry's.
 hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry]
 hsEntriesST a = do
-    next <- LazyST.unsafeIOToST (getHsEntry a)
+    next <- getHsEntry a
     case next of
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntriesST a
@@ -136,24 +136,28 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
-readBSL :: ArchivePtr -> IO BSL.ByteString
+readBSL :: ArchivePtr -> LazyST.ST s BSL.ByteString
 readBSL a = BSL.fromChunks <$> loop
-    where loop = allocaBytes bufSz $ \bufPtr -> do
-            { bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
-            ; if bRead == 0
-                then pure mempty
-                else do
-                    bRes <- BS.packCStringLen (bufPtr, fromIntegral bRead)
-                    (bRes:) <$> loop
-            }
+    where step = LazyST.unsafeIOToST $
+            allocaBytes bufSz $ \bufPtr -> do
+                bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
+                if bRead == 0
+                    then pure Nothing
+                    else Just <$> BS.packCStringLen (bufPtr, fromIntegral bRead)
+
+          loop = do
+            res <- step
+            case res of
+                Just b  -> (b:) <$> loop
+                Nothing -> pure []
 
           bufSz = 32 * 1024 -- read in 32k blocks
 
-readContents :: ArchivePtr -> ArchiveEntryPtr -> IO EntryContent
-readContents a entry = go =<< archiveEntryFiletype entry
-    where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
+readContents :: ArchivePtr -> ArchiveEntryPtr -> LazyST.ST s EntryContent
+readContents a entry = go =<< LazyST.unsafeIOToST (archiveEntryFiletype entry)
+    where go Nothing            = Hardlink <$> LazyST.unsafeIOToST (peekCString =<< archiveEntryHardlink entry)
           go (Just FtRegular)   = NormalFile <$> readBSL a
-          go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
+          go (Just FtLink)      = LazyST.unsafeIOToST $ Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
           go (Just FtDirectory) = pure Directory
           go (Just _)           = error "Unsupported filetype"
 
