@@ -4,25 +4,14 @@ module Main ( main ) where
 import           Codec.Archive
 import           Codec.Archive.Roundtrip (itPacksUnpacks, itPacksUnpacksViaFS, roundtrip, roundtripFreaky, roundtripStrict, roundtripStrict')
 import           Codec.Archive.Test
-import           Control.Exception       (throw)
+import qualified Data.ByteString         as BS
 import qualified Data.ByteString.Lazy    as BSL
 import           Data.Either             (isRight)
 import           Data.Foldable           (traverse_)
-import           Data.Int                (Int64)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
 import           Test.Hspec
-
-getAllBytes :: IO Int64
-getAllBytes = do
-    es <- either throw id . readArchiveBSL <$> BSL.readFile "test/data/sparc64-linux-dist.tar"
-    let lastBytes = (\(NormalFile bsl) -> bsl) . content . last $ es
-    pure (BSL.length lastBytes)
-
-correctBytes :: Spec
-correctBytes = parallel $ it ("should read the full bytestring in entries") $
-    getAllBytes >>= (`shouldBe` 53963136)
 
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
@@ -44,7 +33,7 @@ unpack :: FilePath -> IO (Either ArchiveResult ())
 unpack fp = withSystemTempDirectory "libarchive" $
     \tmp -> runArchiveM $ unpackArchive fp tmp
 
-readArchiveFile' :: FilePath -> IO (Either ArchiveResult [Entry])
+readArchiveFile' :: FilePath -> IO (Either ArchiveResult [Entry FilePath BS.ByteString])
 readArchiveFile' = runArchiveM . readArchiveFile
 
 testUnpackLibarchive :: FilePath -> Spec
@@ -55,7 +44,7 @@ testReadArchiveFile :: FilePath -> Spec
 testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
     readArchiveFile' fp >>= (`shouldSatisfy` isRight)
 
-repack :: ([Entry] -> BSL.ByteString) -> String -> FilePath -> Spec
+repack :: ([Entry FilePath BS.ByteString] -> BSL.ByteString) -> String -> FilePath -> Spec
 repack packer str fp = parallel $ it ("should repack (" ++ str ++ ")") $ do
     res <- runArchiveM $ packer <$> readArchiveFile fp
     res `shouldSatisfy` bsValid
@@ -72,8 +61,6 @@ main = do
 
     hspec $
         describe "roundtrip" $ do
-
-            correctBytes
 
             traverse_ testFp tarPaths
 #ifndef LOW_MEMORY

@@ -19,7 +19,7 @@ import           System.Directory.Recursive   (getDirRecursive)
 import           System.IO.Temp               (withSystemTempDirectory)
 import           Test.Hspec
 
-newtype TestEntries = TestEntries [Entry]
+newtype TestEntries = TestEntries [Entry FilePath BS.ByteString]
     deriving (Eq)
 
 instance Show TestEntries where
@@ -31,7 +31,7 @@ instance Show TestEntries where
             (", ownership=" ++) . shows (ownership entry) .
             (", time=" ++) . shows (time entry) .
             ("}" ++)
-        showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BSL.take 10 bytes) . (" <> undefined)" ++)
+        showsContent (NormalFile bytes) = ("(NormalFile $ " ++) . shows (BS.take 10 bytes) . (" <> undefined)" ++)
         showsContent Directory          = ("Directory" ++)
         showsContent (Symlink target _) = ("(Symlink " ++) . shows target . (')':)
         showsContent (Hardlink target)  = ("(Hardlink " ++) . shows target . (')':)
@@ -53,7 +53,7 @@ roundtrip = roundtripRead BSL.readFile
 roundtripFreaky :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripFreaky = roundtripRead nonstandardRead
 
-itPacksUnpacks :: [Entry] -> Spec
+itPacksUnpacks :: [Entry FilePath BS.ByteString] -> Spec
 itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $
     let
         packed = entriesToBSL entries
@@ -61,7 +61,7 @@ itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss"
     in
         (TestEntries <$> unpacked) `shouldBe` Right (TestEntries entries)
 
-itPacksUnpacksViaFS :: [Entry] -> Spec
+itPacksUnpacksViaFS :: [Entry FilePath BS.ByteString] -> Spec
 itPacksUnpacksViaFS entries = parallel $ unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
         fmap (fmap stripDotSlash . testEntries) unpacked `shouldBe` Right (testEntries entries)
 
@@ -87,5 +87,5 @@ itPacksUnpacksViaFS entries = parallel $ unpackedFromFS $ it "packs/unpacks on f
 
 -- TODO: expose something like this via archive_write_disk
 -- entriesToDir :: Foldable t => FilePath -> t Entry -> ArchiveM ()
-entriesToDir :: FilePath -> [Entry] -> ArchiveM ()
+entriesToDir :: FilePath -> [Entry FilePath BS.ByteString] -> ArchiveM ()
 entriesToDir = entriesToBSL .@ unpackToDirLazy

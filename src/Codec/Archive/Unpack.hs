@@ -30,7 +30,7 @@ import           System.IO.Unsafe             (unsafeDupablePerformIO)
 -- automatically detected.
 --
 -- @since 1.0.0.0
-readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry]
+readArchiveBS :: BS.ByteString -> Either ArchiveResult [Entry FilePath BS.ByteString]
 readArchiveBS = unsafeDupablePerformIO . runArchiveM . (go hsEntries <=< bsToArchive)
     where go f (y, act) = f y <* liftIO act
 {-# NOINLINE readArchiveBS #-}
@@ -52,7 +52,7 @@ bsToArchive bs = do
 -- detected.
 --
 -- @since 1.0.0.0
-readArchiveFile :: FilePath -> ArchiveM [Entry]
+readArchiveFile :: FilePath -> ArchiveM [Entry FilePath BS.ByteString]
 readArchiveFile fp = act =<< liftIO (do
     pre <- archiveReadNew
     castForeignPtr <$> newForeignPtr (castPtr pre) (void $ archiveFree pre))
@@ -82,31 +82,31 @@ unpackArchive tarFp dirFp = do
             archiveFile tarFp a *>
             unpackEntriesFp a dirFp
 
-readEntry :: ArchivePtr -> ArchiveEntryPtr -> LazyST.ST s Entry
+readEntry :: ArchivePtr -> ArchiveEntryPtr -> IO (Entry FilePath BS.ByteString)
 readEntry a entry =
     Entry
-        <$> LazyST.unsafeIOToST (peekCString =<< archiveEntryPathname entry)
+        <$> (peekCString =<< archiveEntryPathname entry)
         <*> readContents a entry
-        <*> LazyST.unsafeIOToST (archiveEntryPerm entry)
-        <*> LazyST.unsafeIOToST (readOwnership entry)
-        <*> LazyST.unsafeIOToST (readTimes entry)
+        <*> archiveEntryPerm entry
+        <*> readOwnership entry
+        <*> readTimes entry
 
 -- | Yield the next entry in an archive
-getHsEntry :: ArchivePtr -> LazyST.ST s (Maybe Entry)
+getHsEntry :: ArchivePtr -> IO (Maybe (Entry FilePath BS.ByteString))
 getHsEntry a = do
-    entry <- LazyST.unsafeIOToST $ getEntry a
+    entry <- getEntry a
     case entry of
         Nothing -> pure Nothing
         Just x  -> Just <$> readEntry a x
 
 -- | Return a list of 'Entry's.
-hsEntries :: ArchivePtr -> ArchiveM [Entry]
+hsEntries :: ArchivePtr -> ArchiveM [Entry FilePath BS.ByteString]
 hsEntries p = pure (LazyST.runST $ hsEntriesST p)
 
 -- | Return a list of 'Entry's.
-hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry]
+hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry FilePath BS.ByteString]
 hsEntriesST a = do
-    next <- getHsEntry a
+    next <- LazyST.unsafeIOToST (getHsEntry a)
     case next of
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntriesST a
@@ -136,9 +136,16 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
-readBSL :: ArchivePtr -> LazyST.ST s BSL.ByteString
+readBS :: ArchivePtr -> Int -> IO BS.ByteString
+readBS a sz =
+    allocaBytes sz $ \buff ->
+        archiveReadData a buff (fromIntegral sz) *>
+        BS.packCStringLen (buff, sz)
+
+-- TODO: sanity check by comparing to archiveEntrySize?
+readBSL :: ArchivePtr -> IO BSL.ByteString
 readBSL a = BSL.fromChunks <$> loop
-    where step = LazyST.unsafeIOToST $
+    where step =
             allocaBytes bufSz $ \bufPtr -> do
                 bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
                 if bRead == 0
@@ -153,13 +160,14 @@ readBSL a = BSL.fromChunks <$> loop
 
           bufSz = 32 * 1024 -- read in 32k blocks
 
-readContents :: ArchivePtr -> ArchiveEntryPtr -> LazyST.ST s EntryContent
-readContents a entry = go =<< LazyST.unsafeIOToST (archiveEntryFiletype entry)
-    where go Nothing            = Hardlink <$> LazyST.unsafeIOToST (peekCString =<< archiveEntryHardlink entry)
-          go (Just FtRegular)   = NormalFile <$> readBSL a
-          go (Just FtLink)      = LazyST.unsafeIOToST $ Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
+readContentsAbs :: Integral a => (ArchivePtr -> a -> IO e) -> ArchivePtr -> ArchiveEntryPtr -> IO (EntryContent FilePath e)
+readContentsAbs read' a entry = go =<< archiveEntryFiletype entry
+    where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
+          go (Just FtRegular)   = NormalFile <$> (read' a =<< sz)
+          go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry
           go (Just FtDirectory) = pure Directory
           go (Just _)           = error "Unsupported filetype"
+          sz = fromIntegral <$> archiveEntrySize entry
 
 archiveGetterHelper :: (ArchiveEntryPtr -> IO a) -> (ArchiveEntryPtr -> IO Bool) -> ArchiveEntryPtr -> IO (Maybe a)
 archiveGetterHelper get check entry = do

@@ -9,6 +9,7 @@ import           Codec.Archive.Types
 import           Codec.Archive.Unpack
 import           Control.Monad          ((<=<))
 import           Control.Monad.IO.Class
+import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Lazy   as BSL
 import qualified Data.ByteString.Unsafe as BS
 import           Data.Foldable          (traverse_)
@@ -37,7 +38,7 @@ unpackToDirLazy fp bs = do
 -- In general, this will be more efficient than 'readArchiveBS'
 --
 -- @since 1.0.4.0
-readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry]
+readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry FilePath BS.ByteString]
 readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (hsEntries <=< bslToArchive)
 {-# NOINLINE readArchiveBSL #-}
 

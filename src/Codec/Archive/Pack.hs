@@ -40,14 +40,14 @@ maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
 
 -- archive_error_string
-contentAdd :: EntryContent -> ArchivePtr -> ArchiveEntryPtr -> ArchiveM ()
+contentAdd :: EntryContent FilePath BS.ByteString -> ArchivePtr -> ArchiveEntryPtr -> ArchiveM ()
 contentAdd (NormalFile contents) a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtRegular)
-    liftIO $ archiveEntrySetSize entry (fromIntegral (BSL.length contents))
+    liftIO $ archiveEntrySetSize entry (fromIntegral (BS.length contents))
     handle $ archiveWriteHeader a entry
-    forM_ (BSL.toChunks contents) $ \b ->
-        useAsCStringLenArchiveM b $ \(buff, sz) ->
-            liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
+    -- forM_ (BSL.toChunks contents) $ \b ->
+    useAsCStringLenArchiveM contents $ \(buff, sz) ->
+        liftIO $ void $ archiveWriteData a buff (fromIntegral sz)
 contentAdd Directory a entry = do
     liftIO $ archiveEntrySetFiletype entry (Just FtDirectory)
     lenient $ archiveWriteHeader a entry
@@ -83,14 +83,14 @@ setOwnership (Ownership uname gname uid gid) entry =
 setTime :: ModTime -> ArchiveEntryPtr -> IO ()
 setTime (time', nsec) entry = archiveEntrySetMtime entry time' nsec
 
-packEntries :: (Foldable t) => ArchivePtr -> t Entry -> ArchiveM ()
+packEntries :: (Foldable t) => ArchivePtr -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 packEntries a = traverse_ (archiveEntryAdd a)
 
 -- Get a number of bytes appropriate for creating the archive.
-entriesSz :: (Foldable t, Integral a) => t Entry -> a
+entriesSz :: (Foldable t, Integral a) => t (Entry FilePath BS.ByteString) -> a
 entriesSz = getSum . foldMap (Sum . entrySz)
     where entrySz e = 512 + 512 * (contentSz (content e) `div` 512 + 1)
-          contentSz (NormalFile str) = fromIntegral $ BSL.length str
+          contentSz (NormalFile str) = fromIntegral $ BS.length str
           contentSz Directory        = 0
           contentSz (Symlink fp _)   = 1 + fromIntegral (length fp)
           contentSz (Hardlink fp)    = fromIntegral $ length fp --idk if this is right
@@ -98,21 +98,21 @@ entriesSz = getSum . foldMap (Sum . entrySz)
 -- | Returns a 'BS.ByteString' containing a tar archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBS :: Foldable t => t Entry -> BS.ByteString
+entriesToBS :: Foldable t => t (Entry FilePath BS.ByteString) -> BS.ByteString
 entriesToBS = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBS #-}
 
 -- | Returns a 'BS.ByteString' containing a @.7z@ archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBS7zip :: Foldable t => t Entry -> BS.ByteString
+entriesToBS7zip :: Foldable t => t (Entry FilePath BS.ByteString) -> BS.ByteString
 entriesToBS7zip = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBS7zip #-}
 
 -- | Returns a 'BS.ByteString' containing a zip archive with the 'Entry's
 --
 -- @since 1.0.0.0
-entriesToBSzip :: Foldable t => t Entry -> BS.ByteString
+entriesToBSzip :: Foldable t => t (Entry FilePath BS.ByteString) -> BS.ByteString
 entriesToBSzip = unsafeDupablePerformIO . noFail . entriesToBSGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSzip #-}
 
@@ -127,7 +127,7 @@ noFail act = do
         Left _  -> error "Should not fail."
 
 -- | Internal function to be used with 'archive_write_set_format_pax' etc.
-entriesToBSGeneral :: (Foldable t) => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BS.ByteString
+entriesToBSGeneral :: (Foldable t) => (ArchivePtr -> IO ArchiveResult) -> t (Entry FilePath BS.ByteString) -> ArchiveM BS.ByteString
 entriesToBSGeneral modifier hsEntries' = do
     preA <- liftIO archiveWriteNew
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (void $ archiveFree preA)
@@ -142,7 +142,7 @@ entriesToBSGeneral modifier hsEntries' = do
     where bufSize :: Integral a => a
           bufSize = entriesSz hsEntries'
 
-filePacker :: (Traversable t) => (FilePath -> t Entry -> ArchiveM ()) -> FilePath -> t FilePath -> ArchiveM ()
+filePacker :: (Traversable t) => (FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()) -> FilePath -> t FilePath -> ArchiveM ()
 filePacker f tar fps = f tar =<< liftIO (traverse mkEntry fps)
 
 -- | @since 2.0.0.0
@@ -195,41 +195,41 @@ packToFileShar = filePacker entriesToFileShar
 -- @
 --
 -- @since 1.0.0.0
-entriesToFile :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFile :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFile = entriesToFileGeneral archiveWriteSetFormatPaxRestricted
 -- this is the recommended format; it is a tar archive
 
 -- | Write some entries to a file, creating a zip archive.
 --
 -- @since 1.0.0.0
-entriesToFileZip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFileZip :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFileZip = entriesToFileGeneral archiveWriteSetFormatZip
 
 -- | Write some entries to a file, creating a @.7z@ archive.
 --
 -- @since 1.0.0.0
-entriesToFile7Zip :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFile7Zip :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFile7Zip = entriesToFileGeneral archiveWriteSetFormat7zip
 
 -- | Write some entries to a file, creating a @.cpio@ archive.
 --
 -- @since 2.2.3.0
-entriesToFileCpio :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFileCpio :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFileCpio = entriesToFileGeneral archiveWriteSetFormatCpio
 
 -- | Write some entries to a file, creating a @.xar@ archive.
 --
 -- @since 2.2.4.0
-entriesToFileXar :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFileXar :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFileXar = entriesToFileGeneral archiveWriteSetFormatXar
 
 -- | Write some entries to a file, creating a @.shar@ archive.
 --
 -- @since 3.0.0.0
-entriesToFileShar :: Foldable t => FilePath -> t Entry -> ArchiveM ()
+entriesToFileShar :: Foldable t => FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFileShar = entriesToFileGeneral archiveWriteSetFormatShar
 
-entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t Entry -> ArchiveM ()
+entriesToFileGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> FilePath -> t (Entry FilePath BS.ByteString) -> ArchiveM ()
 entriesToFileGeneral modifier fp hsEntries' = do
     p <- liftIO archiveWriteNew
     fptr <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr p) (void $ archiveFree p)
@@ -244,7 +244,7 @@ entriesToFileGeneral modifier fp hsEntries' = do
 withArchiveEntry :: (ArchiveEntryPtr -> ArchiveM a) -> ArchiveM a
 withArchiveEntry = (=<< liftIO archiveEntryNew)
 
-archiveEntryAdd :: ArchivePtr -> Entry -> ArchiveM ()
+archiveEntryAdd :: ArchivePtr -> Entry FilePath BS.ByteString -> ArchiveM ()
 archiveEntryAdd a (Entry fp contents perms owner mtime) =
     withArchiveEntry $ \entry -> do
         liftIO $ withCString fp $ \fpc ->

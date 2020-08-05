@@ -18,7 +18,6 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            ) where
 
 import           Codec.Archive.Types.Foreign
-import qualified Data.ByteString.Lazy        as BSL
 import           Data.Int                    (Int64)
 import           Foreign.C.Types             (CInt, CLong, CTime)
 import           Foreign.Ptr                 (Ptr)
@@ -38,18 +37,21 @@ data ArchiveEncryption = HasEncryption
                        deriving (Eq)
 
 -- TODO: support everything here: http://hackage.haskell.org/package/tar/docs/Codec-Archive-Tar-Entry.html#t:EntryContent
-data EntryContent = NormalFile BSL.ByteString
-                  | Directory
-                  | Symlink !FilePath !Symlink
-                  | Hardlink !FilePath
+data EntryContent fp e = NormalFile e
+                       | Directory
+                       | Symlink !fp !Symlink
+                       | Hardlink !fp
     deriving (Show, Eq, Ord)
 
-data Entry = Entry { filepath    :: !FilePath -- TODO: bytestring? functorial?
-                   , content     :: EntryContent
-                   , permissions :: !Permissions
-                   , ownership   :: !Ownership
-                   , time        :: !(Maybe ModTime)
-                   }
+-- | @e@ is the type of entry contents, for instance 'BSL.ByteString'
+--
+-- @fp@ is the type of file paths, for instance 'FilePath'
+data Entry fp e = Entry { filepath    :: !fp -- TODO: bytestring? functorial?
+                        , content     :: EntryContent fp e
+                        , permissions :: !Permissions
+                        , ownership   :: !Ownership
+                        , time        :: !(Maybe ModTime)
+                        }
     deriving (Show, Eq, Ord)
 
 data Ownership = Ownership { userName  :: !(Maybe String)

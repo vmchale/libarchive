@@ -5,7 +5,8 @@
   * Use `ForeignPtr` over `Ptr`
   * Fix `.cpio` and `.zip` functions
   * Add `.shar` functions
-  * A `NormalFile` now takes a lazy bytestring as its contents.
+  * The `Entry` and `EntryContent` are now higher-kinded. This allows one to use
+    the types with e.g. `RawFilePath`s.
 
 ## 2.2.5.2
 

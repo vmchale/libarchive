@@ -32,7 +32,7 @@ import           Foreign.Marshal.Alloc     (free, mallocBytes)
 import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
 import           System.IO.Unsafe          (unsafeDupablePerformIO)
 
-packer :: (Traversable t) => (t Entry -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
+packer :: (Traversable t) => (t (Entry FilePath BS.ByteString) -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap
 
 -- | Pack files into a tar archive. This will be more efficient than
@@ -66,17 +66,17 @@ packFilesShar :: Traversable t => t FilePath -> IO BSL.ByteString
 packFilesShar = packer entriesToBSLShar
 
 -- | @since 1.0.5.0
-entriesToBSLzip :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLzip :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSLzip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatZip
 {-# NOINLINE entriesToBSLzip #-}
 
 -- | @since 1.0.5.0
-entriesToBSL7zip :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSL7zip :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSL7zip = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormat7zip
 {-# NOINLINE entriesToBSL7zip #-}
 
 -- | @since 2.2.3.0
-entriesToBSLCpio :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLCpio :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSLCpio = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatCpio
 {-# NOINLINE entriesToBSLCpio #-}
 
@@ -84,25 +84,25 @@ entriesToBSLCpio = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archive
 -- built with zlib support.
 --
 -- @since 2.2.4.0
-entriesToBSLXar :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLXar :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSLXar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatXar
 {-# NOINLINE entriesToBSLXar #-}
 
 -- | @since 3.0.0.0
-entriesToBSLShar :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSLShar :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSLShar = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatShar
 {-# NOINLINE entriesToBSLShar #-}
 
 -- | In general, this will be more efficient than 'entriesToBS'
 --
 -- @since 1.0.5.0
-entriesToBSL :: Foldable t => t Entry -> BSL.ByteString
+entriesToBSL :: Foldable t => t (Entry FilePath BS.ByteString) -> BSL.ByteString
 entriesToBSL = unsafeDupablePerformIO . noFail . entriesToBSLGeneral archiveWriteSetFormatPaxRestricted
 {-# NOINLINE entriesToBSL #-}
 
 entriesToIOChunks :: Foldable t
                   => (ArchivePtr -> IO ArchiveResult) -- ^ Action to set format of archive
-                  -> t Entry
+                  -> t (Entry FilePath BS.ByteString)
                   -> (BS.ByteString -> IO ()) -- ^ 'IO' Action to process the chunks
                   -> ArchiveM ()
 entriesToIOChunks modifier hsEntries' chunkAct = do
@@ -124,7 +124,7 @@ entriesToIOChunks modifier hsEntries' chunkAct = do
             chunkAct bs
             pure bytesRead
 
-entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t Entry -> ArchiveM BSL.ByteString
+entriesToBSLGeneral :: Foldable t => (ArchivePtr -> IO ArchiveResult) -> t (Entry FilePath BS.ByteString) -> ArchiveM BSL.ByteString
 entriesToBSLGeneral modifier hsEntries' = do
     preRef <- liftIO $ newIORef mempty
     let chunkAct = writeBSL preRef
