@@ -1,9 +1,11 @@
-module Codec.Archive.Unpack ( hsEntries
+module Codec.Archive.Unpack ( hsEntriesAbs
                             , unpackEntriesFp
                             , unpackArchive
                             , readArchiveFile
                             , readArchiveBS
                             , unpackToDir
+                            , readBS
+                            , readSkip
                             ) where
 
 import           Codec.Archive.Common
@@ -82,34 +84,53 @@ unpackArchive tarFp dirFp = do
             archiveFile tarFp a *>
             unpackEntriesFp a dirFp
 
-readEntry :: ArchivePtr -> ArchiveEntryPtr -> IO (Entry FilePath BS.ByteString)
-readEntry a entry =
+readEntry :: Integral a
+          => (ArchivePtr -> a -> IO e)
+          -> ArchivePtr
+          -> ArchiveEntryPtr
+          -> IO (Entry FilePath e)
+readEntry read' a entry =
     Entry
         <$> (peekCString =<< archiveEntryPathname entry)
-        <*> readContents a entry
+        <*> readContents read' a entry
         <*> archiveEntryPerm entry
         <*> readOwnership entry
         <*> readTimes entry
 
 -- | Yield the next entry in an archive
-getHsEntry :: ArchivePtr -> IO (Maybe (Entry FilePath BS.ByteString))
-getHsEntry a = do
+getHsEntry :: Integral a
+           => (ArchivePtr -> a -> IO e)
+           -> ArchivePtr
+           -> IO (Maybe (Entry FilePath e))
+getHsEntry read' a = do
     entry <- getEntry a
     case entry of
         Nothing -> pure Nothing
-        Just x  -> Just <$> readEntry a x
+        Just x  -> Just <$> readEntry read' a x
 
 -- | Return a list of 'Entry's.
 hsEntries :: ArchivePtr -> ArchiveM [Entry FilePath BS.ByteString]
-hsEntries p = pure (LazyST.runST $ hsEntriesST p)
+hsEntries = hsEntriesAbs readBS
+
+hsEntriesAbs :: Integral a
+             => (ArchivePtr -> a -> IO e)
+             -> ArchivePtr
+             -> ArchiveM [Entry FilePath e]
+hsEntriesAbs read' p = pure (LazyST.runST $ hsEntriesSTAbs read' p)
 
 -- | Return a list of 'Entry's.
 hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry FilePath BS.ByteString]
-hsEntriesST a = do
-    next <- LazyST.unsafeIOToST (getHsEntry a)
+hsEntriesST = hsEntriesSTAbs readBS
+
+hsEntriesSTAbs :: Integral a
+               => (ArchivePtr -> a -> IO e)
+               -> ArchivePtr
+               -> LazyST.ST s [Entry FilePath e]
+hsEntriesSTAbs read' a = do
+    next <- LazyST.unsafeIOToST (getHsEntry read' a)
     case next of
         Nothing -> pure []
-        Just x  -> (x:) <$> hsEntriesST a
+        Just x  -> (x:) <$> hsEntriesSTAbs read' a
 
 -- | Unpack an archive in a given directory
 unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
@@ -136,8 +157,8 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
--- readSkip :: ArchivePtr -> IO ()
--- readSkip = archiveReadDataSkip
+readSkip :: ArchivePtr -> Int -> IO ()
+readSkip a _ = void $ archiveReadDataSkip a
 
 readBS :: ArchivePtr -> Int -> IO BS.ByteString
 readBS a sz =
@@ -163,11 +184,12 @@ readBSL a = BSL.fromChunks <$> loop
 
           bufSz = 32 * 1024 -- read in 32k blocks
 
-readContents :: ArchivePtr -> ArchiveEntryPtr -> IO (EntryContent FilePath BS.ByteString)
-readContents = readContentsAbs readBS
-
-readContentsAbs :: Integral a => (ArchivePtr -> a -> IO e) -> ArchivePtr -> ArchiveEntryPtr -> IO (EntryContent FilePath e)
-readContentsAbs read' a entry = go =<< archiveEntryFiletype entry
+readContents :: Integral a
+             => (ArchivePtr -> a -> IO e)
+             -> ArchivePtr
+             -> ArchiveEntryPtr
+             -> IO (EntryContent FilePath e)
+readContents read' a entry = go =<< archiveEntryFiletype entry
     where go Nothing            = Hardlink <$> (peekCString =<< archiveEntryHardlink entry)
           go (Just FtRegular)   = NormalFile <$> (read' a =<< sz)
           go (Just FtLink)      = Symlink <$> (peekCString =<< archiveEntrySymlink entry) <*> archiveEntrySymlinkType entry

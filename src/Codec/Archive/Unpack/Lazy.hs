@@ -1,5 +1,6 @@
 module Codec.Archive.Unpack.Lazy ( readArchiveBSL
                                  , unpackToDirLazy
+                                 , readArchiveHeaders
                                  ) where
 
 import           Codec.Archive.Common
@@ -39,8 +40,18 @@ unpackToDirLazy fp bs = do
 --
 -- @since 1.0.4.0
 readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry FilePath BS.ByteString]
-readArchiveBSL = unsafeDupablePerformIO . runArchiveM . (hsEntries <=< bslToArchive)
-{-# NOINLINE readArchiveBSL #-}
+readArchiveBSL = readArchiveBSLAbs readBS
+
+-- | @since 3.0.0.0
+readArchiveHeaders :: BSL.ByteString -> Either ArchiveResult [Entry FilePath ()]
+readArchiveHeaders = readArchiveBSLAbs readSkip
+
+readArchiveBSLAbs :: Integral a
+                  => (ArchivePtr -> a -> IO e)
+                  -> BSL.ByteString
+                  -> Either ArchiveResult [Entry FilePath e]
+readArchiveBSLAbs read' = unsafeDupablePerformIO . runArchiveM . (hsEntriesAbs read' <=< bslToArchive)
+{-# NOINLINE readArchiveBSLAbs #-}
 
 -- | Lazily stream a 'BSL.ByteString'
 bslToArchive :: BSL.ByteString
