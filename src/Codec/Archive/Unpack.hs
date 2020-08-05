@@ -136,6 +136,9 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
+-- readSkip :: ArchivePtr -> IO ()
+-- readSkip = archiveReadDataSkip
+
 readBS :: ArchivePtr -> Int -> IO BS.ByteString
 readBS a sz =
     allocaBytes sz $ \buff ->
@@ -159,6 +162,9 @@ readBSL a = BSL.fromChunks <$> loop
                 Nothing -> pure []
 
           bufSz = 32 * 1024 -- read in 32k blocks
+
+readContents :: ArchivePtr -> ArchiveEntryPtr -> IO (EntryContent FilePath BS.ByteString)
+readContents = readContentsAbs readBS
 
 readContentsAbs :: Integral a => (ArchivePtr -> a -> IO e) -> ArchivePtr -> ArchiveEntryPtr -> IO (EntryContent FilePath e)
 readContentsAbs read' a entry = go =<< archiveEntryFiletype entry
