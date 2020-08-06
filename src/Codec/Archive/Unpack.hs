@@ -157,9 +157,11 @@ unpackEntriesFp a fp = do
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
 
+{-# INLINE readSkip #-}
 readSkip :: ArchivePtr -> Int -> IO ()
 readSkip a _ = void $ archiveReadDataSkip a
 
+{-# INLINE readBS #-}
 readBS :: ArchivePtr -> Int -> IO BS.ByteString
 readBS a sz =
     allocaBytes sz $ \buff ->
