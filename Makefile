@@ -6,7 +6,24 @@ MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
 setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar
 
 clean:
-	rm -rf dist-newstyle dist test/data/*.tar* test/data/*.tgz *.hp *.prof *.chi *.chs.h stack.yaml.lock .hspec-failures .stack-work tags *.svg
+	rm -rf dist-newstyle \
+	    test/data/*.tar.* \
+	    test/data/*.tgz \
+	    *.hp \
+	    *.prof \
+	    *.chi \
+	    *.chs.h \
+	    stack.yaml.lock \
+	    .hspec-failures \
+	    .stack-work \
+	    tags \
+	    *.svg \
+	    test/data/alsa-lib-1.1.9.tar \
+	    test/data/sparc64-linux-dist.tar \
+	    test/data/ghc-8.8.1-src.tar \
+	    test/data/ATS2-Postiats-0.3.13.tar \
+	    test/data/libarchive-1.0.5.1.tar \
+	    test/data/llvm-9.0.0.src.tar
 
 test/data:
 	mkdir -p $@

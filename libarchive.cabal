@@ -24,6 +24,7 @@ extra-source-files:
   c/autoconf-freebsd/config.h
   c/*.c
   c/*.h
+  test/data/aarch64-linux-dist.tar
 
 source-repository head
     type:     git
