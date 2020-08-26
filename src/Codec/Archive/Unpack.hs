@@ -5,7 +5,6 @@ module Codec.Archive.Unpack ( hsEntriesAbs
                             , readArchiveBS
                             , unpackToDir
                             , readBS
-                            , readSkip
                             ) where
 
 import           Codec.Archive.Common
@@ -156,10 +155,6 @@ unpackEntriesFp a fp = do
                     ignore $ archiveReadExtract a x archiveExtractTime
             ignore $ archiveReadDataSkip a
             unpackEntriesFp a fp
-
-{-# INLINE readSkip #-}
-readSkip :: ArchivePtr -> Int -> IO ()
-readSkip a _ = void $ archiveReadDataSkip a
 
 {-# INLINE readBS #-}
 readBS :: ArchivePtr -> Int -> IO BS.ByteString

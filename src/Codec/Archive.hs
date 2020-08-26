@@ -24,7 +24,6 @@ module Codec.Archive
     , readArchiveFile
     , readArchiveBS
     , readArchiveBSL
-    , readArchiveHeaders
     , packFiles
     , packFilesZip
     , packFiles7zip
