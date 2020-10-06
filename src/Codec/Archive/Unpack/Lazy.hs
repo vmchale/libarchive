@@ -2,7 +2,6 @@ module Codec.Archive.Unpack.Lazy ( readArchiveBSL
                                  , unpackToDirLazy
                                  ) where
 
-import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
@@ -18,6 +17,7 @@ import           Data.IORef             (modifyIORef', newIORef, readIORef, writ
 import           Foreign.Concurrent     (newForeignPtr)
 import           Foreign.ForeignPtr     (castForeignPtr)
 import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
+import           Foreign.Marshal.Utils  (copyBytes)
 import           Foreign.Ptr            (castPtr, freeHaskellFunPtr)
 import           Foreign.Storable       (poke)
 import           System.IO.Unsafe       (unsafeDupablePerformIO)
@@ -86,6 +86,6 @@ bslToArchive bs = do
                                     writeIORef bufPtrRef newBufPtr
                                     pure newBufPtr
                                 else readIORef bufPtrRef
-                            hmemcpy bufPtr' charPtr (fromIntegral sz)
+                            copyBytes bufPtr' charPtr sz
                             poke dataPtr bufPtr' $> fromIntegral sz
           bsChunks = BSL.toChunks bs

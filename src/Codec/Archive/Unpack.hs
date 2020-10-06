@@ -7,7 +7,6 @@ module Codec.Archive.Unpack ( hsEntriesAbs
                             , readBS
                             ) where
 
-import           Codec.Archive.Common
 import           Codec.Archive.Foreign
 import           Codec.Archive.Monad
 import           Codec.Archive.Types
@@ -23,6 +22,7 @@ import           Foreign.C.String
 import           Foreign.Concurrent           (newForeignPtr)
 import           Foreign.ForeignPtr           (castForeignPtr, newForeignPtr_)
 import           Foreign.Marshal.Alloc        (allocaBytes, free, mallocBytes)
+import           Foreign.Marshal.Utils        (copyBytes)
 import           Foreign.Ptr                  (castPtr, nullPtr)
 import           System.FilePath              ((</>))
 import           System.IO.Unsafe             (unsafeDupablePerformIO)
@@ -44,7 +44,7 @@ bsToArchive bs = do
     bufPtr <- useAsCStringLenArchiveM bs $
         \(buf, sz) -> do
             buf' <- liftIO $ mallocBytes sz
-            _ <- liftIO $ hmemcpy buf' buf (fromIntegral sz)
+            _ <- liftIO $ copyBytes buf' buf sz
             handle $ archiveReadOpenMemory a buf (fromIntegral sz)
             pure buf'
     pure (a, free bufPtr)
