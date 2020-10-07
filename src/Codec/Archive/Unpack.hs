@@ -121,6 +121,9 @@ hsEntriesAbs read' p = pure (LazyST.runST $ hsEntriesSTAbs read' p)
 hsEntriesST :: ArchivePtr -> LazyST.ST s [Entry FilePath BS.ByteString]
 hsEntriesST = hsEntriesSTAbs readBS
 
+hsEntriesSTLazy :: ArchivePtr -> LazyST.ST s [Entry FilePath BSL.ByteString]
+hsEntriesSTLazy = hsEntriesSTAbs readBSL
+
 hsEntriesSTAbs :: Integral a
                => (ArchivePtr -> a -> IO e)
                -> ArchivePtr
@@ -164,8 +167,8 @@ readBS a sz =
         BS.packCStringLen (buff, sz)
 
 -- TODO: sanity check by comparing to archiveEntrySize?
-readBSL :: ArchivePtr -> IO BSL.ByteString
-readBSL a = BSL.fromChunks <$> loop
+readBSL :: ArchivePtr -> Int -> IO BSL.ByteString
+readBSL a _ = BSL.fromChunks <$> loop
     where step =
             allocaBytes bufSz $ \bufPtr -> do
                 bRead <- archiveReadData a bufPtr (fromIntegral bufSz)
