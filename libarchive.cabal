@@ -68,7 +68,6 @@ library
         Codec.Archive.Types
         Codec.Archive.Types.Foreign
         Codec.Archive.Permissions
-        Codec.Archive.Common
         Codec.Archive.Monad
 
     default-language:  Haskell2010
