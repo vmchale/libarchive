@@ -15,6 +15,7 @@ module Codec.Archive.Internal.Unpack ( hsEntriesAbs
                                      , getHsEntry
                                      , hsEntries
                                      , hsEntriesST
+                                     , hsEntriesSTLazy
                                      , hsEntriesSTAbs
                                      , archiveGetterHelper
                                      , archiveGetterNull
