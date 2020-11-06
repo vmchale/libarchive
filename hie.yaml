@@ -1,0 +1,9 @@
+---
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:libarchive"
+    - path: "./test/Spec.hs"
+      component: "test:libarchive-test"
+    - path: "./bench/Bench.hs"
+      component: "bench:libarchive-bench"
