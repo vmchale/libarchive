@@ -3,8 +3,21 @@ module Codec.Archive.Internal.Unpack ( hsEntriesAbs
                                      , unpackArchive
                                      , readArchiveFile
                                      , readArchiveBS
+                                     , archiveFile
+                                     , bsToArchive
                                      , unpackToDir
                                      , readBS
+                                     , readBSL
+                                     , readEntry
+                                     , readContents
+                                     , readOwnership
+                                     , readTimes
+                                     , getHsEntry
+                                     , hsEntries
+                                     , hsEntriesST
+                                     , hsEntriesSTAbs
+                                     , archiveGetterHelper
+                                     , archiveGetterNull
                                      ) where
 
 import           Codec.Archive.Foreign
