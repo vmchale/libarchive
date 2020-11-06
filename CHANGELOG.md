@@ -1,5 +1,9 @@
 # libarchive
 
+## 3.0.1.0
+
+  * Add `Internal` modules
+
 ## 3.0.0.0
 
   * Use `ForeignPtr` over `Ptr`
