@@ -1,6 +1,6 @@
 cabal-version:   3.0
 name:            libarchive
-version:         3.0.0.0
+version:         3.0.1.0
 license:         BSD-3-Clause
 license-file:    LICENSE
 copyright:       Copyright: (c) 2018-2020 Vanessa McHale
@@ -55,20 +55,20 @@ library
         Codec.Archive.Foreign
         Codec.Archive.Foreign.Archive
         Codec.Archive.Foreign.ArchiveEntry
+        Codec.Archive.Internal.Pack
+        Codec.Archive.Internal.Pack.Lazy
+        Codec.Archive.Internal.Pack.Common
+        Codec.Archive.Internal.Unpack.Lazy
+        Codec.Archive.Internal.Unpack
+        Codec.Archive.Internal.Monad
 
     hs-source-dirs:    src
     other-modules:
         Codec.Archive.Foreign.Archive.Macros
         Codec.Archive.Foreign.ArchiveEntry.Macros
-        Codec.Archive.Pack
-        Codec.Archive.Pack.Lazy
-        Codec.Archive.Pack.Common
-        Codec.Archive.Unpack.Lazy
-        Codec.Archive.Unpack
         Codec.Archive.Types
         Codec.Archive.Types.Foreign
         Codec.Archive.Permissions
-        Codec.Archive.Monad
 
     default-language:  Haskell2010
     other-extensions:  DeriveGeneric DeriveAnyClass

@@ -54,10 +54,10 @@ module Codec.Archive
     , executablePermissions
     ) where
 
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack
-import           Codec.Archive.Pack.Lazy
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack
+import           Codec.Archive.Internal.Pack.Lazy
 import           Codec.Archive.Permissions
 import           Codec.Archive.Types
-import           Codec.Archive.Unpack
-import           Codec.Archive.Unpack.Lazy
+import           Codec.Archive.Internal.Unpack
+import           Codec.Archive.Internal.Unpack.Lazy

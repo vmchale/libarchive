@@ -1,4 +1,4 @@
-module Codec.Archive.Pack.Common ( mkEntry ) where
+module Codec.Archive.Internal.Pack.Common ( mkEntry ) where
 
 import           Codec.Archive.Types
 import qualified Data.ByteString          as BS
@@ -22,4 +22,3 @@ mkEntry fp = do
     status <- getFileStatus fp
     content' <- mkContent fp status
     pure $ Entry fp content' (fileMode status) (Ownership Nothing Nothing (fromIntegral $ fileOwner status) (fromIntegral $ fileGroup status)) Nothing
-

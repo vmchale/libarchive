@@ -1,36 +1,39 @@
-module Codec.Archive.Pack.Lazy ( entriesToBSL
-                               , entriesToBSL7zip
-                               , entriesToBSLzip
-                               , entriesToBSLCpio
-                               , entriesToBSLXar
-                               , entriesToBSLShar
-                               , packFiles
-                               , packFilesZip
-                               , packFiles7zip
-                               , packFilesCpio
-                               , packFilesXar
-                               , packFilesShar
-                               ) where
+module Codec.Archive.Internal.Pack.Lazy ( entriesToBSL
+                                        , entriesToBSL7zip
+                                        , entriesToBSLzip
+                                        , entriesToBSLCpio
+                                        , entriesToBSLXar
+                                        , entriesToBSLShar
+                                        , entriesToBSLGeneral
+                                        , entriesToIOChunks
+                                        , packer
+                                        , packFiles
+                                        , packFilesZip
+                                        , packFiles7zip
+                                        , packFilesCpio
+                                        , packFilesXar
+                                        , packFilesShar
+                                        ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack
-import           Codec.Archive.Pack.Common
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack
+import           Codec.Archive.Internal.Pack.Common
 import           Codec.Archive.Types
-import           Control.Composition       ((.@))
-import           Control.Monad.IO.Class    (liftIO)
-import           Data.ByteString           (packCStringLen)
-import qualified Data.ByteString           as BS
-import qualified Data.ByteString.Lazy      as BSL
-import qualified Data.DList                as DL
-import           Data.Foldable             (toList)
-import           Data.Functor              (($>))
-import           Data.IORef                (modifyIORef', newIORef, readIORef)
-import           Foreign.Concurrent        (newForeignPtr)
-import           Foreign.ForeignPtr        (castForeignPtr, finalizeForeignPtr)
-import           Foreign.Marshal.Alloc     (free, mallocBytes)
-import           Foreign.Ptr               (castPtr, freeHaskellFunPtr)
-import           System.IO.Unsafe          (unsafeDupablePerformIO)
+import           Control.Composition                ((.@))
+import           Control.Monad.IO.Class             (liftIO)
+import           Data.ByteString                    (packCStringLen)
+import qualified Data.ByteString                    as BS
+import qualified Data.ByteString.Lazy               as BSL
+import qualified Data.DList                         as DL
+import           Data.Foldable                      (toList)
+import           Data.Functor                       (($>))
+import           Data.IORef                         (modifyIORef', newIORef, readIORef)
+import           Foreign.Concurrent                 (newForeignPtr)
+import           Foreign.ForeignPtr                 (castForeignPtr, finalizeForeignPtr)
+import           Foreign.Marshal.Alloc              (free, mallocBytes)
+import           Foreign.Ptr                        (castPtr, freeHaskellFunPtr)
+import           System.IO.Unsafe                   (unsafeDupablePerformIO)
 
 packer :: (Traversable t) => (t (Entry FilePath BS.ByteString) -> BSL.ByteString) -> t FilePath -> IO BSL.ByteString
 packer = traverse mkEntry .@ fmap

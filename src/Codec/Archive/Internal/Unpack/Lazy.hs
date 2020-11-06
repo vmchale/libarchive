@@ -1,26 +1,28 @@
-module Codec.Archive.Unpack.Lazy ( readArchiveBSL
-                                 , unpackToDirLazy
-                                 ) where
+module Codec.Archive.Internal.Unpack.Lazy ( readArchiveBSL
+                                          , readArchiveBSLAbs
+                                          , unpackToDirLazy
+                                          , bslToArchive
+                                          ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Unpack
 import           Codec.Archive.Types
-import           Codec.Archive.Unpack
-import           Control.Monad          ((<=<))
+import           Control.Monad                 ((<=<))
 import           Control.Monad.IO.Class
-import qualified Data.ByteString        as BS
-import qualified Data.ByteString.Lazy   as BSL
-import qualified Data.ByteString.Unsafe as BS
-import           Data.Foldable          (traverse_)
-import           Data.Functor           (($>))
-import           Data.IORef             (modifyIORef', newIORef, readIORef, writeIORef)
-import           Foreign.Concurrent     (newForeignPtr)
-import           Foreign.ForeignPtr     (castForeignPtr)
-import           Foreign.Marshal.Alloc  (free, mallocBytes, reallocBytes)
-import           Foreign.Marshal.Utils  (copyBytes)
-import           Foreign.Ptr            (castPtr, freeHaskellFunPtr)
-import           Foreign.Storable       (poke)
-import           System.IO.Unsafe       (unsafeDupablePerformIO)
+import qualified Data.ByteString               as BS
+import qualified Data.ByteString.Lazy          as BSL
+import qualified Data.ByteString.Unsafe        as BS
+import           Data.Foldable                 (traverse_)
+import           Data.Functor                  (($>))
+import           Data.IORef                    (modifyIORef', newIORef, readIORef, writeIORef)
+import           Foreign.Concurrent            (newForeignPtr)
+import           Foreign.ForeignPtr            (castForeignPtr)
+import           Foreign.Marshal.Alloc         (free, mallocBytes, reallocBytes)
+import           Foreign.Marshal.Utils         (copyBytes)
+import           Foreign.Ptr                   (castPtr, freeHaskellFunPtr)
+import           Foreign.Storable              (poke)
+import           System.IO.Unsafe              (unsafeDupablePerformIO)
 
 -- | In general, this will be more efficient than 'unpackToDir'
 --
@@ -57,7 +59,7 @@ bslToArchive bs = do
     bufPtrRef <- liftIO $ newIORef bufPtr
     bsChunksRef <- liftIO $ newIORef bsChunks
     bufSzRef <- liftIO $ newIORef (32 * 1024)
-    rc <- liftIO $ mkReadCallback (readBSL bsChunksRef bufSzRef bufPtrRef)
+    rc <- liftIO $ mkReadCallback (readBSL' bsChunksRef bufSzRef bufPtrRef)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc *> (free =<< readIORef bufPtrRef))
     ignore $ archiveReadSupportFormatAll a
@@ -70,7 +72,7 @@ bslToArchive bs = do
            ]
     pure a
 
-    where readBSL bsRef bufSzRef bufPtrRef _ _ dataPtr = do
+    where readBSL' bsRef bufSzRef bufPtrRef _ _ dataPtr = do
                 bs' <- readIORef bsRef
                 case bs' of
                     [] -> pure 0

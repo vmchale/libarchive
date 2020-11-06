@@ -1,40 +1,47 @@
-module Codec.Archive.Pack ( entriesToFile
-                          , entriesToFileZip
-                          , entriesToFile7Zip
-                          , entriesToFileCpio
-                          , entriesToFileXar
-                          , entriesToFileShar
-                          , entriesToBS
-                          , entriesToBSzip
-                          , entriesToBS7zip
-                          , packEntries
-                          , noFail
-                          , packToFile
-                          , packToFileZip
-                          , packToFile7Zip
-                          , packToFileCpio
-                          , packToFileXar
-                          , packToFileShar
-                          ) where
+module Codec.Archive.Internal.Pack ( entriesToFile
+                                   , entriesToFileZip
+                                   , entriesToFile7Zip
+                                   , entriesToFileCpio
+                                   , entriesToFileXar
+                                   , entriesToFileShar
+                                   , entriesToFileGeneral
+                                   , entriesToBS
+                                   , entriesToBSGeneral
+                                   , entriesToBSzip
+                                   , entriesToBS7zip
+                                   , filePacker
+                                   , packEntries
+                                   , noFail
+                                   , packToFile
+                                   , packToFileZip
+                                   , packToFile7Zip
+                                   , packToFileCpio
+                                   , packToFileXar
+                                   , packToFileShar
+                                   , archiveEntryAdd
+                                   , contentAdd
+                                   , setTime
+                                   , setOwnership
+                                   ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack.Common
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack.Common
 import           Codec.Archive.Types
-import           Control.Monad             (forM_, void)
-import           Control.Monad.IO.Class    (MonadIO (..))
-import           Data.ByteString           (packCStringLen)
-import qualified Data.ByteString           as BS
-import qualified Data.ByteString.Lazy      as BSL
-import           Data.Coerce               (coerce)
-import           Data.Foldable             (sequenceA_, traverse_)
-import           Data.Semigroup            (Sum (..))
+import           Control.Monad                      (forM_, void)
+import           Control.Monad.IO.Class             (MonadIO (..))
+import           Data.ByteString                    (packCStringLen)
+import qualified Data.ByteString                    as BS
+import qualified Data.ByteString.Lazy               as BSL
+import           Data.Coerce                        (coerce)
+import           Data.Foldable                      (sequenceA_, traverse_)
+import           Data.Semigroup                     (Sum (..))
 import           Foreign.C.String
-import           Foreign.C.Types           (CLLong (..), CLong (..))
-import           Foreign.Concurrent        (newForeignPtr)
-import           Foreign.ForeignPtr        (castForeignPtr)
-import           Foreign.Ptr               (castPtr)
-import           System.IO.Unsafe          (unsafeDupablePerformIO)
+import           Foreign.C.Types                    (CLLong (..), CLong (..))
+import           Foreign.Concurrent                 (newForeignPtr)
+import           Foreign.ForeignPtr                 (castForeignPtr)
+import           Foreign.Ptr                        (castPtr)
+import           System.IO.Unsafe                   (unsafeDupablePerformIO)
 
 maybeDo :: Applicative f => Maybe (f ()) -> f ()
 maybeDo = sequenceA_
