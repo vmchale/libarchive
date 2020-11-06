@@ -1,14 +1,14 @@
-module Codec.Archive.Unpack ( hsEntriesAbs
-                            , unpackEntriesFp
-                            , unpackArchive
-                            , readArchiveFile
-                            , readArchiveBS
-                            , unpackToDir
-                            , readBS
-                            ) where
+module Codec.Archive.Internal.Unpack ( hsEntriesAbs
+                                     , unpackEntriesFp
+                                     , unpackArchive
+                                     , readArchiveFile
+                                     , readArchiveBS
+                                     , unpackToDir
+                                     , readBS
+                                     ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
+import           Codec.Archive.Internal.Monad
 import           Codec.Archive.Types
 import           Control.Monad                ((<=<))
 import           Control.Monad.IO.Class       (liftIO)

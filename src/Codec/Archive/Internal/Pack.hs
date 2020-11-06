@@ -1,25 +1,25 @@
-module Codec.Archive.Pack ( entriesToFile
-                          , entriesToFileZip
-                          , entriesToFile7Zip
-                          , entriesToFileCpio
-                          , entriesToFileXar
-                          , entriesToFileShar
-                          , entriesToBS
-                          , entriesToBSzip
-                          , entriesToBS7zip
-                          , packEntries
-                          , noFail
-                          , packToFile
-                          , packToFileZip
-                          , packToFile7Zip
-                          , packToFileCpio
-                          , packToFileXar
-                          , packToFileShar
-                          ) where
+module Codec.Archive.Internal.Pack ( entriesToFile
+                                   , entriesToFileZip
+                                   , entriesToFile7Zip
+                                   , entriesToFileCpio
+                                   , entriesToFileXar
+                                   , entriesToFileShar
+                                   , entriesToBS
+                                   , entriesToBSzip
+                                   , entriesToBS7zip
+                                   , packEntries
+                                   , noFail
+                                   , packToFile
+                                   , packToFileZip
+                                   , packToFile7Zip
+                                   , packToFileCpio
+                                   , packToFileXar
+                                   , packToFileShar
+                                   ) where
 
 import           Codec.Archive.Foreign
-import           Codec.Archive.Monad
-import           Codec.Archive.Pack.Common
+import           Codec.Archive.Internal.Monad
+import           Codec.Archive.Internal.Pack.Common
 import           Codec.Archive.Types
 import           Control.Monad             (forM_, void)
 import           Control.Monad.IO.Class    (MonadIO (..))
