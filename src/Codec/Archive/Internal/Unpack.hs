@@ -10,15 +10,11 @@ module Codec.Archive.Internal.Unpack ( hsEntriesAbs
                                      , readBSL
                                      , readEntry
                                      , readContents
-                                     , readOwnership
-                                     , readTimes
                                      , getHsEntry
                                      , hsEntries
                                      , hsEntriesST
                                      , hsEntriesSTLazy
                                      , hsEntriesSTAbs
-                                     , archiveGetterHelper
-                                     , archiveGetterNull
                                      ) where
 
 import           Codec.Archive.Foreign

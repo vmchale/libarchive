@@ -1,4 +1,6 @@
-module Codec.Archive.Internal.Pack.Common ( mkEntry ) where
+module Codec.Archive.Internal.Pack.Common ( mkEntry
+                                          , mkContent
+                                          ) where
 
 import           Codec.Archive.Types
 import qualified Data.ByteString          as BS

@@ -20,8 +20,6 @@ module Codec.Archive.Internal.Pack ( entriesToFile
                                    , packToFileShar
                                    , archiveEntryAdd
                                    , contentAdd
-                                   , setTime
-                                   , setOwnership
                                    ) where
 
 import           Codec.Archive.Foreign
