@@ -68,6 +68,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveReadClose
                                      , archiveReadFree
                                      , archiveReadSupportFilterAll
+                                     , archiveReadSupportFilterByCode
                                      , archiveReadSupportFilterBzip2
                                      , archiveReadSupportFilterCompress
                                      , archiveReadSupportFilterGzip
@@ -158,6 +159,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveWriteSetFormatFilterByExtDef
                                      , archiveWriteZipSetCompressionDeflate
                                      , archiveWriteZipSetCompressionStore
+                                     , archiveWriteOpen2
                                      , archiveWriteOpenFd
                                      , archiveWriteOpenFilenameW
                                      , archiveWriteOpenFilename
@@ -558,6 +560,13 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
                                , castFunPtr `FunPtr (ArchiveWriteCallback a b)'
                                , castFunPtr `FunPtr (ArchiveCloseCallbackRaw a)'
                                } -> `ArchiveResult' #}
+{# fun archive_write_open2 as ^ { `ArchivePtr'
+                                , castPtr `Ptr a'
+                                , castFunPtr `FunPtr (ArchiveOpenCallbackRaw a)'
+                                , castFunPtr `FunPtr (ArchiveWriteCallback a b)'
+                                , castFunPtr `FunPtr (ArchiveCloseCallbackRaw a)'
+                                , castFunPtr `FunPtr (ArchiveFreeCallbackRaw a)'
+                                } -> `ArchiveResult' #}
 {# fun archive_write_open_fd as ^ { `ArchivePtr', coerce `Fd' } -> `ArchiveResult' #}
 {# fun archive_write_open_filename as ^ { `ArchivePtr', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_open_filename_w as ^ { `ArchivePtr', `CWString' } -> `ArchiveResult' #}
@@ -644,6 +653,7 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_match_include_gid as ^ { `ArchivePtr', coerce `Id' } -> `ArchiveResult' #}
 {# fun archive_match_include_uid as ^ { `ArchivePtr', coerce `Id' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_all as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_read_support_filter_by_code as ^ { `ArchivePtr', `CInt' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_compress as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_read_support_filter_gzip as ^ { `ArchivePtr' } -> `ArchiveResult' #}

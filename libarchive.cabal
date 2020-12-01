@@ -103,8 +103,10 @@ library
         ghc-options: -Wunused-packages
 
     if !flag(system-libarchive)
-        -- version 3.4.3
-        -- patches applied from 'c/patches'
+        include-dirs: c
+
+    if !flag(system-libarchive)
+        -- version 3.5.0
         c-sources:
           c/archive_acl.c
           c/archive_blake2sp_ref.c
@@ -152,6 +154,7 @@ library
           c/archive_read_set_format.c
           c/archive_read_set_options.c
           c/archive_read_support_filter_all.c
+          c/archive_read_support_filter_by_code.c
           c/archive_read_support_filter_bzip2.c
           c/archive_read_support_filter_compress.c
           c/archive_read_support_filter_grzip.c
@@ -249,7 +252,7 @@ library
 
         cc-options: -std=c11 -DHAVE_CONFIG_H
     else
-        pkgconfig-depends: libarchive (==3.4.0 || >3.4.0) && <4.0
+        pkgconfig-depends: libarchive (==3.5.0 || >3.5.0) && <4.0
 
 
 test-suite libarchive-test

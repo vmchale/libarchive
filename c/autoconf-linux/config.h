@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.4.3"
+#define BSDCAT_VERSION_STRING "3.5.0"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.4.3"
+#define BSDCPIO_VERSION_STRING "3.5.0"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.4.3"
+#define BSDTAR_VERSION_STRING "3.5.0"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -453,7 +453,6 @@
 /* #undef HAVE_EXPAT_H */
 
 /* Define to 1 if you have the <ext2fs/ext2_fs.h> header file. */
-/* #undef HAVE_EXT2FS_EXT2_FS_H */
 
 /* Define to 1 if you have the `extattr_get_fd' function. */
 /* #undef HAVE_EXTATTR_GET_FD */
@@ -606,7 +605,7 @@
 /* #undef HAVE_LCHFLAGS */
 
 /* Define to 1 if you have the `lchmod' function. */
-/* #undef HAVE_LCHMOD 1 */
+/* #undef HAVE_LCHMOD */
 
 /* Define to 1 if you have the `lchown' function. */
 #define HAVE_LCHOWN 1
@@ -755,6 +754,7 @@
 
 /* Define to 1 if you have the <lzma.h> header file. */
 /* #undef HAVE_LZMA_H */
+#define HAVE_LZMA_H 1
 
 /* Define to 1 if you have the `lzma_stream_encoder_mt' function. */
 /* #undef HAVE_LZMA_STREAM_ENCODER_MT */
@@ -1031,7 +1031,7 @@
 /* #undef HAVE_STRUCT_TM_TM_GMTOFF 1 */
 
 /* Define to 1 if `__tm_gmtoff' is a member of `struct tm'. */
-/* #undef HAVE_STRUCT_TM___TM_GMTOFF 1 */
+/* #undef HAVE_STRUCT_TM___TM_GMTOFF */
 
 /* Define to 1 if the system has the type `struct vfsconf'. */
 /* #undef HAVE_STRUCT_VFSCONF */
@@ -1237,10 +1237,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3004003"
+#define LIBARCHIVE_VERSION_NUMBER "3005000"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.4.3"
+#define LIBARCHIVE_VERSION_STRING "3.5.0"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1270,7 +1270,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.4.3"
+#define PACKAGE_STRING "libarchive 3.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1279,7 +1279,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.4.3"
+#define PACKAGE_VERSION "3.5.0"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1319,7 +1319,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.4.3"
+#define VERSION "3.5.0"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
@@ -1365,6 +1365,9 @@
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef _WIN32_WINNT */
+
+/* Internal macro for sanity checks */
+#define __LIBARCHIVE_CONFIG_H_INCLUDED 1
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

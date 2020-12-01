@@ -12,6 +12,7 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , ArchiveOpenCallbackRaw
                                    , ArchiveSwitchCallbackRaw
                                    , ArchivePassphraseCallback
+                                   , ArchiveFreeCallbackRaw
                                    -- * Abstract types
                                    , Archive
                                    , ArchiveEntry
@@ -126,6 +127,15 @@ type LaSSize = {# type la_ssize_t #}
                              } deriving (Eq)
   #}
 
+{# enum define ArchiveEntryDigest { ARCHIVE_ENTRY_DIGEST_MD5 as ArchiveEntryDigestMD5
+                                  , ARCHIVE_ENTRY_DIGEST_RMD160 as ArchiveEntryDigestRMD160
+                                  , ARCHIVE_ENTRY_DIGEST_SHA1 as ArchiveEntryDigestSHA1
+                                  , ARCHIVE_ENTRY_DIGEST_SHA256 as ArchiveEntryDigestSHA256
+                                  , ARCHIVE_ENTRY_DIGEST_SHA384 as ArchiveEntryDigestSHA384
+                                  , ARCHIVE_ENTRY_DIGEST_SHA512 as ArchiveEntryDigestSHA512
+                                  }
+  #}
+
 -- | Abstract type
 data Archive
 
@@ -144,6 +154,7 @@ type ArchiveOpenCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveCloseCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 type ArchiveSwitchCallbackRaw a b = Ptr Archive -> Ptr a -> Ptr b -> IO CInt
 type ArchivePassphraseCallback a = Ptr Archive -> Ptr a -> IO CString
+type ArchiveFreeCallbackRaw a = Ptr Archive -> Ptr a -> IO CInt
 
 newtype Flags = Flags CInt
 
