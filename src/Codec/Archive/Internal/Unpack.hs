@@ -71,10 +71,18 @@ readArchiveFile fp = act =<< liftIO (do
     where act a =
             archiveFile fp a $> LazyST.runST (hsEntriesST a)
 
-archiveFile :: FilePath -> ArchivePtr -> ArchiveM ()
-archiveFile fp a = withCStringArchiveM fp $ \cpath ->
-    ignore (archiveReadSupportFormatAll a) *>
+{-# INLINE archiveAbs #-}
+archiveAbs :: (ArchivePtr -> IO ArchiveResult) -- ^ Function to set format support
+           -> FilePath
+           -> ArchivePtr
+           -> ArchiveM ()
+archiveAbs support fp a = withCStringArchiveM fp $ \cpath ->
+    ignore (support a) *>
     handle (archiveReadOpenFilename a cpath 10240)
+
+-- TODO: general function for format
+archiveFile :: FilePath -> ArchivePtr -> ArchiveM ()
+archiveFile = archiveAbs archiveReadSupportFormatAll
 
 -- | This is more efficient than
 --

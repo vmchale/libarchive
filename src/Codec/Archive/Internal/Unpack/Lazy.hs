@@ -2,6 +2,7 @@ module Codec.Archive.Internal.Unpack.Lazy ( readArchiveBSL
                                           , readArchiveBSLAbs
                                           , unpackToDirLazy
                                           , bslToArchive
+                                          , bslToArchiveAbs
                                           ) where
 
 import           Codec.Archive.Foreign
@@ -44,16 +45,21 @@ readArchiveBSL :: BSL.ByteString -> Either ArchiveResult [Entry FilePath BS.Byte
 readArchiveBSL = readArchiveBSLAbs readBS
 
 readArchiveBSLAbs :: Integral a
-                  => (ArchivePtr -> a -> IO e)
+                  => (ArchivePtr -> a -> IO e) -- ^ Action to read contents from an archive entry
                   -> BSL.ByteString
                   -> Either ArchiveResult [Entry FilePath e]
 readArchiveBSLAbs read' = unsafeDupablePerformIO . runArchiveM . (hsEntriesAbs read' <=< bslToArchive)
 {-# NOINLINE readArchiveBSLAbs #-}
 
 -- | Lazily stream a 'BSL.ByteString'
-bslToArchive :: BSL.ByteString
-             -> ArchiveM ArchivePtr
-bslToArchive bs = do
+bslToArchive :: BSL.ByteString -> ArchiveM ArchivePtr
+bslToArchive = bslToArchiveAbs archiveReadSupportFormatAll
+
+{-# INLINE bslToArchiveAbs #-}
+bslToArchiveAbs :: (ArchivePtr -> IO ArchiveResult) -- ^ Action to set supported formats
+                -> BSL.ByteString
+                -> ArchiveM ArchivePtr
+bslToArchiveAbs support bs = do
     preA <- liftIO archiveReadNew
     bufPtr <- liftIO $ mallocBytes (32 * 1024) -- default to 32k byte chunks
     bufPtrRef <- liftIO $ newIORef bufPtr
@@ -62,7 +68,7 @@ bslToArchive bs = do
     rc <- liftIO $ mkReadCallback (readBSL' bsChunksRef bufSzRef bufPtrRef)
     cc <- liftIO $ mkCloseCallback (\_ ptr -> freeHaskellFunPtr rc *> free ptr $> ArchiveOk)
     a <- liftIO $ castForeignPtr <$> newForeignPtr (castPtr preA) (archiveFree preA *> freeHaskellFunPtr cc *> (free =<< readIORef bufPtrRef))
-    ignore $ archiveReadSupportFormatAll a
+    ignore $ support a
     nothingPtr <- liftIO $ mallocBytes 0
     let seqErr = traverse_ handle
     seqErr [ archiveReadSetReadCallback a rc
