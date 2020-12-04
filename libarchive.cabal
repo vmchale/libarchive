@@ -105,8 +105,6 @@ library
     if !flag(system-libarchive)
         include-dirs: c
 
-    extra-libraries: lzma
-
     if !flag(system-libarchive)
         -- version 3.5.0
         c-sources:
