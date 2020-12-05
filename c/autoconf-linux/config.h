@@ -754,7 +754,6 @@
 
 /* Define to 1 if you have the <lzma.h> header file. */
 /* #undef HAVE_LZMA_H */
-#define HAVE_LZMA_H 1
 
 /* Define to 1 if you have the `lzma_stream_encoder_mt' function. */
 /* #undef HAVE_LZMA_STREAM_ENCODER_MT */
