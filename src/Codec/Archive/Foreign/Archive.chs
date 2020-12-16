@@ -304,6 +304,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , ArchiveCloseCallbackRaw
                                      , ArchiveSwitchCallbackRaw
                                      , ArchivePassphraseCallback
+                                     , ArchiveFreeCallback
                                      -- * Callback constructors
                                      , noOpenCallback
                                      , mkReadCallback
@@ -314,6 +315,7 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , mkOpenCallback
                                      , mkCloseCallback
                                      , mkSwitchCallback
+                                     , mkFreeCallback
                                      , mkWriteLookup
                                      , mkReadLookup
                                      , mkCleanup
@@ -342,7 +344,6 @@ import Foreign.Ptr
 import Foreign.Storable (Storable (peek))
 import System.Posix.Types (Fd (..))
 
--- destructors: use "dynamic" instead of "wrapper" (but we don't want that)
 -- callbacks
 foreign import ccall "wrapper" mkReadCallback :: ArchiveReadCallback a b -> IO (FunPtr (ArchiveReadCallback a b))
 foreign import ccall "wrapper" mkSkipCallback :: ArchiveSkipCallback a -> IO (FunPtr (ArchiveSkipCallback a))
@@ -353,6 +354,7 @@ foreign import ccall "wrapper" mkCloseCallbackRaw :: ArchiveCloseCallbackRaw a -
 foreign import ccall "wrapper" mkSwitchCallbackRaw :: ArchiveSwitchCallbackRaw a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 foreign import ccall "wrapper" mkPassphraseCallback :: ArchivePassphraseCallback a -> IO (FunPtr (ArchivePassphraseCallback a))
 foreign import ccall "wrapper" mkExcludedCallback :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO ()))
+foreign import ccall "wrapper" mkFreeCallbackRaw :: ArchiveFreeCallbackRaw a -> IO (FunPtr (ArchiveFreeCallbackRaw a))
 
 -- | Don't use an open callback. This is the recommended argument to 'archiveReadOpen'
 noOpenCallback :: FunPtr (ArchiveOpenCallbackRaw a)
@@ -376,6 +378,9 @@ mkCloseCallback f = let f' = fmap resultToErr .* f in mkCloseCallbackRaw f'
 
 mkSwitchCallback :: ArchiveSwitchCallback a b -> IO (FunPtr (ArchiveSwitchCallbackRaw a b))
 mkSwitchCallback f = let f' = fmap resultToErr .** f in mkSwitchCallbackRaw f'
+
+mkFreeCallback :: ArchiveFreeCallback a -> IO (FunPtr (ArchiveFreeCallbackRaw a))
+mkFreeCallback f = let f' = fmap resultToErr .* f in mkFreeCallbackRaw f'
 
 mkFilter :: (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO Bool) -> IO (FunPtr (Ptr Archive -> Ptr a -> Ptr ArchiveEntry -> IO CInt))
 mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'

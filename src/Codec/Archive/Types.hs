@@ -7,12 +7,14 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
                            , Permissions
                            , ArchiveEncryption (..)
                            , ArchiveResult (..)
+                           , ArchiveEntryDigest (..)
                            -- * Foreign types
                            , module Codec.Archive.Types.Foreign
                            -- * Callbacks
                            , ArchiveOpenCallback
                            , ArchiveCloseCallback
                            , ArchiveSwitchCallback
+                           , ArchiveFreeCallback
                            -- * Marshalling functions
                            , resultToErr
                            ) where
@@ -26,6 +28,7 @@ import           System.Posix.Types          (CMode (..))
 type ArchiveOpenCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
 type ArchiveCloseCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
 type ArchiveSwitchCallback a b = Ptr Archive -> Ptr a -> Ptr b -> IO ArchiveResult
+type ArchiveFreeCallback a = Ptr Archive -> Ptr a -> IO ArchiveResult
 
 resultToErr :: ArchiveResult -> CInt
 resultToErr = fromIntegral . fromEnum
