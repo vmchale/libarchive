@@ -1,5 +1,7 @@
 # libarchive
 
+# 3.0.2.0
+
   * Upgrade bundled `libarchive` to 3.5.0
   * Require `librachive >= 3.5.0`
   * Add `archiveReadSupportFilterByCode` and `archiveWriteOpen2`
