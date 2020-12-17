@@ -126,6 +126,7 @@ module Codec.Archive.Foreign.ArchiveEntry ( -- * Direct bindings (entry)
                                           , archiveEntryCopyStat
                                           , archiveEntryMacMetadata
                                           , archiveEntryCopyMacMetadata
+                                          , archiveEntryDigest
                                           , archiveEntryAclClear
                                           , archiveEntryAclNext
                                           -- , archiveEntryAclNextW
@@ -404,3 +405,4 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_update_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
 {# fun archive_entry_update_symlink_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
 {# fun archive_entry_update_uname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `Bool' #}
+{# fun archive_entry_digest as ^ { `ArchiveEntryPtr', `ArchiveEntryDigest' } -> `Ptr CUChar' id #}
