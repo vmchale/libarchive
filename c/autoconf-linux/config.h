@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.5.0"
+#define BSDCAT_VERSION_STRING "3.5.1"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.5.0"
+#define BSDCPIO_VERSION_STRING "3.5.1"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.5.0"
+#define BSDTAR_VERSION_STRING "3.5.1"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -453,6 +453,7 @@
 /* #undef HAVE_EXPAT_H */
 
 /* Define to 1 if you have the <ext2fs/ext2_fs.h> header file. */
+/* #undef HAVE_EXT2FS_EXT2_FS_H */
 
 /* Define to 1 if you have the `extattr_get_fd' function. */
 /* #undef HAVE_EXTATTR_GET_FD */
@@ -984,6 +985,9 @@
 /* Define to 1 if you have the `strncpy_s' function. */
 /* #undef HAVE_STRNCPY_S */
 
+/* Define to 1 if you have the `strnlen' function. */
+#define HAVE_STRNLEN 1
+
 /* Define to 1 if you have the `strrchr' function. */
 #define HAVE_STRRCHR 1
 
@@ -1027,7 +1031,7 @@
 /* #undef HAVE_STRUCT_STAT_ST_UMTIME */
 
 /* Define to 1 if `tm_gmtoff' is a member of `struct tm'. */
-/* #undef HAVE_STRUCT_TM_TM_GMTOFF 1 */
+#define HAVE_STRUCT_TM_TM_GMTOFF 1
 
 /* Define to 1 if `__tm_gmtoff' is a member of `struct tm'. */
 /* #undef HAVE_STRUCT_TM___TM_GMTOFF */
@@ -1045,7 +1049,7 @@
 /* #undef HAVE_SYS_ACL_H */
 
 /* Define to 1 if you have the <sys/cdefs.h> header file. */
-/* #undef HAVE_SYS_CDEFS_H */
+#define HAVE_SYS_CDEFS_H 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
@@ -1236,10 +1240,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3005000"
+#define LIBARCHIVE_VERSION_NUMBER "3005001"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.5.0"
+#define LIBARCHIVE_VERSION_STRING "3.5.1"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1254,7 +1258,7 @@
 
 /* Define to 1 if `major', `minor', and `makedev' are declared in
    <sysmacros.h>. */
-#define MAJOR_IN_SYSMACROS 1
+/* #undef MAJOR_IN_SYSMACROS */
 
 /* Define to '0x05020000' for Windows Server 2003 APIs. */
 /* #undef NTDDI_VERSION */
@@ -1269,7 +1273,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.5.0"
+#define PACKAGE_STRING "libarchive 3.5.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1278,7 +1282,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.5.0"
+#define PACKAGE_VERSION "3.5.1"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1290,7 +1294,7 @@
 #define STDC_HEADERS 1
 
 /* Define to 1 if strerror_r returns char *. */
-/* #undef STRERROR_R_CHAR_P */
+#define STRERROR_R_CHAR_P 1
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
@@ -1318,7 +1322,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.5.0"
+#define VERSION "3.5.1"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
