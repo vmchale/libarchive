@@ -8,5 +8,5 @@ Vagrant.configure("2") do |config|
     v.memory = 2048
   end
   config.vm.provision "shell",
-    inline: "pkg install --yes hs-cabal-install ghc"
+    inline: "pkg install --yes hs-cabal-install ghc curl"
 end
