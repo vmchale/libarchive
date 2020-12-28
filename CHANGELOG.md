@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.2.1
+
+  * Upgrade bundled `libarchive` to 3.5.1
+
 # 3.0.2.0
 
   * Upgrade bundled `libarchive` to 3.5.0
