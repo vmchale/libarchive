@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.5.0"
+#define BSDCAT_VERSION_STRING "3.5.1"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.5.0"
+#define BSDCPIO_VERSION_STRING "3.5.1"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.5.0"
+#define BSDTAR_VERSION_STRING "3.5.1"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -985,6 +985,9 @@
 /* Define to 1 if you have the `strncpy_s' function. */
 /* #undef HAVE_STRNCPY_S */
 
+/* Define to 1 if you have the `strnlen' function. */
+#define HAVE_STRNLEN 1
+
 /* Define to 1 if you have the `strrchr' function. */
 #define HAVE_STRRCHR 1
 
@@ -1236,10 +1239,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3005000"
+#define LIBARCHIVE_VERSION_NUMBER "3005001"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.5.0"
+#define LIBARCHIVE_VERSION_STRING "3.5.1"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1269,7 +1272,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.5.0"
+#define PACKAGE_STRING "libarchive 3.5.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1278,7 +1281,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.5.0"
+#define PACKAGE_VERSION "3.5.1"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1318,7 +1321,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.5.0"
+#define VERSION "3.5.1"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
