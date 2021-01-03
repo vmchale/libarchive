@@ -23,10 +23,18 @@ clean:
 	    test/data/ghc-8.8.1-src.tar \
 	    test/data/ATS2-Postiats-0.3.13.tar \
 	    test/data/libarchive-1.0.5.1.tar \
-	    test/data/llvm-9.0.0.src.tar
+	    test/data/llvm-9.0.0.src.tar \
+	    test/data/ruby-3.0.0.tar
+
+packdeps.svg: libarchive.cabal
+	cabal build --disable-benchmarks --disable-tests
+	cabal-plan dot | dot -Tsvg -o $@
 
 test/data:
 	mkdir -p $@
+
+test/data/ruby-3.0.0.tar: test/data/ruby-3.0.0.tar.gz
+	gunzip -f $^
 
 test/data/ghc-8.8.1-src.tar: test/data/ghc-8.8.1-src.tar.xz
 	xz -d -f $^
@@ -45,6 +53,9 @@ test/data/ATS2-Postiats-0.3.13.tar: test/data/ATS2-Postiats-0.3.13.tgz
 
 test/data/libarchive-1.0.5.1.tar: test/data/libarchive-1.0.5.1.tar.gz
 	gunzip -f $^
+
+test/data/ruby-3.0.0.tar.gz: test/data
+	wget https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz -O $@
 
 test/data/ghc-8.8.1-src.tar.xz: test/data
 	wget https://downloads.haskell.org/~ghc/8.8.1/ghc-8.8.1-src.tar.xz --no-check-certificate -O $@

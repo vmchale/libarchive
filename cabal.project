@@ -1,2 +1,5 @@
 packages: ./
 max-backjumps: 40000
+
+-- package Cabal
+  -- ghc-options: -j +RTS -A32m -RTS
