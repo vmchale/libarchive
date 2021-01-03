@@ -38,6 +38,7 @@ module Codec.Archive
     , packToFileShar
     -- * Concrete (Haskell) types
     , ArchiveResult (..)
+    , ArchiveEntryDigest (..)
     , Entry (..)
     , Symlink (..)
     , EntryContent (..)
@@ -57,7 +58,7 @@ module Codec.Archive
 import           Codec.Archive.Internal.Monad
 import           Codec.Archive.Internal.Pack
 import           Codec.Archive.Internal.Pack.Lazy
-import           Codec.Archive.Permissions
-import           Codec.Archive.Types
 import           Codec.Archive.Internal.Unpack
 import           Codec.Archive.Internal.Unpack.Lazy
+import           Codec.Archive.Permissions
+import           Codec.Archive.Types

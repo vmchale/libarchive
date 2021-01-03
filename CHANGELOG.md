@@ -1,5 +1,17 @@
 # libarchive
 
+# 3.0.2.1
+
+  * Upgrade bundled `libarchive` to 3.5.1
+
+# 3.0.2.0
+
+  * Upgrade bundled `libarchive` to 3.5.0
+  * Require `librachive >= 3.5.0`
+  * Add `archiveReadSupportFilterByCode` and `archiveWriteOpen2`
+  * Add `ArchiveFreeCallback` type
+  * Add `ArchiveEntryDigest` sum type
+
 ## 3.0.1.1
 
   * Add `Internal` modules

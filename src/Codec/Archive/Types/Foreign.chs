@@ -22,6 +22,7 @@ module Codec.Archive.Types.Foreign ( -- * Callbacks
                                    , ArchiveResult (..)
                                    , FileType (..)
                                    , Symlink (..)
+                                   , ArchiveEntryDigest (..)
                                    -- * Macros
                                    , Flags (..)
                                    , ArchiveFilter (..)

@@ -66,7 +66,7 @@ main = do
 #ifndef LOW_MEMORY
             traverse_ (\fp -> repack entriesToBSLzip ("zip/" ++ fp) fp) tarPaths
             traverse_ (repack entriesToBSLCpio "cpio") tarPaths
-            traverse_ (repack entriesToBSLXar "xar") tarPaths
+            -- traverse_ (repack entriesToBSLXar "xar") tarPaths
             traverse_ (repack entriesToBSLShar "shar") tarPaths
             traverse_ (repack entriesToBSL7zip "7zip") tarPaths
             traverse_ testFpFreaky tarPaths
