@@ -3,7 +3,7 @@
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
 .DELETE_ON_ERROR:
 
-setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar
+setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar test/data/ruby-3.0.0.tar test/data/mlton-20210117.src.tar
 
 clean:
 	rm -rf dist-newstyle \
@@ -24,7 +24,8 @@ clean:
 	    test/data/ATS2-Postiats-0.3.13.tar \
 	    test/data/libarchive-1.0.5.1.tar \
 	    test/data/llvm-9.0.0.src.tar \
-	    test/data/ruby-3.0.0.tar
+	    test/data/ruby-3.0.0.tar \
+	    test/data/mlton-20210117.src.tar
 
 packdeps.svg: libarchive.cabal
 	cabal build --disable-benchmarks --disable-tests
@@ -32,6 +33,9 @@ packdeps.svg: libarchive.cabal
 
 test/data:
 	mkdir -p $@
+
+test/data/mlton-20210117.src.tar: test/data/mlton-20210117.src.tgz
+	gunzip -f $^
 
 test/data/ruby-3.0.0.tar: test/data/ruby-3.0.0.tar.gz
 	gunzip -f $^
@@ -53,6 +57,9 @@ test/data/ATS2-Postiats-0.3.13.tar: test/data/ATS2-Postiats-0.3.13.tgz
 
 test/data/libarchive-1.0.5.1.tar: test/data/libarchive-1.0.5.1.tar.gz
 	gunzip -f $^
+
+test/data/mlton-20210117.src.tgz: test/data
+	wget https://sourceforge.net/projects/mlton/files/mlton/20210117/mlton-20210117.src.tgz -O $@
 
 test/data/ruby-3.0.0.tar.gz: test/data
 	wget https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz -O $@
