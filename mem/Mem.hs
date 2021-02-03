@@ -20,8 +20,7 @@ readArc = forceList =<< throwArchiveM
     (readArchiveFile "test/data/llvm-9.0.0.src.tar")
 
 readArcBS :: IO ()
-readArcBS = forceList =<< fmap (either throw id)
-    (readArchiveBSL <$> BSL.readFile "test/data/llvm-9.0.0.src.tar")
+readArcBS = (forceList . either throw id) . readArchiveBSL =<< BSL.readFile "test/data/llvm-9.0.0.src.tar"
 
 readWriteArc :: IO ()
 readWriteArc = forceList . BSL.toChunks =<< throwArchiveM
