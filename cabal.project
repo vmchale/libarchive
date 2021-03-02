@@ -1,8 +1,5 @@
 packages: ./
 max-backjumps: 40000
 
-allow-newer:
-  polyparse:base
-
 -- package Cabal
   -- ghc-options: -j +RTS -A32m -RTS
