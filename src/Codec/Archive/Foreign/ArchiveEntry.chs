@@ -282,7 +282,11 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_pathname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
+#ifndef mingw32_HOST_OS
 {# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
+#else
+{# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CUShort' #}
+#endif
 {# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_rdevminor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
@@ -336,7 +340,11 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_set_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+#ifndef mingw32_HOST_OS
 {# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
+#else
+{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CUShort' } -> `()' #}
+#endif
 {# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
 {# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
 {# fun archive_entry_set_rdevminor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
