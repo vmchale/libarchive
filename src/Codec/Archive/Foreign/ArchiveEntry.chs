@@ -241,7 +241,7 @@ import System.PosixCompat.Types (CMode (..), CDev (..))
 {#default in `CWString' [wchar_t*] castPtr#}
 {#default out `CWString' [wchar_t*] castPtr#}
 
-ft :: CMode -> Maybe FileType
+ft :: Permissions -> Maybe FileType
 ft 0 = Nothing
 ft i = Just $ toEnum (fromIntegral i)
 

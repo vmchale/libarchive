@@ -22,6 +22,7 @@ extra-source-files:
   c/autoconf-darwin/config.h
   c/autoconf-linux/config.h
   c/autoconf-freebsd/config.h
+  c/autoconf-windows/config.h
   c/*.c
   c/*.h
   test/data/aarch64-linux-dist.tar
@@ -82,6 +83,9 @@ library
         mtl >=2.2.1,
         unix-compat >=0.1.2.1,
         deepseq >=1.4.0.0
+
+    if os(windows)
+        cc-options: -U__GCC_ASM_FLAG_OUTPUTS__
 
     if !flag(cross)
         build-tool-depends: c2hs:c2hs >=0.26.1
@@ -245,6 +249,8 @@ library
           include-dirs: c/autoconf-linux
         elif os(freebsd)
           include-dirs: c/autoconf-freebsd
+        elif os(windows)
+          include-dirs: c/autoconf-windows
         else
           build-depends: unbuildable<0
           buildable: False
@@ -272,6 +278,7 @@ test-suite libarchive-test
         base -any,
         libarchive -any,
         hspec -any,
+        hspec-core -any,
         bytestring -any,
         directory >=1.2.5.0,
         filepath -any,

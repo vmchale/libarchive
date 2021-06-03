@@ -23,4 +23,4 @@ mkEntry :: FilePath -> IO (Entry FilePath BS.ByteString)
 mkEntry fp = do
     status <- getFileStatus fp
     content' <- mkContent fp status
-    pure $ Entry fp content' (fileMode status) (Ownership Nothing Nothing (fromIntegral $ fileOwner status) (fromIntegral $ fileGroup status)) Nothing
+    pure $ Entry fp content' (fromIntegral (fileMode status)) (Ownership Nothing Nothing (fromIntegral $ fileOwner status) (fromIntegral $ fileGroup status)) Nothing
