@@ -74,8 +74,18 @@ case "$(uname -s)" in
 			-e '/define HAVE_SYS_ACL_H/d' \
 			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
 			config.h > ../c/autoconf-freebsd/config.h ;;
-
-	# TODO: windows
+	MSYS*|MINGW*)
+		sed \
+			-e '/define HAVE_LIBMD/d' \
+			-e '/define ARCHIVE_CRYPTO_.*_LIBMD/d' \
+			-e '/define HAVE_MD5_H/d' \
+			-e '/define HAVE_RIPEMD_H/d' \
+			-e '/define HAVE_SHA256_H/d' \
+			-e '/define HAVE_SHA512_H/d' \
+			-e '/define HAVE_SHA_H/d' \
+			-e '/define HAVE_SYS_ACL_H/d' \
+			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
+			config.h > ../c/autoconf-windows/config.h ;;
 	*) die "Unknown platform" ;;
 esac
 

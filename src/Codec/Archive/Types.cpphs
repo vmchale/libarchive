@@ -21,7 +21,7 @@ module Codec.Archive.Types ( -- * Concrete (Haskell) data types
 
 import           Codec.Archive.Types.Foreign
 import           Data.Int                    (Int64)
-import           Foreign.C.Types             (CInt, CLong, CTime)
+import           Foreign.C.Types             (CInt, CLong, CTime, CUShort)
 import           Foreign.Ptr                 (Ptr)
 import           System.Posix.Types          (CMode (..))
 
@@ -64,7 +64,11 @@ data Ownership = Ownership { userName  :: !(Maybe String)
                            }
     deriving (Eq, Show, Ord)
 
+#ifdef mingw32_HOST_OS
+type Permissions = CUShort
+#else
 type Permissions = CMode
+#endif
 type ModTime = (CTime, CLong)
 
 -- | A user or group ID
