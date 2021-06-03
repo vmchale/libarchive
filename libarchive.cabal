@@ -85,6 +85,7 @@ library
 
     if !flag(cross)
         build-tool-depends: c2hs:c2hs >=0.26.1
+                          , cpphs:cpphs
 
     if !impl(ghc >=8.0)
         build-depends:
