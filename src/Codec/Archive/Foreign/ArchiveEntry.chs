@@ -275,17 +275,21 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_hardlink_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
 {# fun archive_entry_ino as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
 {# fun archive_entry_ino64 as ^ { `ArchiveEntryPtr' } -> `LaInt64' #}
+#ifdef mingw32_HOST_OS
+{# fun archive_entry_mode as ^ { `ArchiveEntryPtr' } -> `CUShort' #}
+#else
 {# fun archive_entry_mode as ^ { `ArchiveEntryPtr' } -> `CMode' #}
+#endif
 {# fun archive_entry_mtime as ^ { `ArchiveEntryPtr' } -> `CTime' #}
 {# fun archive_entry_mtime_nsec as ^ { `ArchiveEntryPtr' } -> `CLong' #}
 {# fun archive_entry_nlink as ^ { `ArchiveEntryPtr' } -> `CUInt' #}
 {# fun archive_entry_pathname as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_utf8 as ^ { `ArchiveEntryPtr' } -> `CString' #}
 {# fun archive_entry_pathname_w as ^ { `ArchiveEntryPtr' } -> `CWString' #}
-#ifndef mingw32_HOST_OS
-{# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
-#else
+#ifdef mingw32_HOST_OS
 {# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CUShort' #}
+#else
+{# fun archive_entry_perm as ^ { `ArchiveEntryPtr' } -> `CMode' #}
 #endif
 {# fun archive_entry_rdev as ^ { `ArchiveEntryPtr' } -> `CDev' #}
 {# fun archive_entry_rdevmajor as ^ { `ArchiveEntryPtr' } -> `CDev' #}
@@ -332,7 +336,11 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_set_link_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_link as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_link_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
+#ifdef mingw32_HOST_OS
+{# fun archive_entry_set_mode as ^ { `ArchiveEntryPtr', `CUShort' } -> `()' #}
+#else
 {# fun archive_entry_set_mode as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
+#endif
 {# fun archive_entry_set_mtime as ^ { `ArchiveEntryPtr', `CTime', `CLong' } -> `()' #}
 {# fun archive_entry_unset_mtime as ^ { `ArchiveEntryPtr' } -> `()' #}
 {# fun archive_entry_set_nlink as ^ { `ArchiveEntryPtr', `CUInt' } -> `()' #}
@@ -340,10 +348,10 @@ uft (Just ft') = fromIntegral (fromEnum ft')
 {# fun archive_entry_set_pathname_utf8 as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname as ^ { `ArchiveEntryPtr', `CString' } -> `()' #}
 {# fun archive_entry_copy_pathname_w as ^ { `ArchiveEntryPtr', `CWString' } -> `()' #}
-#ifndef mingw32_HOST_OS
-{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
-#else
+#ifdef mingw32_HOST_OS
 {# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CUShort' } -> `()' #}
+#else
+{# fun archive_entry_set_perm as ^ { `ArchiveEntryPtr', `CMode' } -> `()' #}
 #endif
 {# fun archive_entry_set_rdev as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
 {# fun archive_entry_set_rdevmajor as ^ { `ArchiveEntryPtr', `CDev' } -> `()' #}
