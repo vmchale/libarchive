@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.2.2
+
+  * Builds on Windows (changes due to Julian Ospald)
+
 # 3.0.2.1
 
   * Upgrade bundled `libarchive` to 3.5.1
