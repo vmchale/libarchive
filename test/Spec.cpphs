@@ -11,7 +11,16 @@ import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
+#ifdef mingw32_HOST_OS
+import           System.Environment
+import           Test.Hspec  hiding ( parallel )
+import           Test.Hspec.Core.Runner
+
+parallel :: SpecWith a -> SpecWith a
+parallel = id
+#else
 import           Test.Hspec
+#endif
 
 testFp :: FilePath -> Spec
 testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
@@ -59,7 +68,7 @@ main = do
     tarballs <- if dir then listDirectory "test/data" else pure []
     let tarPaths = ("test/data" </>) <$> tarballs
 
-    hspec $
+    hspec' $
         describe "roundtrip" $ do
 
             traverse_ testFp tarPaths
@@ -107,3 +116,9 @@ main = do
                 [ stripOwnership (simpleFile "a.txt" (NormalFile "text")) ]
             xcontext "having entry without timestamp" . itPacksUnpacks $
                 [ stripTime (simpleFile "a.txt" (NormalFile "text")) ]
+  where
+#ifdef mingw32_HOST_OS
+    hspec' spec = getArgs >>= readConfig defaultConfig >>= (\c -> withArgs [] . runSpec spec $ c{ configConcurrentJobs = Nothing }) >>= evaluateSummary
+#else
+    hspec' = hspec
+#endif
