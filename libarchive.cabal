@@ -87,6 +87,10 @@ library
     if os(windows)
         cc-options: -U__GCC_ASM_FLAG_OUTPUTS__
 
+    if arch(i386)
+        -- https://github.com/vmchale/libarchive/issues/12
+        cc-options: -D_Alignas(t)=__attribute__((__aligned__(t)))
+
     if !flag(cross)
         build-tool-depends: c2hs:c2hs >=0.26.1
                           , cpphs:cpphs
