@@ -319,7 +319,7 @@ translate_acl(struct archive_read_disk *a,
 
 static int
 set_acl(struct archive *a, int fd, const char *name,
-    struct archive_acl *abstract_acl, __LA_MODE_T mode,
+    struct archive_acl *abstract_acl,
     int ae_requested_type, const char *tname)
 {
 	int		 acl_type = 0;
@@ -362,13 +362,6 @@ set_acl(struct archive *a, int fd, const char *name,
 		errno = ENOENT;
 		archive_set_error(a, errno, "Unsupported ACL type");
 		return (ARCHIVE_FAILED);
-	}
-
-	if (acl_type == ACL_TYPE_DEFAULT && !S_ISDIR(mode)) {
-		errno = EINVAL;
-		archive_set_error(a, errno,
-		    "Cannot set default ACL on non-directory");
-		return (ARCHIVE_WARN);
 	}
 
 	acl = acl_init(entries);
@@ -549,10 +542,7 @@ set_acl(struct archive *a, int fd, const char *name,
 	else if (acl_set_link_np(name, acl_type, acl) != 0)
 #else
 	/* FreeBSD older than 8.0 */
-	else if (S_ISLNK(mode)) {
-	    /* acl_set_file() follows symbolic links, skip */
-	    ret = ARCHIVE_OK;
-	} else if (acl_set_file(name, acl_type, acl) != 0)
+	else if (acl_set_file(name, acl_type, acl) != 0)
 #endif
 	{
 		if (errno == EOPNOTSUPP) {
@@ -687,14 +677,14 @@ archive_write_disk_set_acls(struct archive *a, int fd, const char *name,
 	    & ARCHIVE_ENTRY_ACL_TYPE_POSIX1E) != 0) {
 		if ((archive_acl_types(abstract_acl)
 		    & ARCHIVE_ENTRY_ACL_TYPE_ACCESS) != 0) {
-			ret = set_acl(a, fd, name, abstract_acl, mode,
+			ret = set_acl(a, fd, name, abstract_acl,
 			    ARCHIVE_ENTRY_ACL_TYPE_ACCESS, "access");
 			if (ret != ARCHIVE_OK)
 				return (ret);
 		}
 		if ((archive_acl_types(abstract_acl)
 		    & ARCHIVE_ENTRY_ACL_TYPE_DEFAULT) != 0)
-			ret = set_acl(a, fd, name, abstract_acl, mode,
+			ret = set_acl(a, fd, name, abstract_acl,
 			    ARCHIVE_ENTRY_ACL_TYPE_DEFAULT, "default");
 
 		/* Simultaneous POSIX.1e and NFSv4 is not supported */
@@ -703,7 +693,7 @@ archive_write_disk_set_acls(struct archive *a, int fd, const char *name,
 #if ARCHIVE_ACL_FREEBSD_NFS4
 	else if ((archive_acl_types(abstract_acl) &
 	    ARCHIVE_ENTRY_ACL_TYPE_NFS4) != 0) {
-		ret = set_acl(a, fd, name, abstract_acl, mode,
+		ret = set_acl(a, fd, name, abstract_acl,
 		    ARCHIVE_ENTRY_ACL_TYPE_NFS4, "nfs4");
 	}
 #endif

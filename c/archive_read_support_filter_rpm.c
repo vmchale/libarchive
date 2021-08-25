@@ -216,7 +216,7 @@ rpm_filter_read(struct archive_read_filter *self, const void **buff)
 						archive_set_error(
 						    &self->archive->archive,
 						    ARCHIVE_ERRNO_FILE_FORMAT,
-						    "Unrecognized rpm header");
+						    "Unrecoginized rpm header");
 						return (ARCHIVE_FATAL);
 					}
 					rpm->state = ST_ARCHIVE;

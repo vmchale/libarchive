@@ -101,7 +101,6 @@ type LaSSize = {# type la_ssize_t #}
                              , ARCHIVE_FORMAT_CPIO_SVR4_NOCRC as ArchiveFormatCpioSvr4Nocrc
                              , ARCHIVE_FORMAT_CPIO_SVR4_CRC as ArchiveFormatCpioSvr4Crc
                              , ARCHIVE_FORMAT_CPIO_AFIO_LARGE as ArchiveFormatCpioAfioLarge
-                             , ARCHIVE_FORMAT_CPIO_PWB as ArchiveFormatCpioPwb
                              , ARCHIVE_FORMAT_SHAR as ArchiveFormatShar
                              , ARCHIVE_FORMAT_SHAR_BASE as ArchiveFormatSharBase
                              , ARCHIVE_FORMAT_SHAR_DUMP as ArchiveFormatSharDump

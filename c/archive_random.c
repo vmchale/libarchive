@@ -173,7 +173,7 @@ arc4_init(void)
 }
 
 static inline void
-arc4_addrandom(uint8_t *dat, int datlen)
+arc4_addrandom(u_char *dat, int datlen)
 {
 	int     n;
 	uint8_t si;
@@ -196,7 +196,7 @@ arc4_stir(void)
 	struct {
 		struct timeval	tv;
 		pid_t		pid;
-		uint8_t		rnd[KEYSIZE];
+		u_char	 	rnd[KEYSIZE];
 	} rdat;
 
 	if (!rs_initialized) {
@@ -216,7 +216,7 @@ arc4_stir(void)
 		/* We'll just take whatever was on the stack too... */
 	}
 
-	arc4_addrandom((uint8_t *)&rdat, KEYSIZE);
+	arc4_addrandom((u_char *)&rdat, KEYSIZE);
 
 	/*
 	 * Discard early keystream, as per recommendations in:
@@ -258,7 +258,7 @@ arc4_getbyte(void)
 static void
 arc4random_buf(void *_buf, size_t n)
 {
-	uint8_t *buf = (uint8_t *)_buf;
+	u_char *buf = (u_char *)_buf;
 	_ARC4_LOCK();
 	arc4_stir_if_needed();
 	while (n--) {
