@@ -11,51 +11,48 @@ import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
 import           System.IO.Temp          (withSystemTempDirectory)
+import           Control.Exception (evaluate)
+import           Control.DeepSeq
 #ifdef mingw32_HOST_OS
 import           System.Environment
-import           Test.Hspec  hiding ( parallel )
 import           Test.Hspec.Core.Runner
-
-parallel :: SpecWith a -> SpecWith a
-parallel = id
-#else
-import           Test.Hspec
 #endif
+import           Test.Hspec
 
 testFp :: FilePath -> Spec
-testFp fp = parallel $ it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
+testFp fp = it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
     roundtrip fp >>= (`shouldSatisfy` isRight)
 
 testFpStrict :: FilePath -> Spec
-testFpStrict fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
+testFpStrict fp = it ("works on strict bytestring (" ++ fp ++ ")") $
     roundtripStrict fp >>= (`shouldSatisfy` isRight)
 
 testFpStrict' :: FilePath -> Spec
-testFpStrict' fp = parallel $ it ("works on strict bytestring (" ++ fp ++ ")") $
+testFpStrict' fp = it ("works on strict bytestring (" ++ fp ++ ")") $
     roundtripStrict' fp >>= (`shouldSatisfy` isRight)
 
 testFpFreaky :: FilePath -> Spec
-testFpFreaky fp = parallel $ it ("works on nonstandard bytestring (" ++ fp ++ ")") $
+testFpFreaky fp = it ("works on nonstandard bytestring (" ++ fp ++ ")") $
     roundtripFreaky fp >>= (`shouldSatisfy` isRight)
 
 unpack :: FilePath -> IO (Either ArchiveResult ())
 unpack fp = withSystemTempDirectory "libarchive" $
-    \tmp -> runArchiveM $ unpackArchive fp tmp
+    \tmp -> fmap force (evaluate =<< (runArchiveM $ unpackArchive fp tmp))
 
 readArchiveFile' :: FilePath -> IO (Either ArchiveResult [Entry FilePath BS.ByteString])
-readArchiveFile' = runArchiveM . readArchiveFile
+readArchiveFile' fp = evaluate =<< (runArchiveM . readArchiveFile $ fp)
 
 testUnpackLibarchive :: FilePath -> Spec
-testUnpackLibarchive fp = parallel $ it ("unpacks " ++ fp) $
+testUnpackLibarchive fp = it ("unpacks " ++ fp) $
     unpack fp >>= (`shouldSatisfy` isRight)
 
 testReadArchiveFile :: FilePath -> Spec
-testReadArchiveFile fp = parallel $ it ("reads " ++ fp) $
+testReadArchiveFile fp = it ("reads " ++ fp) $
     readArchiveFile' fp >>= (`shouldSatisfy` isRight)
 
 repack :: ([Entry FilePath BS.ByteString] -> BSL.ByteString) -> String -> FilePath -> Spec
-repack packer str fp = parallel $ it ("should repack (" ++ str ++ ")") $ do
-    res <- runArchiveM $ packer <$> readArchiveFile fp
+repack packer str fp = it ("should repack (" ++ str ++ ")") $ do
+    res <- fmap force (evaluate =<< (runArchiveM $ packer <$> readArchiveFile fp))
     res `shouldSatisfy` bsValid
 
 bsValid :: Either a BSL.ByteString -> Bool
