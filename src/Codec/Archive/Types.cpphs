@@ -69,6 +69,8 @@ type Permissions = CUShort
 #else
 type Permissions = CMode
 #endif
+
+-- | Pair of a UNIX time stamp and a nanosecond fractional part.
 type ModTime = (CTime, CLong)
 
 -- | A user or group ID
