@@ -402,7 +402,7 @@
 
 /* Define to 1 if you have the declaration of `SSIZE_MAX', and to 0 if you
    don't. */
-/* #undef HAVE_DECL_SSIZE_MAX */
+#define HAVE_DECL_SSIZE_MAX 1
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
@@ -426,10 +426,10 @@
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-/* #undef HAVE_DIRENT_H */
+#define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have a dirfd function or macro */
-/* #undef HAVE_DIRFD */
+#define HAVE_DIRFD 1
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
@@ -519,7 +519,7 @@
 /* #undef HAVE_FORK */
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-/* #undef HAVE_FSEEKO */
+#define HAVE_FSEEKO 1
 
 /* Define to 1 if you have the `fsetea' function. */
 /* #undef HAVE_FSETEA */
@@ -540,7 +540,7 @@
 /* #undef HAVE_FSTATVFS */
 
 /* Define to 1 if you have the `ftruncate' function. */
-/* #undef HAVE_FTRUNCATE */
+#define HAVE_FTRUNCATE 1
 
 /* Define to 1 if you have the `futimens' function. */
 /* #undef HAVE_FUTIMENS */
@@ -692,9 +692,6 @@
 /* Define to 1 if you have the `link' function. */
 /* #undef HAVE_LINK */
 
-/* Define to 1 if you have the `linkat' function. */
-/* #undef HAVE_LINKAT */
-
 /* Define to 1 if you have the <linux/fiemap.h> header file. */
 /* #undef HAVE_LINUX_FIEMAP_H */
 
@@ -814,7 +811,7 @@
 /* #undef HAVE_MKNOD */
 
 /* Define to 1 if you have the `mkstemp' function. */
-/* #undef HAVE_MKSTEMP */
+#define HAVE_MKSTEMP 1
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
@@ -868,13 +865,13 @@
 /* #undef HAVE_POSIX_SPAWNP */
 
 /* Define to 1 if you have the <pthread.h> header file. */
-/* #undef HAVE_PTHREAD_H */
+#define HAVE_PTHREAD_H 1
 
 /* Define to 1 if you have the <pwd.h> header file. */
 /* #undef HAVE_PWD_H */
 
 /* Define to 1 if you have a POSIX compatible readdir_r */
-/* #undef HAVE_READDIR_R */
+#define HAVE_READDIR_R 1
 
 /* Define to 1 if you have the `readlink' function. */
 /* #undef HAVE_READLINK */
@@ -980,7 +977,7 @@
 #define HAVE_STRFTIME 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-/* #undef HAVE_STRINGS_H */
+#define HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
@@ -999,12 +996,6 @@
 
 /* Define to 1 if the system has the type `struct richacl'. */
 /* #undef HAVE_STRUCT_RICHACL */
-
-/* Define to 1 if the system has the type `struct statfs'. */
-/* #undef HAVE_STRUCT_STATFS */
-
-/* Define to 1 if `f_iosize' is a member of `struct statfs'. */
-/* #undef HAVE_STRUCT_STATFS_F_IOSIZE */
 
 /* Define to 1 if `f_namemax' is a member of `struct statfs'. */
 /* #undef HAVE_STRUCT_STATFS_F_NAMEMAX */
@@ -1058,7 +1049,7 @@
 /* #undef HAVE_SYS_ACL_H */
 
 /* Define to 1 if you have the <sys/cdefs.h> header file. */
-/* #undef HAVE_SYS_CDEFS_H */
+#define HAVE_SYS_CDEFS_H 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
@@ -1084,7 +1075,7 @@
 /* #undef HAVE_SYS_NDIR_H */
 
 /* Define to 1 if you have the <sys/param.h> header file. */
-/* #undef HAVE_SYS_PARAM_H */
+#define HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/poll.h> header file. */
 /* #undef HAVE_SYS_POLL_H */
@@ -1108,7 +1099,7 @@
 /* #undef HAVE_SYS_SYSMACROS_H */
 
 /* Define to 1 if you have the <sys/time.h> header file. */
-/* #undef HAVE_SYS_TIME_H */
+#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -1141,7 +1132,7 @@
 #define HAVE_UINTMAX_T 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-/* #undef HAVE_UNISTD_H */
+#define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the `unlinkat' function. */
 /* #undef HAVE_UNLINKAT */
@@ -1165,13 +1156,13 @@
 /* #undef HAVE_UTIMES */
 
 /* Define to 1 if you have the <utime.h> header file. */
-/* #undef HAVE_UTIME_H */
+#define HAVE_UTIME_H 1
 
 /* Define to 1 if you have the `vfork' function. */
 /* #undef HAVE_VFORK */
 
 /* Define to 1 if you have the `vprintf' function. */
-/* #undef HAVE_VPRINTF */
+#define HAVE_VPRINTF 1
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #define HAVE_WCHAR_H 1
@@ -1207,7 +1198,7 @@
 #define HAVE_WINIOCTL_H 1
 
 /* Define to 1 if you have the `wmemcmp' function. */
-/* #undef HAVE_WMEMCMP */
+#define HAVE_WMEMCMP 1
 
 /* Define to 1 if you have the `wmemcpy' function. */
 #define HAVE_WMEMCPY 1
@@ -1234,7 +1225,7 @@
 #define HAVE__FSEEKI64 1
 
 /* Define to 1 if you have the `_get_timezone' function. */
-#define HAVE__GET_TIMEZONE 1
+/* #undef HAVE__GET_TIMEZONE */
 
 /* Define to 1 if you have the `_gmtime64_s' function. */
 #define HAVE__GMTIME64_S 1
@@ -1306,7 +1297,7 @@
 /* #undef STRERROR_R_CHAR_P */
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-/* #undef TIME_WITH_SYS_TIME */
+#define TIME_WITH_SYS_TIME 1
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
@@ -1342,7 +1333,7 @@
 #endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
-/* #undef _FILE_OFFSET_BITS */
+#define _FILE_OFFSET_BITS 64
 
 /* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
 /* #undef _LARGEFILE_SOURCE */
@@ -1408,7 +1399,7 @@
 /* #undef intmax_t */
 
 /* Define to `int' if <sys/types.h> does not define. */
-#define mode_t int
+/* #undef mode_t */
 
 /* Define to `long long' if <sys/types.h> does not define. */
 /* #undef off_t */
