@@ -54,7 +54,7 @@ roundtripFreaky :: FilePath -> IO (Either ArchiveResult BSL.ByteString)
 roundtripFreaky = roundtripRead nonstandardRead
 
 itPacksUnpacks :: [Entry FilePath BS.ByteString] -> Spec
-itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss" $
+itPacksUnpacks entries = it "packs/unpacks successfully without loss" $
     let
         packed = entriesToBSL entries
         unpacked = readArchiveBSL packed
@@ -62,7 +62,7 @@ itPacksUnpacks entries = parallel $ it "packs/unpacks successfully without loss"
         (TestEntries <$> unpacked) `shouldBe` Right (TestEntries entries)
 
 itPacksUnpacksViaFS :: [Entry FilePath BS.ByteString] -> Spec
-itPacksUnpacksViaFS entries = parallel $ unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
+itPacksUnpacksViaFS entries = unpackedFromFS $ it "packs/unpacks on filesystem successfully without loss" $ \unpacked ->
         fmap (fmap stripDotSlash . testEntries) unpacked `shouldBe` Right (testEntries entries)
 
     where
