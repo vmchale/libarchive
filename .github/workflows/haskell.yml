@@ -94,7 +94,7 @@ jobs:
 
     - name: Run benches
       run: |
-        make setup
+        make DOWNLOADER=curl DOWNLOADER_OPTS="-L -o" -j1 setup 
         cabal bench
       shell: bash
 
@@ -158,6 +158,6 @@ jobs:
 
     - name: Run benches
       run: |
-        make setup
+        make DOWNLOADER=curl DOWNLOADER_OPTS="-L -o" -j1 setup 
         stack bench
       shell: bash
