@@ -7,157 +7,152 @@ on:
     branches: [ master ]
 
 jobs:
-  build-cabal:
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        ghc: ['8.10.7', '9.0.1']
-        cabal: ['3.4.0.0']
+  hlint:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    - if: matrix.os == 'windows-latest'
-      name: Install ghcup on windows
-      run: Set-ExecutionPolicy Bypass -Scope Process -Force;[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;Invoke-Command -ScriptBlock ([ScriptBlock]::Create((Invoke-WebRequest https://www.haskell.org/ghcup/sh/bootstrap-haskell.ps1 -UseBasicParsing))) -ArgumentList $false,$true,$true,$false,$false,$false,$false,"C:\"
+    - name: Run hlint
+      run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s -- -r src mem bench test
+      shell: bash
 
-    - if: matrix.os != 'windows-latest'
-      name: Install ghcup on non-windows
+  build-cabal:
+
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macOS, windows]
+        builder: ['cabal 3.4.0.0 ghc 8.10.7', 'cabal 3.4.0.0 ghc 9.0.1', 'stack 2.7.3']
+
+        include:
+          - os: windows
+            shell: msys2 {0}
+          - os: ubuntu
+            shell: bash
+          - os: macOS
+            shell: bash
+
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          gawk
+          base-devel
+          bzip2
+          ca-certificates
+          curl
+          git
+          gzip
+          make
+          mingw-w64-x86_64-pkgconf
+          wget
+          xz
+        # this action is broken shite: https://github.com/msys2/setup-msys2/issues/104
+        path-type: inherit
+
+    - id: get
+      run: |
+        builder=$(echo ${{ matrix.builder }} | awk '{ print $1 }')
+        builder_version=$(echo ${{ matrix.builder }} | awk '{ print $2 }')
+        ghc_version=$(echo ${{ matrix.builder }} | awk '{ print $4 }')
+        echo "::set-output name=builder::$builder"
+        echo "::set-output name=builder_version::$builder_version"
+        echo "::set-output name=ghc_version::$ghc_version"
+      shell: bash
+
+    - if: matrix.os == 'windows'
+      name: Install ghcup on windows
+      run: |
+        Set-Location -Path "$env:temp"
+        curl.exe -O "https://www.haskell.org/ghcup/sh/bootstrap-haskell.ps1"
+        .\bootstrap-haskell.ps1 -Minimal -InBash -ExistingMsys2Dir C:\msys64 -InstallDir C:\
+      shell: pwsh
+
+    - if: matrix.os != 'windows'
+      name: Install ghcup on Linux/macOS
       run: curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_MINIMAL=1 sh
 
-    - if: matrix.os == 'windows-latest'
+    - if: matrix.os == 'windows'
+      name: Add ghcup to PATH on windows
       run: echo "/c/ghcup/bin" >> $GITHUB_PATH
-      shell: bash
 
     - name: Install ghc/cabal
       run: |
-        ghcup install ghc ${{ matrix.ghc }}
-        ghcup install cabal ${{ matrix.cabal }}
-      shell: bash
-
-    - name: create ~/.local/bin
-      run: mkdir -p "$HOME/.local/bin"
-      shell: bash
-
-    - name: Add ~/.local/bin to PATH
-      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-      shell: bash
+        [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup install ghc ${{ steps.get-ghc-ver.outputs.id }}
+        ghcup install ${{ steps.get.outputs.builder }} ${{ steps.get.outputs.builder_version }}
 
     - name: Cache
       uses: actions/cache@v1
       env:
-        cache-name: cache-cabal
+        cache-name: ${{ steps.get.outputs.builder }}
       with:
-        path: ~/.cabal
-        key: ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
+        path: ~/.${{ steps.get.outputs.builder }}
+        key: ${{ matrix.os }}-${{ matrix.builder }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/cabal.project') }}
         restore-keys: |
-          ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-${{ matrix.ghc }}-${{ matrix.cabal }}-build-
-          ${{ runner.os }}-${{ matrix.ghc }}-
-          ${{ runner.os }}-
+          ${{ matrix.os }}-${{ matrix.builder }}-build-${{ env.cache-name }}-
+          ${{ matrix.os }}-${{ matrix.builder }}-build-
+          ${{ matrix.os }}-${{ matrix.builder }}-
+          ${{ matrix.os }}-
 
-    - name: Update cabal index
-      run: cabal update
-      shell: bash
+    - name: Update cabal/stack index
+      run: |
+        if [ "${{ steps.get.outputs.builder }}" = "stack" ] ; then
+          mkdir -p ~/.stack
+          echo 'skip-msys: true' >> ~/.stack/config.yaml
+          echo -e 'extra-include-dirs:\n- "/c/msys64/mingw64/include"' >> ~/.stack/config.yaml
+          echo -e 'extra-lib-dirs:\n- "/c/msys64/mingw64/lib"' >> ~/.stack/config.yaml
+          echo -e 'extra-path:\n- "/c/msys64/usr/bin"\n- "/c/msys64/mingw64/bin"' >> ~/.stack/config.yaml
+        fi
+        ${{ steps.get.outputs.builder }} update
 
-    - if: matrix.os == 'ubuntu-latest'
+    - if: matrix.os == 'linux' && steps.get.outputs.builder == 'cabal'
       name: Install cabal-docspec
       run: |
+        mkdir -p "$HOME/.local/bin"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
         curl -sL https://github.com/phadej/cabal-extras/releases/download/cabal-docspec-0.0.0.20210111/cabal-docspec-0.0.0.20210111.xz > cabal-docspec.xz
         echo '0829bd034fba901cbcfe491d98ed8b28fd54f9cb5c91fa8e1ac62dc4413c9562  cabal-docspec.xz' | sha256sum -c -
-        xz -d < cabal-docspec.xz > $HOME/.local/bin/cabal-docspec
+        xz -d < cabal-docspec.xz > "$HOME/.local/bin/cabal-docspec"
         rm -f cabal-docspec.xz
-        chmod a+x $HOME/.local/bin/cabal-docspec
-      shell: bash
+        chmod a+x "$HOME/.local/bin/cabal-docspec"
 
-    - if: matrix.os == 'windows-latest'
-      name: disable system libarchive
+    - if: matrix.os == 'windows'
+      name: disable system libarchive on windows
       run: |
         echo -e 'package libarchive\n  flags: -system-libarchive' >> cabal.project.local
-      shell: bash
 
     - name: Build
-      run: cabal build --enable-tests --enable-benchmarks
-      shell: bash
+      run: ${{ steps.get.outputs.builder }} build
 
     - name: Run tests
-      run: cabal test
-      shell: bash
+      run: ${{ steps.get.outputs.builder }} test
 
-    - if: matrix.os == 'ubuntu-latest'
+    - if: matrix.os == 'linux' && steps.get.outputs.builder == 'cabal'
       name: Run doctests
       run: cabal-docspec -XCPP -XTypeSynonymInstances -XOverloadedStrings
-      shell: bash
+
+    - name: Download benchmark files
+      run: make -j1 setup 
 
     - name: Run benches
-      run: |
-        make DOWNLOADER=curl DOWNLOADER_OPTS="-L -o" -j1 setup 
-        cabal bench
-      shell: bash
+      run: ${{ steps.get.outputs.builder }} bench
 
     - name: Build haddock
-      run: cabal haddock
-      shell: bash
+      run: ${{ steps.get.outputs.builder }} haddock
+      continue-on-error: true
 
     - if: always()
       uses: actions/upload-artifact@v2
       with:
         name: plan.json
         path: ./dist-newstyle/cache/plan.json
-
-  build-stack:
-    name: Stack ${{ matrix.stack }} ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-        stack: ['latest']
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - if: matrix.os == 'windows-latest'
-      name: Install ghcup on windows
-      run: Set-ExecutionPolicy Bypass -Scope Process -Force;[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;Invoke-Command -ScriptBlock ([ScriptBlock]::Create((Invoke-WebRequest https://www.haskell.org/ghcup/sh/bootstrap-haskell.ps1 -UseBasicParsing))) -ArgumentList $false,$true,$true,$false,$false,$false,$false,"C:\"
-
-    - if: matrix.os != 'windows-latest'
-      name: Install ghcup on non-windows
-      run: curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_MINIMAL=1 sh
-
-    - if: matrix.os == 'windows-latest'
-      run: echo "/c/ghcup/bin" >> $GITHUB_PATH
-      shell: bash
-
-    - name: Install stack
-      run: ghcup install stack ${{ matrix.stack }}
-      shell: bash
-
-    - name: Cache
-      uses: actions/cache@v1
-      env:
-        cache-name: stack-cabal
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-${{ matrix.stack }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/stack.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - name: Build
-      run: stack build
-      shell: bash
-
-    - name: Run tests
-      run: stack test
-      shell: bash
-
-    - name: Run benches
-      run: |
-        make DOWNLOADER=curl DOWNLOADER_OPTS="-L -o" -j1 setup 
-        stack bench
-      shell: bash
