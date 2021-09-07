@@ -49,7 +49,10 @@ case "$(uname -s)" in
 			-e '/define HAVE_SHA_H/d' \
 			-e '/define HAVE_SYS_ACL_H/d' \
 			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
-			config.h > ../c/autoconf-linux/config.h ;;
+			config.h > ../c/autoconf-linux/config.h
+			echo '#define HAVE_LIBZ 1' >> ../c/autoconf-linux/config.h
+			echo '#define HAVE_ZLIB_H 1' >> ../c/autoconf-linux/config.h
+			;;
 	"Darwin"|"darwin")
 		sed \
 			-e '/define HAVE_LIBMD/d' \
@@ -61,7 +64,10 @@ case "$(uname -s)" in
 			-e '/define HAVE_SHA_H/d' \
 			-e '/define HAVE_SYS_ACL_H/d' \
 			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
-			config.h > ../c/autoconf-darwin/config.h ;;
+			config.h > ../c/autoconf-darwin/config.h
+			echo '#define HAVE_LIBZ 1' >> ../c/autoconf-darwin/config.h
+			echo '#define HAVE_ZLIB_H 1' >> ../c/autoconf-darwin/config.h
+			;;
 	"FreeBSD"|"freebsd")
 		sed \
 			-e '/define HAVE_LIBMD/d' \
@@ -73,7 +79,10 @@ case "$(uname -s)" in
 			-e '/define HAVE_SHA_H/d' \
 			-e '/define HAVE_SYS_ACL_H/d' \
 			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
-			config.h > ../c/autoconf-freebsd/config.h ;;
+			config.h > ../c/autoconf-freebsd/config.h
+			echo '#define HAVE_LIBZ 1' >> ../c/autoconf-freebsd/config.h
+			echo '#define HAVE_ZLIB_H 1' >> ../c/autoconf-freebsd/config.h
+			;;
 	MSYS*|MINGW*)
 		sed \
 			-e '/define HAVE_LIBMD/d' \
@@ -85,7 +94,10 @@ case "$(uname -s)" in
 			-e '/define HAVE_SHA_H/d' \
 			-e '/define HAVE_SYS_ACL_H/d' \
 			-e '/define HAVE_EXT2FS_EXT2_FS_H/d' \
-			config.h > ../c/autoconf-windows/config.h ;;
+			config.h > ../c/autoconf-windows/config.h
+			echo '#define HAVE_LIBZ 1' >> ../c/autoconf-windows/config.h
+			echo '#define HAVE_ZLIB_H 1' >> ../c/autoconf-windows/config.h
+			;;
 	*) die "Unknown platform" ;;
 esac
 

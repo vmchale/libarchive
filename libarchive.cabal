@@ -25,6 +25,8 @@ extra-source-files:
   ./c/autoconf-windows/config.h
   ./c/*.c
   ./c/*.h
+  ./c/zlib/*.c
+  ./c/zlib/*.h
   test/data/aarch64-linux-dist.tar
 
 source-repository head
@@ -247,6 +249,20 @@ library
           ./c/filter_fork_windows.c
           ./c/xxhash.c
 
+          -- zlib-1.2.11
+          -- see https://github.com/vmchale/libarchive/issues/25
+          ./c/zlib/adler32.c
+          ./c/zlib/crc32.c
+          ./c/zlib/deflate.c
+          ./c/zlib/inffast.c
+          ./c/zlib/zutil.c
+          ./c/zlib/compress.c
+          ./c/zlib/infback.c
+          ./c/zlib/inflate.c
+          ./c/zlib/inftrees.c
+          ./c/zlib/trees.c
+          ./c/zlib/uncompr.c
+
         if os(darwin)
           include-dirs: c/autoconf-darwin
         elif os(linux)
@@ -259,7 +275,7 @@ library
           build-depends: unbuildable<0
           buildable: False
 
-        include-dirs: c/
+        include-dirs: c/ c/zlib/
 
         cc-options: -std=c11 -DHAVE_CONFIG_H
     else
