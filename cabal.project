@@ -1,5 +1,7 @@
 packages: ./
 max-backjumps: 40000
 
+flags: -system-libarchive
+
 -- package Cabal
   -- ghc-options: -j +RTS -A32m -RTS
