@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.2.3
+
+  * Fix unpacking with zlib with bundled sources
+
 # 3.0.2.2
 
   * Builds on Windows (changes due to Julian Ospald)
