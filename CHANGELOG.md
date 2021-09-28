@@ -1,8 +1,10 @@
 # libarchive
 
+# 3.0.3.0
+
   * Bundle zlib sources so zip archives are guaranteed to work (work by Julian
     Ospald)
-  * Upgrade bundled `libarchive` to 3.5.2
+  * Upgrade bundled `libarchive` to 3.5.2. This introduces several functions.
 
 # 3.0.2.2
 
