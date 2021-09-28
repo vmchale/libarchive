@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.5.1"
+#define BSDCAT_VERSION_STRING "3.5.2"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.5.1"
+#define BSDCPIO_VERSION_STRING "3.5.2"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.5.1"
+#define BSDTAR_VERSION_STRING "3.5.2"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -681,7 +681,7 @@
 /* #undef HAVE_LIBXML_XMLWRITER_H */
 
 /* Define to 1 if you have the `z' library (-lz). */
-#define HAVE_LIBZ 1
+/* #undef HAVE_LIBZ */
 
 /* Define to 1 if you have the `zstd' library (-lzstd). */
 /* #undef HAVE_LIBZSTD */
@@ -691,6 +691,9 @@
 
 /* Define to 1 if you have the `link' function. */
 #define HAVE_LINK 1
+
+/* Define to 1 if you have the `linkat' function. */
+#define HAVE_LINKAT 1
 
 /* Define to 1 if you have the <linux/fiemap.h> header file. */
 /* #undef HAVE_LINUX_FIEMAP_H */
@@ -997,6 +1000,12 @@
 /* Define to 1 if the system has the type `struct richacl'. */
 /* #undef HAVE_STRUCT_RICHACL */
 
+/* Define to 1 if the system has the type `struct statfs'. */
+#define HAVE_STRUCT_STATFS 1
+
+/* Define to 1 if `f_iosize' is a member of `struct statfs'. */
+#define HAVE_STRUCT_STATFS_F_IOSIZE 1
+
 /* Define to 1 if `f_namemax' is a member of `struct statfs'. */
 /* #undef HAVE_STRUCT_STATFS_F_NAMEMAX */
 
@@ -1212,7 +1221,7 @@
 /* #undef HAVE_WORKING_FS_IOC_GETFLAGS */
 
 /* Define to 1 if you have the <zlib.h> header file. */
-#define HAVE_ZLIB_H 1
+/* #undef HAVE_ZLIB_H */
 
 /* Define to 1 if you have the <zstd.h> header file. */
 /* #undef HAVE_ZSTD_H */
@@ -1239,10 +1248,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3005001"
+#define LIBARCHIVE_VERSION_NUMBER "3005002"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.5.1"
+#define LIBARCHIVE_VERSION_STRING "3.5.2"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1272,7 +1281,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.5.1"
+#define PACKAGE_STRING "libarchive 3.5.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1281,7 +1290,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.5.1"
+#define PACKAGE_VERSION "3.5.2"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1321,7 +1330,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.5.1"
+#define VERSION "3.5.2"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
@@ -1432,3 +1441,5 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef uintptr_t */
+#define HAVE_LIBZ 1
+#define HAVE_ZLIB_H 1
