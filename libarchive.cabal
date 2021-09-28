@@ -230,7 +230,9 @@ library
           ./c/archive_write_set_format_by_name.c
           ./c/archive_write_set_format.c
           ./c/archive_write_set_format_cpio.c
+          ./c/archive_write_set_format_cpio_binary.c
           ./c/archive_write_set_format_cpio_newc.c
+          ./c/archive_write_set_format_cpio_odc.c
           ./c/archive_write_set_format_filter_by_ext.c
           ./c/archive_write_set_format_gnutar.c
           ./c/archive_write_set_format_iso9660.c

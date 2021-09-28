@@ -541,7 +541,10 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_set_format_ar_bsd as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_ar_svr4 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_cpio as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_cpio_bin as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_cpio_newc as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_cpio_odc as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_set_format_cpio_pwb as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_gnutar as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_mtree as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_set_format_mtree_classic as ^ { `ArchivePtr' } -> `ArchiveResult' #}
