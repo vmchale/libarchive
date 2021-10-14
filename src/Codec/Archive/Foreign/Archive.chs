@@ -140,7 +140,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveWriteSetFormatArBsd
                                      , archiveWriteSetFormatArSvr4
                                      , archiveWriteSetFormatCpio
+                                     , archiveWriteSetFormatCpioBin
                                      , archiveWriteSetFormatCpioNewc
+                                     , archiveWriteSetFormatCpioOdc
+                                     , archiveWriteSetFormatCpioPwb
                                      , archiveWriteSetFormatGnutar
                                      , archiveWriteSetFormatMtree
                                      , archiveWriteSetFormatMtreeClassic
