@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.3.1
+
+  * Properly export functions from libarchive 3.5.2.
+
 # 3.0.3.0
 
   * Bundle zlib sources so zip archives are guaranteed to work (work by Julian
