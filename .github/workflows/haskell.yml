@@ -127,9 +127,14 @@ jobs:
         chmod a+x "$HOME/.local/bin/cabal-docspec"
 
     - if: matrix.os == 'windows'
-      name: disable system libarchive on windows
+      name: Set cabal.project.local
       run: |
-        echo -e 'package libarchive\n  flags: -system-libarchive' >> cabal.project.local
+        echo -e 'package libarchive\n  flags: -system-libarchive -no-exe' >> cabal.project.local
+
+    - if: matrix.os != 'windows'
+      name: Set cabal.project.local
+      run: |
+        echo -e 'package libarchive\n  flags: -no-exe' >> cabal.project.local
 
     - name: Build
       run: ${{ steps.get.outputs.builder }} build
