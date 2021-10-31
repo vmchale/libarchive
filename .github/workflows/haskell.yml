@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macOS, windows]
-        builder: ['cabal 3.4.0.0 ghc 8.10.7', 'cabal 3.4.0.0 ghc 9.0.1', 'stack 2.7.3']
+        builder: ['cabal 3.6.2.0 ghc 8.10.7', 'cabal 3.6.2.0 ghc 9.0.1', 'stack 2.7.3']
 
         include:
           - os: windows
@@ -89,6 +89,7 @@ jobs:
     - name: Install ghc/cabal
       run: |
         [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup install ghc ${{ steps.get-ghc-ver.outputs.id }}
+        [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup set ghc ${{ steps.get-ghc-ver.outputs.id }}
         ghcup install ${{ steps.get.outputs.builder }} ${{ steps.get.outputs.builder_version }}
 
     - name: Cache
@@ -127,9 +128,14 @@ jobs:
         chmod a+x "$HOME/.local/bin/cabal-docspec"
 
     - if: matrix.os == 'windows'
-      name: disable system libarchive on windows
+      name: Set cabal.project.local
       run: |
-        echo -e 'package libarchive\n  flags: -system-libarchive' >> cabal.project.local
+        echo -e 'package libarchive\n  flags: -system-libarchive -no-exe' >> cabal.project.local
+
+    - if: matrix.os != 'windows'
+      name: Set cabal.project.local
+      run: |
+        echo -e 'package libarchive\n  flags: -no-exe' >> cabal.project.local
 
     - name: Build
       run: ${{ steps.get.outputs.builder }} build

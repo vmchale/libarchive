@@ -52,6 +52,11 @@ flag system-libarchive
   default:     True
   description: Use libarchive found with pkg-config rather than the bundled sources
 
+flag no-exe
+  description: don't install the archive executables
+  manual:      False
+  default:     True
+
 library
     exposed-modules:
         Codec.Archive
@@ -375,3 +380,21 @@ benchmark mem
 
     if impl(ghc >=8.10)
         ghc-options: -Wunused-packages
+
+executable archive
+  main-is: Main.hs
+  hs-source-dirs: exe
+  ghc-options: -Wall
+  build-depends:
+    base >=4.8 && <5,
+    bytestring >= 0.9,
+    bzlib >= 0.4 && < 0.7,
+    directory >= 1.0,
+    exceptions,
+    filepath >= 1.0,
+    libarchive,
+    lzma-static,
+    time,
+    zlib ^>=0.6.2.2
+  if flag(no-exe)
+    buildable: False
