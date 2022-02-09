@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.3.2
+
+  * Bundled libarchive 3.5.3
+
 # 3.0.3.1
 
   * Properly export functions from libarchive 3.5.2.
