@@ -150,6 +150,10 @@ archiveReadDiskNoAcl = ReadDiskFlags {# const ARCHIVE_READDISK_NO_ACL #}
 archiveReadDiskNoFFlags :: ReadDiskFlags
 archiveReadDiskNoFFlags = ReadDiskFlags {# const ARCHIVE_READDISK_NO_FFLAGS #}
 
+-- | @since 3.0.4.0
+archiveReadDiskNoSparse :: ReadDiskFlags
+archiveReadDiskNoSparse = ReadDiskFlags {# const ARCHIVE_READDISK_NO_SPARSE #}
+
 archiveMatchMTime :: TimeFlag
 archiveMatchMTime = TimeFlag {# const ARCHIVE_MATCH_MTIME #}
 
