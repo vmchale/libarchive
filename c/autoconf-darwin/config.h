@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.5.3"
+#define BSDCAT_VERSION_STRING "3.6.0"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.5.3"
+#define BSDCPIO_VERSION_STRING "3.6.0"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.5.3"
+#define BSDTAR_VERSION_STRING "3.6.0"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -685,6 +685,10 @@
 
 /* Define to 1 if you have the `zstd' library (-lzstd). */
 /* #undef HAVE_LIBZSTD */
+
+/* Define to 1 if you have the `zstd' library (-lzstd) with compression
+   support. */
+/* #undef HAVE_LIBZSTD_COMPRESSOR */
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
@@ -1248,10 +1252,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3005003"
+#define LIBARCHIVE_VERSION_NUMBER "3006000"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.5.3"
+#define LIBARCHIVE_VERSION_STRING "3.6.0"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1281,7 +1285,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.5.3"
+#define PACKAGE_STRING "libarchive 3.6.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1290,10 +1294,16 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.5.3"
+#define PACKAGE_VERSION "3.6.0"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
+
+/* The number of bytes in type int */
+#define SIZEOF_INT 4
+
+/* The number of bytes in type long */
+#define SIZEOF_LONG 8
 
 /* The size of `wchar_t', as computed by sizeof. */
 #define SIZEOF_WCHAR_T 4
@@ -1330,7 +1340,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.5.3"
+#define VERSION "3.6.0"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
