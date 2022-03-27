@@ -34,6 +34,7 @@ module Codec.Archive.Foreign.Archive.Macros ( archiveVersionNumberMacro
                                             , archiveReadDiskNoXattr
                                             , archiveReadDiskNoAcl
                                             , archiveReadDiskNoFFlags
+                                            , archiveReadDiskNoSparse
                                             -- * Conversion functions
                                             , encryptionResult
                                             ) where
