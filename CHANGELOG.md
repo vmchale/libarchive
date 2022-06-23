@@ -2,7 +2,7 @@
 
 # 3.0.4.0
 
-  * Bundled libarchive 3.6.0
+  * Bundled libarchive 3.6.1
   * Add `archiveReadDiskNoSparse`
 
 # 3.0.3.2
