@@ -104,7 +104,7 @@
 /* #undef ARCHIVE_CRYPTO_SHA256_OPENSSL */
 
 /* SHA256 via ARCHIVE_CRYPTO_SHA256_WIN supported. */
-#define ARCHIVE_CRYPTO_SHA256_WIN 1
+/* #undef ARCHIVE_CRYPTO_SHA256_WIN */
 
 /* SHA384 via ARCHIVE_CRYPTO_SHA384_LIBC supported. */
 /* #undef ARCHIVE_CRYPTO_SHA384_LIBC */
@@ -128,7 +128,7 @@
 /* #undef ARCHIVE_CRYPTO_SHA384_OPENSSL */
 
 /* SHA384 via ARCHIVE_CRYPTO_SHA384_WIN supported. */
-#define ARCHIVE_CRYPTO_SHA384_WIN 1
+/* #undef ARCHIVE_CRYPTO_SHA384_WIN */
 
 /* SHA512 via ARCHIVE_CRYPTO_SHA512_LIBC supported. */
 /* #undef ARCHIVE_CRYPTO_SHA512_LIBC */
@@ -155,7 +155,7 @@
 /* #undef ARCHIVE_CRYPTO_SHA512_OPENSSL */
 
 /* SHA512 via ARCHIVE_CRYPTO_SHA512_WIN supported. */
-#define ARCHIVE_CRYPTO_SHA512_WIN 1
+/* #undef ARCHIVE_CRYPTO_SHA512_WIN */
 
 /* AIX xattr support */
 /* #undef ARCHIVE_XATTR_AIX */
@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.6.0"
+#define BSDCAT_VERSION_STRING "3.6.1"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.6.0"
+#define BSDCPIO_VERSION_STRING "3.6.1"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.6.0"
+#define BSDTAR_VERSION_STRING "3.6.1"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -402,11 +402,11 @@
 
 /* Define to 1 if you have the declaration of `SSIZE_MAX', and to 0 if you
    don't. */
-/* #undef HAVE_DECL_SSIZE_MAX */
+#define HAVE_DECL_SSIZE_MAX 1
 
 /* Define to 1 if you have the declaration of `strerror_r', and to 0 if you
    don't. */
-#define HAVE_DECL_STRERROR_R 0
+#define HAVE_DECL_STRERROR_R 1
 
 /* Define to 1 if you have the declaration of `UINT32_MAX', and to 0 if you
    don't. */
@@ -426,13 +426,13 @@
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-/* #undef HAVE_DIRENT_H */
+#define HAVE_DIRENT_H 1
 
 /* Define to 1 if you have a dirfd function or macro */
 /* #undef HAVE_DIRFD */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-/* #undef HAVE_DLFCN_H */
+#define HAVE_DLFCN_H 1
 
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 /* #undef HAVE_DOPRNT */
@@ -540,7 +540,7 @@
 /* #undef HAVE_FSTATVFS */
 
 /* Define to 1 if you have the `ftruncate' function. */
-/* #undef HAVE_FTRUNCATE */
+#define HAVE_FTRUNCATE 1
 
 /* Define to 1 if you have the `futimens' function. */
 /* #undef HAVE_FUTIMENS */
@@ -818,7 +818,7 @@
 /* #undef HAVE_MKNOD */
 
 /* Define to 1 if you have the `mkstemp' function. */
-/* #undef HAVE_MKSTEMP */
+#define HAVE_MKSTEMP 1
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 /* #undef HAVE_NDIR_H */
@@ -923,7 +923,7 @@
 /* #undef HAVE_SELECT */
 
 /* Define to 1 if you have the `setenv' function. */
-/* #undef HAVE_SETENV */
+#define HAVE_SETENV 1
 
 /* Define to 1 if you have the `setlocale' function. */
 #define HAVE_SETLOCALE 1
@@ -978,13 +978,13 @@
 #define HAVE_STRERROR 1
 
 /* Define to 1 if you have the `strerror_r' function. */
-/* #undef HAVE_STRERROR_R */
+#define HAVE_STRERROR_R 1
 
 /* Define to 1 if you have the `strftime' function. */
 #define HAVE_STRFTIME 1
 
 /* Define to 1 if you have the <strings.h> header file. */
-/* #undef HAVE_STRINGS_H */
+#define HAVE_STRINGS_H 1
 
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
@@ -1088,7 +1088,7 @@
 /* #undef HAVE_SYS_NDIR_H */
 
 /* Define to 1 if you have the <sys/param.h> header file. */
-/* #undef HAVE_SYS_PARAM_H */
+#define HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/poll.h> header file. */
 /* #undef HAVE_SYS_POLL_H */
@@ -1112,7 +1112,7 @@
 /* #undef HAVE_SYS_SYSMACROS_H */
 
 /* Define to 1 if you have the <sys/time.h> header file. */
-/* #undef HAVE_SYS_TIME_H */
+#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #define HAVE_SYS_TYPES_H 1
@@ -1145,13 +1145,13 @@
 #define HAVE_UINTMAX_T 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-/* #undef HAVE_UNISTD_H */
+#define HAVE_UNISTD_H 1
 
 /* Define to 1 if you have the `unlinkat' function. */
 /* #undef HAVE_UNLINKAT */
 
 /* Define to 1 if you have the `unsetenv' function. */
-/* #undef HAVE_UNSETENV */
+#define HAVE_UNSETENV 1
 
 /* Define to 1 if the system has the type `unsigned long long'. */
 #define HAVE_UNSIGNED_LONG_LONG 1
@@ -1169,13 +1169,13 @@
 /* #undef HAVE_UTIMES */
 
 /* Define to 1 if you have the <utime.h> header file. */
-/* #undef HAVE_UTIME_H */
+#define HAVE_UTIME_H 1
 
 /* Define to 1 if you have the `vfork' function. */
 /* #undef HAVE_VFORK */
 
 /* Define to 1 if you have the `vprintf' function. */
-/* #undef HAVE_VPRINTF */
+#define HAVE_VPRINTF 1
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #define HAVE_WCHAR_H 1
@@ -1211,7 +1211,7 @@
 #define HAVE_WINIOCTL_H 1
 
 /* Define to 1 if you have the `wmemcmp' function. */
-/* #undef HAVE_WMEMCMP */
+#define HAVE_WMEMCMP 1
 
 /* Define to 1 if you have the `wmemcpy' function. */
 #define HAVE_WMEMCPY 1
@@ -1238,7 +1238,7 @@
 #define HAVE__FSEEKI64 1
 
 /* Define to 1 if you have the `_get_timezone' function. */
-#define HAVE__GET_TIMEZONE 1
+/* #undef HAVE__GET_TIMEZONE */
 
 /* Define to 1 if you have the `_gmtime64_s' function. */
 #define HAVE__GMTIME64_S 1
@@ -1253,10 +1253,10 @@
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3006000"
+#define LIBARCHIVE_VERSION_NUMBER "3006001"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.6.0"
+#define LIBARCHIVE_VERSION_STRING "3.6.1"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1286,7 +1286,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.6.0"
+#define PACKAGE_STRING "libarchive 3.6.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1295,7 +1295,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.6.0"
+#define PACKAGE_VERSION "3.6.1"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1316,7 +1316,7 @@
 /* #undef STRERROR_R_CHAR_P */
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-/* #undef TIME_WITH_SYS_TIME */
+#define TIME_WITH_SYS_TIME 1
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
@@ -1341,7 +1341,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.6.0"
+#define VERSION "3.6.1"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 #define WINVER 0x0502
@@ -1418,7 +1418,7 @@
 /* #undef intmax_t */
 
 /* Define to `int' if <sys/types.h> does not define. */
-#define mode_t int
+/* #undef mode_t */
 
 /* Define to `long long' if <sys/types.h> does not define. */
 /* #undef off_t */
