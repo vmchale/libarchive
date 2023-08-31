@@ -7,7 +7,6 @@ import           Control.Monad          (void)
 import           Control.Monad.IO.Class (liftIO)
 import           Criterion.Main
 import qualified Data.ByteString.Lazy   as BSL
-import           Data.Conduit.Tar       as TarConduit
 import           System.IO.Temp         (withSystemTempDirectory)
 
 roundtrip :: BSL.ByteString -> Either ArchiveResult BSL.ByteString
@@ -33,11 +32,6 @@ extractTar :: IO ()
 extractTar = withSystemTempDirectory "tar" $
     \fp -> Tar.extract fp "test/data/libarchive-1.0.5.1.tar"
 
--- I'm not even sure why I'm benchmarking this since it doesn't work
-unpackTarConduit :: IO ()
-unpackTarConduit = withSystemTempDirectory "tar" $
-    \fp -> void $ TarConduit.extractTarballLenient "test/data/libarchive-1.0.5.1.tar" (Just fp)
-
 main :: IO ()
 main =
     defaultMain [ env file $ \ f ->
@@ -49,7 +43,6 @@ main =
                       [ bench "libarchive (via bytestring)" $ nfIO unpackHs
                       , bench "libarchive (C API)" $ nfIO unpack
                       , bench "tar" $ nfIO extractTar
-                      , bench "tarConduit" $ nfIO unpackTarConduit
                       ]
                 ]
     where file = BSL.readFile "test/data/libarchive-1.0.5.1.tar"
