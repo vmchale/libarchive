@@ -170,13 +170,13 @@
 /* #undef ARCHIVE_XATTR_LINUX */
 
 /* Version number of bsdcat */
-#define BSDCAT_VERSION_STRING "3.6.2"
+#define BSDCAT_VERSION_STRING "3.7.1"
 
 /* Version number of bsdcpio */
-#define BSDCPIO_VERSION_STRING "3.6.2"
+#define BSDCPIO_VERSION_STRING "3.7.1"
 
 /* Version number of bsdtar */
-#define BSDTAR_VERSION_STRING "3.6.2"
+#define BSDTAR_VERSION_STRING "3.7.1"
 
 /* Define to 1 if the system has the type `ace_t'. */
 /* #undef HAVE_ACE_T */
@@ -315,6 +315,9 @@
 
 /* Define to 1 if you have the `chroot' function. */
 #define HAVE_CHROOT 1
+
+/* cmtime_s function */
+/* #undef HAVE_CMTIME_S */
 
 /* Define to 1 if you have the <copyfile.h> header file. */
 #define HAVE_COPYFILE_H 1
@@ -515,6 +518,12 @@
 /* Define to 1 if you have the `flistxattr' function. */
 /* #undef HAVE_FLISTXATTR */
 
+/* Define to 1 if you have the `fnmatch' function. */
+#define HAVE_FNMATCH 1
+
+/* Define to 1 if you have the <fnmatch.h> header file. */
+#define HAVE_FNMATCH_H 1
+
 /* Define to 1 if you have the `fork' function. */
 #define HAVE_FORK 1
 
@@ -563,6 +572,12 @@
 /* Define to 1 if you have the `getgrnam_r' function. */
 #define HAVE_GETGRNAM_R 1
 
+/* Define to 1 if you have the `getline' function. */
+#define HAVE_GETLINE 1
+
+/* Platform uses optreset to reset getopt */
+#define HAVE_GETOPT_OPTRESET 1
+
 /* Define to 1 if you have the `getpid' function. */
 #define HAVE_GETPID 1
 
@@ -580,6 +595,9 @@
 
 /* Define to 1 if you have the `gmtime_r' function. */
 #define HAVE_GMTIME_R 1
+
+/* gmtime_s function */
+/* #undef HAVE_GMTIME_S */
 
 /* Define to 1 if you have the <grp.h> header file. */
 #define HAVE_GRP_H 1
@@ -729,6 +747,9 @@
 /* Define to 1 if you have the `localtime_r' function. */
 #define HAVE_LOCALTIME_R 1
 
+/* localtime_s function */
+/* #undef HAVE_LOCALTIME_S */
+
 /* Define to 1 if the system has the type `long long int'. */
 #define HAVE_LONG_LONG_INT 1
 
@@ -753,6 +774,9 @@
 
 /* Define to 1 if you have the <lz4.h> header file. */
 /* #undef HAVE_LZ4_H */
+
+/* Define to 1 if you have the `LZMA_FILTER_ARM64' macro. */
+/* #undef HAVE_LZMA_FILTER_ARM64 */
 
 /* Define to 1 if you have the <lzma.h> header file. */
 /* #undef HAVE_LZMA_H */
@@ -1089,6 +1113,9 @@
 /* Define to 1 if you have the <sys/poll.h> header file. */
 #define HAVE_SYS_POLL_H 1
 
+/* Define to 1 if you have the <sys/queue.h> header file. */
+#define HAVE_SYS_QUEUE_H 1
+
 /* Define to 1 if you have the <sys/richacl.h> header file. */
 /* #undef HAVE_SYS_RICHACL_H */
 
@@ -1227,32 +1254,23 @@
 /* Define to 1 if you have the <zstd.h> header file. */
 /* #undef HAVE_ZSTD_H */
 
-/* Define to 1 if you have the `_ctime64_s' function. */
-/* #undef HAVE__CTIME64_S */
-
 /* Define to 1 if you have the `_fseeki64' function. */
 /* #undef HAVE__FSEEKI64 */
 
 /* Define to 1 if you have the `_get_timezone' function. */
 /* #undef HAVE__GET_TIMEZONE */
 
-/* Define to 1 if you have the `_gmtime64_s' function. */
-/* #undef HAVE__GMTIME64_S */
-
-/* Define to 1 if you have the `_localtime64_s' function. */
-/* #undef HAVE__LOCALTIME64_S */
-
-/* Define to 1 if you have the `_mkgmtime64' function. */
-/* #undef HAVE__MKGMTIME64 */
+/* _mkgmtime function */
+/* #undef HAVE__MKGMTIME */
 
 /* Define as const if the declaration of iconv() needs const. */
 /* #undef ICONV_CONST */
 
 /* Version number of libarchive as a single integer */
-#define LIBARCHIVE_VERSION_NUMBER "3006002"
+#define LIBARCHIVE_VERSION_NUMBER "3007001"
 
 /* Version number of libarchive */
-#define LIBARCHIVE_VERSION_STRING "3.6.2"
+#define LIBARCHIVE_VERSION_STRING "3.7.1"
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
@@ -1282,7 +1300,7 @@
 #define PACKAGE_NAME "libarchive"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "libarchive 3.6.2"
+#define PACKAGE_STRING "libarchive 3.7.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "libarchive"
@@ -1291,7 +1309,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.6.2"
+#define PACKAGE_VERSION "3.7.1"
 
 /* Define to 1 if PCRE_STATIC needs to be defined. */
 /* #undef PCRE_STATIC */
@@ -1312,10 +1330,6 @@
 
 /* Define to 1 if strerror_r returns char *. */
 /* #undef STRERROR_R_CHAR_P */
-
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. This
-   macro is obsolete. */
-#define TIME_WITH_SYS_TIME 1
 
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
@@ -1406,7 +1420,7 @@
 
 
 /* Version number of package */
-#define VERSION "3.6.2"
+#define VERSION "3.7.1"
 
 /* Define to '0x0502' for Windows Server 2003 APIs. */
 /* #undef WINVER */
