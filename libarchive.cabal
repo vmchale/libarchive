@@ -365,7 +365,6 @@ benchmark libarchive-bench
         criterion,
         bytestring,
         tar,
-        tar-conduit >=0.2.5,
         temporary
 
     if impl(ghc >=8.0)
