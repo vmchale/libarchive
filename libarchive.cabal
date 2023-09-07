@@ -1,6 +1,6 @@
 cabal-version:      3.0
 name:               libarchive
-version:            3.0.4.1
+version:            3.0.4.2
 license:            BSD-3-Clause
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
@@ -35,8 +35,8 @@ source-repository head
 
 custom-setup
     setup-depends:
-        base,
-        Cabal,
+        base <=5,
+        Cabal <=4,
         chs-cabal
 
 flag cross

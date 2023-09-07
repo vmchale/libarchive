@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.4.2
+
+  * Package bounds for Hackage
+
 # 3.0.4.1
 
   * Bundled libarchive 3.7.1
