@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.4.1
+
+  * Bundled libarchive 3.7.1
+
 # 3.0.4.0
 
   * Bundled libarchive 3.6.1
