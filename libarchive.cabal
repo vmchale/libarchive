@@ -333,6 +333,10 @@ test-suite libarchive-test
         composition-prelude >=2.0.5.0,
         pathological-bytestrings
 
+    if os(windows)
+        build-depends:
+            hspec-core
+
     if flag(low-memory)
         cpp-options: -DLOW_MEMORY
 
