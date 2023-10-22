@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macOS, windows]
-        builder: ['cabal 3.6.2.0 ghc 8.10.7', 'cabal 3.6.2.0 ghc 9.0.1', 'stack 2.7.3']
+        builder: ['cabal 3.6.2.0 ghc 8.10.7', 'cabal 3.6.2.0 ghc 9.0.1', 'cabal 3.6.2.0 ghc 9.2.8', 'cabal 3.6.2.0 ghc 9.4.7', 'stack 2.7.3']
 
         include:
           - os: windows
