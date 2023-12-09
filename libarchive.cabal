@@ -15,15 +15,14 @@ description:
 category:           Codec
 build-type:         Custom
 extra-source-files:
-    ./c/autoconf-darwin/config.h
-    ./c/autoconf-linux/config.h
-    ./c/autoconf-freebsd/config.h
-    ./c/autoconf-windows/config.h
     ./c/*.c
     ./c/*.h
     ./c/zlib/*.c
     ./c/zlib/*.h
+    ./c/config.h.in
     test/data/aarch64-linux-dist.tar
+    configure
+    configure.ac
 
 extra-doc-files:
     README.md
@@ -36,6 +35,8 @@ source-repository head
 custom-setup
     setup-depends:
         base <=5,
+        directory,
+        process,
         Cabal <=4,
         chs-cabal
 
@@ -264,25 +265,6 @@ library
             ./c/zlib/uncompr.c
 
         include-dirs: c/ c/zlib/
-
-        if os(osx)
-            include-dirs: c/autoconf-darwin
-
-        else
-            if os(linux)
-                include-dirs: c/autoconf-linux
-
-            else
-                if os(freebsd)
-                    include-dirs: c/autoconf-freebsd
-
-                else
-                    if os(windows)
-                        include-dirs: c/autoconf-windows
-
-                    else
-                        buildable:     False
-                        build-depends: unbuildable <0
 
     else
         pkgconfig-depends: libarchive (==3.6.0 || >3.6.0) && <4.0
