@@ -88,8 +88,7 @@ jobs:
 
     - name: Install ghc/cabal
       run: |
-        [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup install ghc ${{ steps.get-ghc-ver.outputs.id }}
-        [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup set ghc ${{ steps.get-ghc-ver.outputs.id }}
+        [ -n "${{ steps.get.outputs.ghc_version }}" ] && ghcup install ghc --set ${{ steps.get.outputs.ghc_version }}
         ghcup install ${{ steps.get.outputs.builder }} ${{ steps.get.outputs.builder_version }}
 
     - name: Cache
