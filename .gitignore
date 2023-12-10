@@ -7,12 +7,12 @@ tags
 *.eventlog
 dist-newstyle
 *.tar
+!aarch64-linux-dist.tar
 *.chi
 *.chs.h
 .hspec-failures
 .stack-work
 libarchive-*.tar.*
-libarchive-*/
 
 # autoconf
 build/autoconf/config.guess

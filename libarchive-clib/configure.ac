@@ -7,7 +7,7 @@ m4_define([BSDCPIO_VERSION_S],LIBARCHIVE_VERSION_S())
 m4_define([BSDCAT_VERSION_S],LIBARCHIVE_VERSION_S())
 
 AC_PREREQ([2.69])
-AC_INIT([Haskell libarchive package],[3.0.4.2],[vamchale@gmail.com],[libarchive])
+AC_INIT([Haskell libarchive-clib package],[3.7.2],[vamchale@gmail.com],[libarchive-clib])
 
 #
 # Now starts the "real" configure script.
