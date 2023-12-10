@@ -17,8 +17,6 @@ build-type:         Configure
 extra-source-files:
     ./c/*.c
     ./c/*.h
-    ./c/zlib/*.c
-    ./c/zlib/*.h
     ./c/config.h.in
     configure
     configure.ac
@@ -37,6 +35,7 @@ library
 
     cc-options:   -std=c11 -DHAVE_CONFIG_H
     include-dirs: c
+    build-depends: zlib-clib
     c-sources:
         ./c/archive_acl.c
         ./c/archive_blake2sp_ref.c
@@ -169,16 +168,5 @@ library
         ./c/filter_fork_posix.c
         ./c/filter_fork_windows.c
         ./c/xxhash.c
-        ./c/zlib/adler32.c
-        ./c/zlib/crc32.c
-        ./c/zlib/deflate.c
-        ./c/zlib/inffast.c
-        ./c/zlib/zutil.c
-        ./c/zlib/compress.c
-        ./c/zlib/infback.c
-        ./c/zlib/inflate.c
-        ./c/zlib/inftrees.c
-        ./c/zlib/trees.c
-        ./c/zlib/uncompr.c
 
-    include-dirs: c/ c/zlib/
+    include-dirs: c/

@@ -2,6 +2,7 @@
 packages:
   - libarchive
   - libarchive-clib
+  - zlib-clib
 resolver: lts-21.24
 ghc-options: {"$locals": -ddump-to-file -ddump-hi}
 flags:

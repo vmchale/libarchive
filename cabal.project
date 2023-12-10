@@ -1,5 +1,6 @@
 packages: ./libarchive/libarchive.cabal
           ./libarchive-clib/libarchive-clib.cabal
+          ./zlib-clib/zlib-clib.cabal
 max-backjumps: 40000
 
 constraints: zlib -pkg-config +bundled-c-zlib
