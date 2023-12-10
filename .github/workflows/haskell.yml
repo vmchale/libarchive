@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Run hlint
-      run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s -- -r src mem bench test
+      run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s -- -r libarchive/src libarchive/mem libarchive/bench libarchive/test
       shell: bash
 
   build-cabal:
@@ -46,6 +46,8 @@ jobs:
       with:
         update: true
         install: >-
+          autoconf2.71
+          autoconf-archive
           gawk
           base-devel
           bzip2
@@ -136,24 +138,29 @@ jobs:
       run: |
         echo -e 'package libarchive\n  flags: -no-exe' >> cabal.project.local
 
+    - name: autoreconf
+      run: |
+        cd libarchive-clib
+        autoreconf -fi
+
     - name: Build
-      run: ${{ steps.get.outputs.builder }} build
+      run: ${{ steps.get.outputs.builder }} build libarchive
 
     - name: Run tests
-      run: ${{ steps.get.outputs.builder }} test
+      run: ${{ steps.get.outputs.builder }} test libarchive
 
     - if: matrix.os == 'linux' && steps.get.outputs.builder == 'cabal'
       name: Run doctests
-      run: cabal-docspec -XCPP -XTypeSynonymInstances -XOverloadedStrings
+      run: cabal-docspec -XCPP -XTypeSynonymInstances -XOverloadedStrings libarchive
 
     - name: Download benchmark files
-      run: make -j1 setup 
+      run: make -C libarchive -j1 setup 
 
     - name: Run benches
-      run: ${{ steps.get.outputs.builder }} bench
+      run: ${{ steps.get.outputs.builder }} bench libarchive
 
     - name: Build haddock
-      run: ${{ steps.get.outputs.builder }} haddock
+      run: ${{ steps.get.outputs.builder }} haddock libarchive
       continue-on-error: true
 
     - if: always()
@@ -161,3 +168,4 @@ jobs:
       with:
         name: plan.json
         path: ./dist-newstyle/cache/plan.json
+
