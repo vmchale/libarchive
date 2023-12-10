@@ -33,14 +33,14 @@ library
     include-dirs: c
     c-sources:
         ./c/adler32.c
+        ./c/compress.c
         ./c/crc32.c
         ./c/deflate.c
-        ./c/inffast.c
-        ./c/zutil.c
-        ./c/compress.c
         ./c/infback.c
+        ./c/inffast.c
         ./c/inflate.c
         ./c/inftrees.c
         ./c/trees.c
         ./c/uncompr.c
+        ./c/zutil.c
 

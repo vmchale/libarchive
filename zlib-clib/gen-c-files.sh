@@ -17,6 +17,7 @@ ZLIB_URL="https://zlib.net/${ZLIB_BALL}"
 
 (
 cd "zlib-${ZLIB_VER}"
+rm ./gzclose.c ./gzlib.c ./gzread.c ./gzwrite.c
 
 rm -f ../c/*.[ch]
 cp ./*.[ch] ../c/
