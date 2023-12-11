@@ -46,8 +46,10 @@ jobs:
       with:
         update: true
         install: >-
-          autoconf2.71
+          autoconf
           autoconf-archive
+          autotools
+          automake
           gawk
           base-devel
           bzip2
@@ -61,6 +63,13 @@ jobs:
           xz
         # this action is broken shite: https://github.com/msys2/setup-msys2/issues/104
         path-type: inherit
+
+    - if: runner.os == 'macOS'
+      name: Install automake via brew
+      run: |
+          bash .github/scripts/brew.sh automake
+          echo "$HOME/.brew/bin" >> $GITHUB_PATH
+          echo "$HOME/.brew/sbin" >> $GITHUB_PATH
 
     - id: get
       run: |
