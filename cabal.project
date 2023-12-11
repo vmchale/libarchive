@@ -5,7 +5,7 @@ max-backjumps: 40000
 
 constraints: zlib -pkg-config +bundled-c-zlib
 
-flags: +system-libarchive
+flags: -system-libarchive
 
 -- package Cabal
   -- ghc-options: -j +RTS -A32m -RTS
