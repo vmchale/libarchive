@@ -169,4 +169,8 @@ library
         ./c/filter_fork_windows.c
         ./c/xxhash.c
 
+    install-includes:
+        ./c/archive.h
+        ./c/archive_entry.h
+
     include-dirs: c/
