@@ -111,6 +111,10 @@ library
     else
         build-depends: libarchive-clib
 
+    includes:
+        archive.h
+        archive_entry.h
+
 executable archive
     main-is:          Main.hs
     hs-source-dirs:   exe

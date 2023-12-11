@@ -170,7 +170,8 @@ library
         ./c/xxhash.c
 
     install-includes:
-        ./c/archive.h
-        ./c/archive_entry.h
+        archive.h
+        archive_entry.h
 
     include-dirs: c/
+
