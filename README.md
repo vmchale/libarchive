@@ -25,46 +25,42 @@ to download test data.
 
 ## Performance
 
-`libarchive` is faster than `tar` or `tar-conduit` when unpacking archives.
+`libarchive` is faster than `tar` when unpacking archives.
 
 ```
 benchmarking roundtrip/libarchive
-time                 248.5 μs   (247.0 μs .. 250.0 μs)
-                     0.999 R²   (0.999 R² .. 1.000 R²)
-mean                 249.7 μs   (248.2 μs .. 251.6 μs)
-std dev              5.637 μs   (4.385 μs .. 8.012 μs)
-variance introduced by outliers: 15% (moderately inflated)
+time                 308.2 μs   (305.2 μs .. 311.4 μs)
+                     0.999 R²   (0.999 R² .. 0.999 R²)
+mean                 314.4 μs   (311.8 μs .. 317.6 μs)
+std dev              9.721 μs   (7.337 μs .. 13.78 μs)
+variance introduced by outliers: 25% (moderately inflated)
 
 benchmarking roundtrip/tar
-time                 322.7 μs   (321.9 μs .. 323.7 μs)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 324.0 μs   (322.9 μs .. 325.1 μs)
-std dev              3.673 μs   (2.837 μs .. 5.119 μs)
+time                 341.1 μs   (337.2 μs .. 345.6 μs)
+                     0.998 R²   (0.995 R² .. 0.999 R²)
+mean                 341.1 μs   (337.6 μs .. 347.2 μs)
+std dev              15.62 μs   (10.13 μs .. 24.01 μs)
+variance introduced by outliers: 42% (moderately inflated)
 
 benchmarking unpack/libarchive (via bytestring)
-time                 1.146 ms   (1.133 ms .. 1.157 ms)
-                     0.999 R²   (0.997 R² .. 0.999 R²)
-mean                 1.110 ms   (1.096 ms .. 1.156 ms)
-std dev              72.18 μs   (30.15 μs .. 141.7 μs)
-variance introduced by outliers: 51% (severely inflated)
+time                 902.6 μs   (887.2 μs .. 920.0 μs)
+                     0.995 R²   (0.988 R² .. 0.999 R²)
+mean                 924.5 μs   (911.9 μs .. 952.4 μs)
+std dev              59.38 μs   (32.00 μs .. 104.6 μs)
+variance introduced by outliers: 53% (severely inflated)
 
 benchmarking unpack/libarchive (C API)
-time                 1.009 ms   (994.1 μs .. 1.022 ms)
-                     0.999 R²   (0.997 R² .. 1.000 R²)
-mean                 1.002 ms   (999.0 μs .. 1.006 ms)
-std dev              11.81 μs   (8.603 μs .. 18.76 μs)
+time                 855.7 μs   (832.9 μs .. 897.5 μs)
+                     0.991 R²   (0.978 R² .. 1.000 R²)
+mean                 854.4 μs   (845.7 μs .. 874.2 μs)
+std dev              40.97 μs   (16.99 μs .. 83.85 μs)
+variance introduced by outliers: 39% (moderately inflated)
 
 benchmarking unpack/tar
-time                 3.600 ms   (3.271 ms .. 4.001 ms)
-                     0.939 R²   (0.898 R² .. 0.977 R²)
-mean                 4.119 ms   (3.814 ms .. 5.295 ms)
-std dev              1.631 ms   (541.5 μs .. 3.272 ms)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking unpack/tarConduit
-time                 4.946 ms   (4.072 ms .. 6.308 ms)
-                     0.835 R²   (0.779 R² .. 0.988 R²)
-mean                 4.164 ms   (3.967 ms .. 4.574 ms)
-std dev              848.0 μs   (442.7 μs .. 1.620 ms)
-variance introduced by outliers: 88% (severely inflated)
+time                 1.776 ms   (1.729 ms .. 1.843 ms)
+                     0.994 R²   (0.985 R² .. 0.999 R²)
+mean                 1.767 ms   (1.752 ms .. 1.798 ms)
+std dev              70.54 μs   (39.81 μs .. 126.7 μs)
+variance introduced by outliers: 27% (moderately inflated)
 ```
+
