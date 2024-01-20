@@ -3,5 +3,7 @@ max-backjumps: 40000
 
 flags: -system-libarchive
 
+constraints: zlib -pkg-config +bundled-c-zlib
+
 -- package Cabal
   -- ghc-options: -j +RTS -A32m -RTS

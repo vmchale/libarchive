@@ -365,7 +365,7 @@ benchmark libarchive-bench
         libarchive,
         criterion,
         bytestring,
-        tar,
+        tar >=0.6.0.0,
         temporary
 
     if impl(ghc >=8.0)

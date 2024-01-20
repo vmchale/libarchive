@@ -1,7 +1,7 @@
 module Main (main) where
 
 import           Codec.Archive
-import           Codec.Archive.Tar      (Entries (..), FormatError)
+import           Codec.Archive.Tar      (Entries, FormatError, GenEntries (..))
 import qualified Codec.Archive.Tar      as Tar
 import           Control.Monad          (void)
 import           Control.Monad.IO.Class (liftIO)
