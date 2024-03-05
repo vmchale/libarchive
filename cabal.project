@@ -1,9 +1,11 @@
-packages: ./
+packages: ./libarchive/libarchive.cabal
+          ./libarchive-clib/libarchive-clib.cabal
+          ./zlib-clib/zlib-clib.cabal
 max-backjumps: 40000
 
-flags: -system-libarchive
-
 constraints: zlib -pkg-config +bundled-c-zlib
+
+flags: -system-libarchive
 
 -- package Cabal
   -- ghc-options: -j +RTS -A32m -RTS
