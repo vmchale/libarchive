@@ -6,7 +6,7 @@ DOWNLOADER_OPTS ?= -O
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
 .DELETE_ON_ERROR:
 
-setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar test/data/ruby-3.0.0.tar test/data/mlton-20210117.src.tar
+setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar test/data/ruby-3.0.0.tar test/data/mlton-20210117.src.tar test/data/wezterm-20240127-113634-bbcac864-src.tar
 
 clean:
 	rm -rf dist-newstyle \
@@ -28,7 +28,8 @@ clean:
 	    test/data/libarchive-1.0.5.1.tar \
 	    test/data/llvm-9.0.0.src.tar \
 	    test/data/ruby-3.0.0.tar \
-	    test/data/mlton-20210117.src.tar
+	    test/data/mlton-20210117.src.tar \
+	    test/data/wezterm-20240127-113634-bbcac864-src.tar
 
 packdeps.svg: libarchive.cabal
 	cabal build --disable-benchmarks --disable-tests
@@ -36,6 +37,9 @@ packdeps.svg: libarchive.cabal
 
 test/data:
 	mkdir -p $@
+
+test/data/wezterm-20240127-113634-bbcac864-src.tar: test/data/wezterm-20240127-113634-bbcac864-src.tar.gz
+	gunzip -f $^
 
 test/data/mlton-20210117.src.tar: test/data/mlton-20210117.src.tgz
 	gunzip -f $^
@@ -84,3 +88,6 @@ test/data/libarchive-1.0.5.1.tar.gz: test/data
 
 test/data/sparc64-linux-dist.tar.gz: test/data
 	$(DOWNLOADER) https://github.com/vmchale/dickinson/releases/download/1.1.0.2/sparc64-linux-dist.tar.gz $(DOWNLOADER_OPTS) $@
+
+test/data/wezterm-20240127-113634-bbcac864-src.tar.gz: test/data
+	$(DOWNLOADER) https://github.com/wez/wezterm/releases/download/20240127-113634-bbcac864/wezterm-20240127-113634-bbcac864-src.tar.gz $(DOWNLOADER_OPTS) $@
