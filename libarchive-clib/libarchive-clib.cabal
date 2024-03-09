@@ -18,6 +18,10 @@ extra-source-files:
     ./c/*.c
     ./c/*.h
     ./c/config.h.in
+    ./build/autoconf/config.guess
+    ./build/autoconf/config.sub
+    ./build/autoconf/install-sh
+    ./build/autoconf/ltmain.sh
     configure
     configure.ac
 
