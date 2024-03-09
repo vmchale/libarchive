@@ -15,15 +15,6 @@ dist-newstyle
 libarchive-*.tar.*
 
 # autoconf
-build/autoconf/config.guess
-build/autoconf/config.sub
-build/autoconf/install-sh
-build/autoconf/libtool.m4
-build/autoconf/ltmain.sh
-build/autoconf/ltoptions.m4
-build/autoconf/ltsugar.m4
-build/autoconf/ltversion.m4
-build/autoconf/lt~obsolete.m4
 autom4te.cache/
 aclocal.m4
 c/config.h
