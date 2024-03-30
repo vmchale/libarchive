@@ -1,5 +1,5 @@
-DOWNLOADER ?= wget
-DOWNLOADER_OPTS ?= -O
+DOWNLOADER ?= curl
+DOWNLOADER_OPTS ?= -L -o
 
 .PHONY: clean
 
