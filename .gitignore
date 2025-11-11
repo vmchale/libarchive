@@ -1,6 +1,7 @@
 *.swp
 .ghc.environment*
 tags
+tags.mtime
 *.prof
 *.hp
 *.eventlog
