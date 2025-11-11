@@ -6,7 +6,7 @@ DOWNLOADER_OPTS ?= -L -o
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
 .DELETE_ON_ERROR:
 
-setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/ATS2-Postiats-0.3.13.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar test/data/ruby-3.0.0.tar test/data/mlton-20210117.src.tar test/data/wezterm-20240127-113634-bbcac864-src.tar
+setup: test/data/ghc-8.8.1-src.tar test/data/alsa-lib-1.1.9.tar test/data/llvm-9.0.0.src.tar test/data/libarchive-1.0.5.1.tar test/data/sparc64-linux-dist.tar test/data/ruby-3.0.0.tar test/data/mlton-20210117.src.tar test/data/wezterm-20240127-113634-bbcac864-src.tar
 
 clean:
 	rm -rf dist-newstyle \
@@ -24,7 +24,6 @@ clean:
 	    test/data/alsa-lib-1.1.9.tar \
 	    test/data/sparc64-linux-dist.tar \
 	    test/data/ghc-8.8.1-src.tar \
-	    test/data/ATS2-Postiats-0.3.13.tar \
 	    test/data/libarchive-1.0.5.1.tar \
 	    test/data/llvm-9.0.0.src.tar \
 	    test/data/ruby-3.0.0.tar \
@@ -59,9 +58,6 @@ test/data/llvm-9.0.0.src.tar: test/data/llvm-9.0.0.src.tar.xz
 test/data/sparc64-linux-dist.tar: test/data/sparc64-linux-dist.tar.gz
 	gunzip -f $^
 
-test/data/ATS2-Postiats-0.3.13.tar: test/data/ATS2-Postiats-0.3.13.tgz
-	gunzip -f $^
-
 test/data/libarchive-1.0.5.1.tar: test/data/libarchive-1.0.5.1.tar.gz
 	gunzip -f $^
 
@@ -79,9 +75,6 @@ test/data/alsa-lib-1.1.9.tar.bz2: test/data
 
 test/data/llvm-9.0.0.src.tar.xz: test/data
 	$(DOWNLOADER) http://releases.llvm.org/9.0.0/llvm-9.0.0.src.tar.xz $(DOWNLOADER_OPTS) $@
-
-test/data/ATS2-Postiats-0.3.13.tgz: test/data
-	$(DOWNLOADER) http://ats-lang.sourceforge.net/IMPLEMENT/Postiats/ATS2-Postiats-0.3.13.tgz $(DOWNLOADER_OPTS) $@
 
 test/data/libarchive-1.0.5.1.tar.gz: test/data
 	$(DOWNLOADER) http://hackage.haskell.org/package/libarchive-1.0.5.1/libarchive-1.0.5.1.tar.gz $(DOWNLOADER_OPTS) $@
