@@ -20,6 +20,4 @@ aclocal.m4
 c/config.h
 c/config.h.in~
 configure~
-configure
 libtool
-ltmain.sh
