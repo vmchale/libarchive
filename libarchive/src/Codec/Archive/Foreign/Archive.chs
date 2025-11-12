@@ -12,6 +12,23 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveBzlibVersion
                                      , archiveLiblz4Version
                                      , archiveLibzstdVersion
+                                     , archiveLiblzo2Version
+                                     , archiveLibexpatVersion
+                                     , archiveLibbsdxmlVersion
+                                     , archiveLibxml2Version
+                                     , archiveMbedtlsVersion
+                                     , archiveNettleVersion
+                                     , archiveOpensslVersion
+                                     , archiveLibmdVersion
+                                     , archiveCommoncryptoVersion
+                                     , archiveCngVersion
+                                     , archiveWincryptVersion
+                                     , archiveLibrichaclVersion
+                                     , archiveLibaclVersion
+                                     , archiveLibattrVersion
+                                     , archiveLibiconvVersion
+                                     , archiveLibpcreVersion
+                                     , archiveLibpcre2Version
                                      -- * Miscellany
                                      , archiveErrorString
                                      , archiveFormatName
@@ -162,6 +179,10 @@ module Codec.Archive.Foreign.Archive ( archiveReadHasEncryptedEntries
                                      , archiveWriteSetFormatFilterByExtDef
                                      , archiveWriteZipSetCompressionDeflate
                                      , archiveWriteZipSetCompressionStore
+                                     , archiveWriteZipSetCompressionLzma
+                                     , archiveWriteZipSetCompressionXz
+                                     , archiveWriteZipSetCompressionBzip2
+                                     , archiveWriteZipSetCompressionZstd
                                      , archiveWriteOpen2
                                      , archiveWriteOpenFd
                                      , archiveWriteOpenFilenameW
@@ -412,6 +433,23 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_bzlib_version as ^ {} -> `CString' #}
 {# fun archive_liblz4_version as ^ {} -> `CString' #}
 {# fun archive_libzstd_version as ^ {} -> `CString' #}
+{# fun archive_liblzo2_version as ^ {} -> `CString' #}
+{# fun archive_libexpat_version as ^ {} -> `CString' #}
+{# fun archive_libbsdxml_version as ^ {} -> `CString' #}
+{# fun archive_libxml2_version as ^ {} -> `CString' #}
+{# fun archive_mbedtls_version as ^ {} -> `CString' #}
+{# fun archive_nettle_version as ^ {} -> `CString' #}
+{# fun archive_openssl_version as ^ {} -> `CString' #}
+{# fun archive_libmd_version as ^ {} -> `CString' #}
+{# fun archive_commoncrypto_version as ^ {} -> `CString' #}
+{# fun archive_cng_version as ^ {} -> `CString' #}
+{# fun archive_wincrypt_version as ^ {} -> `CString' #}
+{# fun archive_librichacl_version as ^ {} -> `CString' #}
+{# fun archive_libacl_version as ^ {} -> `CString' #}
+{# fun archive_libattr_version as ^ {} -> `CString' #}
+{# fun archive_libiconv_version as ^ {} -> `CString' #}
+{# fun archive_libpcre_version as ^ {} -> `CString' #}
+{# fun archive_libpcre2_version as ^ {} -> `CString' #}
 
 {# fun archive_error_string as ^ { `ArchivePtr' } -> `CString' #}
 {# fun archive_format_name as ^ { `ArchivePtr' } -> `CString' #}
@@ -565,6 +603,10 @@ mkFilter f = let f' = fmap boolToInt .** f in preMkFilter f'
 {# fun archive_write_set_format_filter_by_ext_def as ^ { `ArchivePtr', `CString', `CString' } -> `ArchiveResult' #}
 {# fun archive_write_zip_set_compression_deflate as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_zip_set_compression_store as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_zip_set_compression_lzma as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_zip_set_compression_xz as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_zip_set_compression_bzip2 as ^ { `ArchivePtr' } -> `ArchiveResult' #}
+{# fun archive_write_zip_set_compression_zstd as ^ { `ArchivePtr' } -> `ArchiveResult' #}
 {# fun archive_write_open as ^ { `ArchivePtr'
                                , castPtr `Ptr a'
                                , castFunPtr `FunPtr (ArchiveOpenCallbackRaw a)'
