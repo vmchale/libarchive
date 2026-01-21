@@ -64,7 +64,6 @@
 
 
 #include "archive_platform.h"
-__FBSDID("$FreeBSD$");
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
@@ -218,7 +217,7 @@ compress_bidder_init(struct archive_read_filter *self)
 	self->code = ARCHIVE_FILTER_COMPRESS;
 	self->name = "compress (.Z)";
 
-	state = (struct private_data *)calloc(sizeof(*state), 1);
+	state = calloc(1, sizeof(*state));
 	out_block = malloc(out_block_size);
 	if (state == NULL || out_block == NULL) {
 		free(out_block);
@@ -329,6 +328,7 @@ next_code(struct archive_read_filter *self)
 	static int debug_buff[1024];
 	static unsigned debug_index;
 
+again:
 	code = newcode = getbits(self, state->bits);
 	if (code < 0)
 		return (code);
@@ -361,7 +361,7 @@ next_code(struct archive_read_filter *self)
 		state->section_end_code = (1 << state->bits) - 1;
 		state->free_ent = 257;
 		state->oldcode = -1;
-		return (next_code(self));
+		goto again;
 	}
 
 	if (code > state->free_ent

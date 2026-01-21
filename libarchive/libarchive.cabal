@@ -107,9 +107,9 @@ library
         ghc-options: -Wunused-packages
 
     if flag(system-libarchive)
-        pkgconfig-depends: libarchive (==3.6.0 || >3.6.0) && <4.0
+        pkgconfig-depends: libarchive >=3.8.2 && <4.0
     else
-        build-depends: libarchive-clib
+        build-depends: libarchive-clib >=3.8.2 && <4.0
 
     includes:
         archive.h
@@ -130,7 +130,7 @@ executable archive
         libarchive,
         lzma-static,
         time,
-        zlib ^>=0.6.2.2
+        zlib ^>=0.7.1.1
 
     if flag(no-exe)
         buildable: False

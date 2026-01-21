@@ -57,7 +57,7 @@ pbkdf2_sha1(const char *pw, size_t pw_len, const uint8_t *salt,
 	return 0;
 }
 
-#elif defined(_WIN32) && !defined(__CYGWIN__) && defined(HAVE_BCRYPT_H)
+#elif defined(_WIN32) && !defined(__CYGWIN__) && defined(HAVE_BCRYPT_H) && _WIN32_WINNT >= _WIN32_WINNT_VISTA
 #ifdef _MSC_VER
 #pragma comment(lib, "Bcrypt.lib")
 #endif
@@ -151,7 +151,7 @@ pbkdf2_sha1(const char *pw, size_t pw_len, const uint8_t *salt,
 	(void)rounds; /* UNUSED */
 	(void)derived_key; /* UNUSED */
 	(void)derived_key_len; /* UNUSED */
-	return -1; /* UNSUPPORTED */
+	return CRYPTOR_STUB_FUNCTION; /* UNSUPPORTED */
 }
 
 #endif
@@ -197,7 +197,7 @@ aes_ctr_release(archive_crypto_ctx *ctx)
 	return 0;
 }
 
-#elif defined(_WIN32) && !defined(__CYGWIN__) && defined(HAVE_BCRYPT_H)
+#elif defined(_WIN32) && !defined(__CYGWIN__) && defined(HAVE_BCRYPT_H) && _WIN32_WINNT >= _WIN32_WINNT_VISTA
 
 static int
 aes_ctr_init(archive_crypto_ctx *ctx, const uint8_t *key, size_t key_len)
@@ -424,8 +424,8 @@ static int
 aes_ctr_release(archive_crypto_ctx *ctx)
 {
 	EVP_CIPHER_CTX_free(ctx->ctx);
-	memset(ctx->key, 0, ctx->key_len);
-	memset(ctx->nonce, 0, sizeof(ctx->nonce));
+	OPENSSL_cleanse(ctx->key, ctx->key_len);
+	OPENSSL_cleanse(ctx->nonce, sizeof(ctx->nonce));
 	return 0;
 }
 
@@ -439,14 +439,14 @@ aes_ctr_init(archive_crypto_ctx *ctx, const uint8_t *key, size_t key_len)
 	(void)ctx; /* UNUSED */
 	(void)key; /* UNUSED */
 	(void)key_len; /* UNUSED */
-	return -1;
+	return CRYPTOR_STUB_FUNCTION;
 }
 
 static int
 aes_ctr_encrypt_counter(archive_crypto_ctx *ctx)
 {
 	(void)ctx; /* UNUSED */
-	return -1;
+	return CRYPTOR_STUB_FUNCTION;
 }
 
 static int
@@ -469,7 +469,7 @@ aes_ctr_update(archive_crypto_ctx *ctx, const uint8_t * const in,
 	(void)out; /* UNUSED */
 	(void)out_len; /* UNUSED */
 	aes_ctr_encrypt_counter(ctx); /* UNUSED */ /* Fix unused function warning */
-	return -1;
+	return CRYPTOR_STUB_FUNCTION;
 }
 
 #else

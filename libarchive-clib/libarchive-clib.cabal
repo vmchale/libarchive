@@ -1,6 +1,6 @@
 cabal-version:      2.0
 name:               libarchive-clib
-version:            3.7.2
+version:            3.8.2
 license:            OtherLicense
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
@@ -60,7 +60,8 @@ library
         ./c/archive_entry_stat.c
         ./c/archive_entry_strmode.c
         ./c/archive_entry_xattr.c
-        ./c/archive_getdate.c
+        ./c/archive_parse_date.c
+        ./c/archive_time.c
         ./c/archive_hmac.c
         ./c/archive_match.c
         ./c/archive_options.c
