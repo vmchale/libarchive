@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.5.0
+
+  * use libarchive-clib package
+
 # 3.0.4.2
 
   * Package bounds for Hackage
