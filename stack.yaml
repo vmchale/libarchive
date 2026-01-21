@@ -2,16 +2,15 @@
 packages:
   - libarchive
   - libarchive-clib
-  - zlib-clib
-resolver: lts-20.26
+resolver: lts-24.19
 ghc-options: {"$locals": -ddump-to-file -ddump-hi}
 flags:
   libarchive:
     system-libarchive: false
 extra-deps:
-  - chs-cabal-0.1.1.1
-  - composition-prelude-2.0.5.0@sha256:2e18aa0baa6ba527b086261f077a10c2786594879f6c0cbcb50464b9d69b1521,1149
+  - chs-cabal-0.1.1.4@sha256:284d247cd25296ddd2fdb34ba753d42c68c7000c0f787725751e2fbd1c229d7f,1217
+  - Cabal-3.14.1.1@sha256:424e9f5053a17d4598f1d2b9ae657e6f039233a127b7adb148ded7a8d0cb8103,13720
+  - Cabal-syntax-3.14.1.0@sha256:557a2b20dc85f052c86c5a06dcbd7c6995f2d0391bbff8e62c90b4b5975211da,7380
   - chs-deps-0.1.0.0@sha256:0cdada6d2c682c41b20331b8c63c2ecfc7e806928585195fd544c9d41f3074fd,2496
-  - dir-traverse-0.2.1.0@sha256:4f3da22394431ffb5e0ac6c0e130d78e64a0ea4f33c2a1ff8e5521c784399a2b,1548
+  - dir-traverse-0.2.3.0@sha256:adcc128f201ff95131b15ffe41365dc99c50dc3fa3a910f021521dc734013bfa,2137
   - pathological-bytestrings-0.1.0.0@sha256:0649a14d6e87091cc0f9e7430881e970e53008be262f878311b25d410ebf974b,1079
-  - tar-0.6.0.0@sha256:98033ad873ecd42a74e393364b43b361ca7a46f3a4d84e4b8e94ddeb25508abd,4476

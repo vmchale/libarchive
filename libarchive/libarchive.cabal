@@ -130,7 +130,7 @@ executable archive
         libarchive,
         lzma-static,
         time,
-        zlib ^>=0.6.2.2
+        zlib ^>=0.7.1.1
 
     if flag(no-exe)
         buildable: False
