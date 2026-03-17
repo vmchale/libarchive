@@ -93,12 +93,11 @@ library
         ./c/archive_entry_stat.c
         ./c/archive_entry_strmode.c
         ./c/archive_entry_xattr.c
-        ./c/archive_parse_date.c
-        ./c/archive_time.c
         ./c/archive_hmac.c
         ./c/archive_match.c
         ./c/archive_options.c
         ./c/archive_pack_dev.c
+        ./c/archive_parse_date.c
         ./c/archive_pathmatch.c
         ./c/archive_ppmd7.c
         ./c/archive_ppmd8.c
@@ -154,6 +153,7 @@ library
         ./c/archive_read_support_format_zip.c
         ./c/archive_string.c
         ./c/archive_string_sprintf.c
+        ./c/archive_time.c
         ./c/archive_util.c
         ./c/archive_version_details.c
         ./c/archive_virtual.c
@@ -185,8 +185,8 @@ library
         ./c/archive_write_set_format_ar.c
         ./c/archive_write_set_format_by_name.c
         ./c/archive_write_set_format.c
-        ./c/archive_write_set_format_cpio.c
         ./c/archive_write_set_format_cpio_binary.c
+        ./c/archive_write_set_format_cpio.c
         ./c/archive_write_set_format_cpio_newc.c
         ./c/archive_write_set_format_cpio_odc.c
         ./c/archive_write_set_format_filter_by_ext.c
