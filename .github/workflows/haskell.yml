@@ -72,9 +72,7 @@ jobs:
     - if: runner.os == 'macOS'
       name: Install automake via brew
       run: |
-          bash .github/scripts/brew.sh automake libtool
-          echo "$HOME/.brew/bin" >> $GITHUB_PATH
-          echo "$HOME/.brew/sbin" >> $GITHUB_PATH
+          brew install autoconf automake libtool gettext
 
     - id: get
       run: |

@@ -1,6 +1,8 @@
 cabal-version:      2.0
 name:               libarchive-clib
-version:            3.8.6
+-- this is actually corresponding to upstream's 3.8.6,
+-- but we had to fix configure.ac and PVP has no patch versions
+version:            3.8.6.1
 license:            OtherLicense
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
@@ -24,10 +26,43 @@ extra-source-files:
     ./build/autoconf/ltmain.sh
     configure
     configure.ac
+    libarchive-clib.buildinfo.in
 
 source-repository head
     type:     git
     location: https://github.com/vmchale/libarchive
+
+flag zlib
+    description: Build support for gzip through zlib
+    default:     True
+
+flag iconv
+    description: Link against iconv
+    default:     False
+
+flag lz4
+    description: Build support for lz4 through liblz4
+    default:     False
+
+flag zstd
+    description: Build support for zstd through libzstd
+    default:     False
+
+flag lzma
+    description: Build support for xz through lzma
+    default:     False
+
+flag bz2lib
+    description: Build support for bzip2 through bz2lib
+    default:     False
+
+flag acl
+    description: Enable ACL support
+    default:     False
+
+flag xattr
+    description: Extended Attributes support
+    default:     False
 
 library
     default-language: Haskell2010
@@ -60,12 +95,11 @@ library
         ./c/archive_entry_stat.c
         ./c/archive_entry_strmode.c
         ./c/archive_entry_xattr.c
-        ./c/archive_parse_date.c
-        ./c/archive_time.c
         ./c/archive_hmac.c
         ./c/archive_match.c
         ./c/archive_options.c
         ./c/archive_pack_dev.c
+        ./c/archive_parse_date.c
         ./c/archive_pathmatch.c
         ./c/archive_ppmd7.c
         ./c/archive_ppmd8.c
@@ -121,6 +155,7 @@ library
         ./c/archive_read_support_format_zip.c
         ./c/archive_string.c
         ./c/archive_string_sprintf.c
+        ./c/archive_time.c
         ./c/archive_util.c
         ./c/archive_version_details.c
         ./c/archive_virtual.c
@@ -152,8 +187,8 @@ library
         ./c/archive_write_set_format_ar.c
         ./c/archive_write_set_format_by_name.c
         ./c/archive_write_set_format.c
-        ./c/archive_write_set_format_cpio.c
         ./c/archive_write_set_format_cpio_binary.c
+        ./c/archive_write_set_format_cpio.c
         ./c/archive_write_set_format_cpio_newc.c
         ./c/archive_write_set_format_cpio_odc.c
         ./c/archive_write_set_format_filter_by_ext.c

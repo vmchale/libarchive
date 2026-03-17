@@ -1,0 +1,3 @@
+extra-libraries: @EXTRA_LIBS@
+cc-options: @CFLAGS@
+ld-options: @LDFLAGS@
