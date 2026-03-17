@@ -1,4 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE LambdaCase #-}
 module Main ( main ) where
 
 import           Codec.Archive
@@ -7,6 +9,7 @@ import           Codec.Archive.Test
 import qualified Data.ByteString         as BS
 import qualified Data.ByteString.Lazy    as BSL
 import           Data.Either             (isRight)
+import           Data.List (uncons)
 import           Data.Foldable           (traverse_)
 import           System.Directory        (doesDirectoryExist, listDirectory)
 import           System.FilePath         ((</>))
@@ -18,6 +21,11 @@ import           System.Environment
 import           Test.Hspec.Core.Runner
 #endif
 import           Test.Hspec
+
+import qualified Data.ByteString.Base16        as B16
+import qualified Crypto.Hash.SHA256            as SHA256
+import qualified Data.Text.Encoding            as E
+import qualified Data.Text                     as T
 
 testFp :: FilePath -> Spec
 testFp fp = it ("sucessfully unpacks/packs (" ++ fp ++ ")") $
@@ -58,6 +66,20 @@ repack packer str fp = it ("should repack (" ++ str ++ ")") $ do
 bsValid :: Either a BSL.ByteString -> Bool
 bsValid = \x -> case x of { Left{} -> False; Right b -> not $ BSL.null b }
 
+testArchiveContentChecksum :: FilePath  -- ^ archive
+                           -> FilePath  -- ^ file inside archive
+						   -> String    -- ^ base64 encoded sha256sum
+						   -> Spec
+testArchiveContentChecksum archive file sha = it ("Verify checksum of " <> file <> " in archive " <> archive) $ do
+  entries' <-  runArchiveM (readArchiveFile archive)
+  entries <- either (ioError . userError . show) pure $ entries'
+  let cabal_exe = uncons . fmap content . filter (\Entry{..} -> filepath == file) $ entries
+  c <- case cabal_exe of
+         (Just (NormalFile c, _)) -> pure c
+         _ -> ioError $ userError $ "Could not find file " <> file <> " in archive " <> archive
+  digest <- either (ioError . userError . show) pure . E.decodeUtf8' . B16.encode . SHA256.hash $ c
+  digest `shouldBe` T.pack sha
+
 main :: IO ()
 main = do
 
@@ -65,7 +87,7 @@ main = do
     tarballs <- if dir then listDirectory "test/data" else pure []
     let tarPaths = ("test/data" </>) <$> tarballs
 
-    hspec' $
+    hspec' $ do
         describe "roundtrip" $ do
 
             traverse_ testFp tarPaths
@@ -113,6 +135,13 @@ main = do
                 [ stripOwnership (simpleFile "a.txt" (NormalFile "text")) ]
             xcontext "having entry without timestamp" . itPacksUnpacks $
                 [ stripTime (simpleFile "a.txt" (NormalFile "text")) ]
+
+        describe "checksums" $ do
+		  testArchiveContentChecksum
+		    "test/data/plan_json.zip"
+			"plan.json"
+			"5eac50e94666fff2491e43f81a670ef243c272aa3afe1fc59c720004fe186feb"
+
   where
 #ifdef mingw32_HOST_OS
     hspec' spec = getArgs >>= readConfig defaultConfig >>= (\c -> withArgs [] . runSpec spec $ c{ configConcurrentJobs = Nothing }) >>= evaluateSummary

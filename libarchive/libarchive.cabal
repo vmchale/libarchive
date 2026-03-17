@@ -16,6 +16,7 @@ category:           Codec
 build-type:         Custom
 extra-source-files:
     test/data/aarch64-linux-dist.tar
+    test/data/plan_json.zip
 
 extra-doc-files:
     README.md
@@ -130,6 +131,8 @@ executable archive
         libarchive,
         lzma-static,
         time,
+        cryptohash-sha256,
+        base16-bytestring,
         zlib ^>=0.7.1.1
 
     if flag(no-exe)
@@ -149,6 +152,8 @@ test-suite libarchive-test
     ghc-options:        -threaded -rtsopts "-with-rtsopts=-N -K1K" -Wall
     build-depends:
         base,
+        base16-bytestring,
+        cryptohash-sha256,
         deepseq,
         libarchive,
         hspec,
@@ -156,6 +161,7 @@ test-suite libarchive-test
         directory >=1.2.5.0,
         filepath,
         temporary,
+        text,
         mtl >=2.2.2,
         dir-traverse,
         composition-prelude >=2.0.5.0,
