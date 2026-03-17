@@ -2,7 +2,7 @@ cabal-version:      2.0
 name:               libarchive-clib
 -- this is actually corresponding to upstream's 3.8.6,
 -- but we had to fix configure.ac and PVP has no patch versions
-version:            3.8.6.1
+version:            3.8.6.2
 license:            OtherLicense
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
