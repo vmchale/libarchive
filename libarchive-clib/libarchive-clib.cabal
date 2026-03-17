@@ -20,10 +20,22 @@ extra-source-files:
     ./c/*.c
     ./c/*.h
     ./c/config.h.in
+    ./build/autoconf/check_stdcall_func.m4
     ./build/autoconf/config.guess
+    ./build/autoconf/config.rpath
     ./build/autoconf/config.sub
+    ./build/autoconf/iconv.m4
     ./build/autoconf/install-sh
+    ./build/autoconf/la_uid_t.m4
+    ./build/autoconf/lib-ld.m4
+    ./build/autoconf/lib-link.m4
+    ./build/autoconf/lib-prefix.m4
+    ./build/autoconf/libtool.m4
     ./build/autoconf/ltmain.sh
+    ./build/autoconf/ltoptions.m4
+    ./build/autoconf/ltsugar.m4
+    ./build/autoconf/ltversion.m4
+    ./build/autoconf/m4_ax_compile_check_sizeof.m4
     configure
     configure.ac
     libarchive-clib.buildinfo.in
