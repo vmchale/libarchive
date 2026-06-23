@@ -2,7 +2,7 @@ cabal-version:      2.0
 name:               libarchive-clib
 -- this is actually corresponding to upstream's 3.8.6,
 -- but we had to fix configure.ac and PVP has no patch versions
-version:            3.8.7
+version:            3.8.8
 license:            OtherLicense
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
@@ -80,6 +80,8 @@ library
     default-language: Haskell2010
     if os(windows)
         cc-options: -U__GCC_ASM_FLAG_OUTPUTS__
+        extra-libraries: bcrypt
+        extra-libraries-static: bcrypt
 
     if arch(i386)
         cc-options: -D_Alignas(t)=__attribute__((__aligned__(t)))
