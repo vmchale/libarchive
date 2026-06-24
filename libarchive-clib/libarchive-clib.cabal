@@ -1,9 +1,9 @@
-cabal-version:      2.0
+cabal-version:      3.8
 name:               libarchive-clib
 -- this is actually corresponding to upstream's 3.8.6,
 -- but we had to fix configure.ac and PVP has no patch versions
 version:            3.8.8
-license:            OtherLicense
+license:            LicenseRef-Custom
 license-file:       LICENSE
 copyright:          Copyright: (c) 2018-2020 Vanessa McHale
 maintainer:         vamchale@gmail.com
