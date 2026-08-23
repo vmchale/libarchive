@@ -82,7 +82,7 @@ archiveAbs support fp a = withCStringArchiveM fp $ \cpath ->
 
 -- TODO: general function for format
 archiveFile :: FilePath -> ArchivePtr -> ArchiveM ()
-archiveFile = archiveAbs archiveReadSupportFormatAll
+archiveFile = archiveAbs (\a -> archiveReadSupportFilterAll a >> archiveReadSupportFormatAll a)
 
 -- | This is more efficient than
 --
