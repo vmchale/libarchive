@@ -27,6 +27,8 @@ import           System.IO.Unsafe              (unsafeDupablePerformIO)
 
 -- | In general, this will be more efficient than 'unpackToDir'
 --
+-- Throws 'ArchiveFatal' if any entry's path begins with @".."@
+--
 -- @since 1.0.4.0
 unpackToDirLazy :: FilePath -- ^ Directory to unpack in
                 -> BSL.ByteString -- ^ 'BSL.ByteString' containing archive

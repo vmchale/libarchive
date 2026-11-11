@@ -1,5 +1,9 @@
 # libarchive
 
+# 3.0.6.0
+
+  * Refuse to unpack malicious tarballs (i.e. any file starting with `..`)
+
 # 3.0.5.0
 
   * use libarchive-clib package

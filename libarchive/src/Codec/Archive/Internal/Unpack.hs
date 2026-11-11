@@ -20,7 +20,8 @@ module Codec.Archive.Internal.Unpack ( hsEntriesAbs
 import           Codec.Archive.Foreign
 import           Codec.Archive.Internal.Monad
 import           Codec.Archive.Types
-import           Control.Monad                ((<=<))
+import           Control.Monad                (when, (<=<))
+import           Control.Monad.Except         (throwError)
 import           Control.Monad.IO.Class       (liftIO)
 import qualified Control.Monad.ST.Lazy        as LazyST
 import qualified Control.Monad.ST.Lazy.Unsafe as LazyST
@@ -34,7 +35,7 @@ import           Foreign.ForeignPtr           (castForeignPtr, newForeignPtr_)
 import           Foreign.Marshal.Alloc        (allocaBytes, free, mallocBytes)
 import           Foreign.Marshal.Utils        (copyBytes)
 import           Foreign.Ptr                  (castPtr, nullPtr)
-import           System.FilePath              ((</>))
+import           System.FilePath              (normalise, splitDirectories, (</>))
 import           System.IO.Unsafe             (unsafeDupablePerformIO)
 
 -- | Read an archive contained in a 'BS.ByteString'. The format of the archive is
@@ -152,7 +153,13 @@ hsEntriesSTAbs read' a = do
         Nothing -> pure []
         Just x  -> (x:) <$> hsEntriesSTAbs read' a
 
--- | Unpack an archive in a given directory
+abortIfSuspect :: FilePath -> ArchiveM ()
+abortIfSuspect fp | ("..":_) <- splitDirectories (normalise fp) = throwError ArchiveFatal
+                  | otherwise = pure ()
+
+-- | Unpack an archive in a given directory.
+--
+-- Throws 'ArchiveFatal' if any entry's path begins with @".."@
 unpackEntriesFp :: ArchivePtr -> FilePath -> ArchiveM ()
 unpackEntriesFp a fp = do
     res <- liftIO $ getEntry a
@@ -161,6 +168,7 @@ unpackEntriesFp a fp = do
         Just x  -> do
             preFile <- liftIO $ archiveEntryPathname x
             file <- liftIO $ peekCString preFile
+            abortIfSuspect file
             let file' = fp </> file
             liftIO $ withCString file' $ \fileC ->
                 archiveEntrySetPathname x fileC
@@ -253,6 +261,7 @@ getEntry a = do
         then pure Nothing
         else Just . castForeignPtr <$> newForeignPtr_ (castPtr res)
 
+-- | Throws 'ArchiveFatal' if any entry's path begins with @".."@
 unpackToDir :: FilePath -- ^ Directory to unpack in
             -> BS.ByteString -- ^ 'BS.ByteString' containing archive
             -> ArchiveM ()
